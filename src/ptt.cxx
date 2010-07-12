@@ -11,14 +11,19 @@
 
 #include "ptt.h"
 #include "debug.h"
-#include "rig_io.h"
-#include "rig.h"
+#include "wkey_io.h"
+#include "flwkey.h"
 #include "support.h"
 
 using namespace std;
 
+// add fake rit to this function and to set_vfoA ??
+
 void rigPTT(bool on)
 {
+	if (on && progStatus.split)
+		cbABactive();
+
 	if (progStatus.comm_catptt) {
 		pthread_mutex_lock(&mutex_serial);
 			selrig->set_PTT_control(on);
@@ -28,5 +33,8 @@ void rigPTT(bool on)
 	else if (SepSerial.IsOpen() && (progStatus.sep_dtrptt || progStatus.sep_rtsptt) )
 		SepSerial.SetPTT(on);
 	else
-		LOG_WARN("No PTT i/o connected");
+		LOG_INFO("No PTT i/o connected");
+
+	if (!on && progStatus.split)
+		cbABactive();
 }

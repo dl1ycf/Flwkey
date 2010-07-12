@@ -12,176 +12,87 @@
 #include <sys/shm.h>
 #endif
 
-#include "rig.h"
-#include "rigbase.h"
-#include "rig_io.h"
-#include "images.h"
+#include "flwkey.h"
+#include "wkey_io.h"
 #include "serial.h"
 #include "status.h"
 
 #include <FL/fl_show_colormap.H>
 #include <FL/fl_ask.H>
 
-#define LISTSIZE 200
+extern Cserial WKEY_serial;
 
-struct FREQMODE {
-	long freq;
-	int imode;
-	int iBW;
-};
-
-extern FREQMODE vfoA;
-extern FREQMODE vfoB;
-extern bool PTT;
-extern bool localptt;
-extern bool remoteptt;
-
-extern Cserial RigSerial;
-extern Cserial AuxSerial;
-extern Cserial SepSerial;
-
-extern bool run_xmlrcp_thread;
-extern bool bandwidth_changed;
-extern bool modes_changed;
-extern bool bandwidths_changed;
-
-extern std::vector<std::string> rigmodes_;
-extern std::vector<std::string> rigbws_;
-
-extern rigbase *selrig;
-
-extern void cbExit();
-
-extern void setVolumeControl(void *);
-extern void setModeControl(void *);
-extern void updateBandwidthControl();
-extern void updateBW(void *);
-extern void setBWControl(void *);
-extern void setNotchControl(void *);
-extern void setNotchButton(void *);
-extern void setIFshiftButton(void *);
-extern void setIFshiftControl(void *);
-extern void setPTT( void *);
-extern void setPreampControl(void *);
-extern void setAttControl(void *);
-extern void setNoiseControl(void *);
-extern void setMicGainControl(void *);
-
-extern void setMode();
-extern void setBW();
-
-extern void addFreq();
-extern void delFreq();
-extern void buildlist();
-extern void clearList();
-extern void saveFreqList();
-extern void readList();
-extern void selectFreq();
-extern int  movFreq();
-extern void adjustFreqs();
-extern void cbABactive();
-extern void cbA2B();
-extern void cbRIT();
-extern void cbXIT();
-extern void cbBFO();
-extern void cbAuxPort();
-extern void cb_line_out();
-extern void cb_agc_level();
-extern void cb_cw_wpm();
-extern void cb_cw_vol();
-extern void cb_cw_spot();
-extern void cb_vox_gain();
-extern void cb_vox_anti();
-extern void cb_vox_hang();
-extern void cb_vox_onoff();
-extern void cb_compression();
-extern void setLower();
-extern void setUpper();
-
-extern void cbExit();
-
-extern void about();
-
-extern void setNotch();
-
-extern void cbAttenuator();
-extern void cbPreamp();
-extern void cbNR();
-extern void setNR();
-extern void cbNoise();
-extern void cbbtnNotch();
-extern void setNotch();
-extern void setIFshift();
-extern void cbIFsh();
-extern void setVolume();
-extern void setMicGain();
-extern void cbbtnMicLine();
-extern void setPower();
-extern void setRFGAIN();
-extern void setSQUELCH();
-
-extern void cbTune();
-extern void cbPTT();
-//extern void cbSmeter();
-extern void cbALC_SWR();
-//extern void cbPWR();
-extern void cbMute();
-extern void cbEventLog();
-
-extern void loadConfig();
-extern void saveConfig();
-extern void loadState();
-extern void saveState();
-extern void initRig();
-extern void init_title();
-extern void initConfigDialog();
-extern void initStatusConfigDialog();
-extern void initRigCombo();
-extern void createXcvrDialog();
-extern void cbUseRepeatButtons(bool on);
-extern void preamp_label(const char *, bool on);
-extern void atten_label(const char *, bool on);
-
-// Display Dialog
-extern void cbOkXcvrDialog();
-extern void cbCancelXcvrDialog();
-extern void initCommPortTable ();
-extern void configXcvr();
-extern void setDisplayColors();
-extern void openMemoryDialog();
-extern void cbCloseMemory();
-
-extern void cbOkDisplayDialog();
-extern void cbCancelDisplayDialog();
-extern void cbPrefBackground();
-extern void cbPrefForeground();
-
-extern void cbSMeterColor();
-extern void cbPwrMeterColor();
-extern void cbSWRMeterColor();
-extern void cbBacklightColor();
-
-extern void * serial_thread_loop( void * );
 extern bool bypass_serial_thread_loop;
-extern bool bypass_xmlrcp_thread_loop;
 
-extern Cserial RigSerial;
-extern Cserial AuxSerial;
+extern void * serial_thread_loop(void *);
+extern void cb_events();
+extern void cbExit();
+extern int  main_handler(int);
 
-extern char szttyport[];
-extern int  baudttyport;
+extern void config_comm_port();
+extern void cbCancelSetupDialog();
+extern void cbOkSetupDialog();
 
-extern void serial_timer(void *);
+extern void open_wkeyer();
 
-extern void init_xmlrpc();
+extern void cb_clear_text_to_send();
+extern void cb_send_text();
+extern void cb_cancel_transmit();
+extern void cb_transmit_text();
+extern void set_wpm();
+extern void use_pot_changed();
+extern void cb_send_text(void *);
+extern void load_defaults();
 
-extern void setFreqDisp(void *d);
-extern void updateSmeter(void *d);
-extern void updateFwdPwr(void *d);
-extern void updateALC(void *d);
-extern void updateSWR(void *d);
-extern void updateSquelch(void *d);
-extern void updateRFgain(void *d);
-extern void zeroXmtMeters(void *d);
-extern void reset_power_controlImage( void *d );
+extern void config_parameters();
+extern void config_messages();
+extern void done_parameters();
+extern void done_edit();
+extern void cancel_edit();
+extern void change_choice_keyer_mode();
+extern void change_choice_output_pins();
+extern void change_choice_sidetone();
+extern void change_choice_hang();
+extern void change_cntr_tail();
+extern void change_cntr_leadin();
+extern void change_cntr_weight();
+extern void change_cntr_sample();
+extern void change_cntr_first_ext();
+extern void change_cntr_comp();
+extern void change_cntr_ratio();
+extern void change_cntr_cmd_wpm();
+extern void change_cntr_farnsworth();
+extern void change_cntr_rng_wpm();
+extern void change_cntr_min_wpm();
+extern void change_btn_msg_break();
+extern void change_btn_cut_zeronine();
+extern void change_btn_paddledog();
+extern void change_btn_ct_space();
+extern void change_btn_auto_space();
+extern void change_btn_swap();
+extern void change_btn_paddle_echo();
+extern void change_btn_serial_echo();
+
+extern void cb_tune();
+
+extern void exec_msg1();
+extern void exec_msg2();
+extern void exec_msg3();
+extern void exec_msg4();
+extern void exec_msg5();
+extern void exec_msg6();
+extern void exec_msg7();
+extern void exec_msg8();
+extern void exec_msg9();
+extern void exec_msg10();
+extern void update_msg_labels();
+
+extern void open_operator_dialog();
+extern void cb_done_op_dialog();
+extern void change_txt_cll();
+extern void change_txt_qth();
+extern void change_txt_loc();
+extern void change_txt_opr();
+
+
 #endif

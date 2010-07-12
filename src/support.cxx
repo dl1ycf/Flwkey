@@ -9,45 +9,83 @@
 #include <fcntl.h>
 #include <pthread.h>
 
+#include <FL/Fl_Box.H>
+#include <FL/Enumerations.H>
+
 #include "support.h"
 #include "debug.h"
 #include "gettext.h"
-#include "rig_io.h"
-#include "rig.h"
+#include "wkey_io.h"
 #include "dialogs.h"
-#include "rigbase.h"
-#include "xml_io.h"
-#include "ptt.h"
+#include "wkey_dialogs.h"
+#include "status.h"
 
 using namespace std;
 
-rigbase *selrig = rigs[0];
+Cserial WKEY_serial;
 
-extern bool test;
-int freqval = 0;
+//=============================================================================
+// WinKey command sequences
+//=============================================================================
+// ADMIN MODE
+const char ADMIN		= '\x00';
+const char CALIBRATE	= '\x00';
+const char RESET		= '\x01';
+const char HOST_OPEN	= '\x02';
+const char HOST_CLOSE	= '\x03';
+const char ECHO_TEST	= '\x04';
+const char PADDLE_A2D	= '\x05';
+const char SPEED_A2D	= '\x06';
+const char GET_VALUES	= '\x07';
+const char GET_CAL		= '\x09';
+const char WK1_MODE		= '\x0A';
+const char WK2_MODE		= '\x0B';
+const char DUMP_EEPROM	= '\x0C';
+const char LOAD_EEPROM	= '\x0D';
 
-extern void resetWatchDog();
+const char *SEND_MSG_NBR	= "\x0E";
 
-FREQMODE vfoB = {7070000, 0, 0};
-FREQMODE vfoA = {14070000, 0, 0};
-int transceiver_bw = 0;
-int transceiver_mode = 0;
+// HOST MODE
+const char *SIDETONE		= "\x01";	// N see table page 6 Interface Manual
+const char *SET_WPM			= "\x02";	// 5 .. N .. 99 in WPM
+const char *SET_WEIGHT		= "\x03";	// 10 .. N .. 90 %
+const char *SET_PTT_LT		= "\x04";	// A - lead time, B - tail time
+										// both 0..250 in 10 msec steps
+										// "0x04<01><A0> = 10 msec lead, 1.6 sec tail
+const char *SET_SPEED_POT	= "\x05";	// A = min, B = range, C anything
+const char *PAUSE			= "\x06";	// 1 = pause, 0 = release
+const char *GET_SPEED_POT 	= "\x07"; 	// return values as per page 7/8
+const char *BACKSPACE		= "\x08";
+const char *SET_PIN_CONFIG	= "\x09";	// N as per tables page 8
+const char *CLEAR_BUFFER	= "\x0A";
+const char *KEY_IMMEDIATE	= "\x0B";	// 0 = keyup, 1 = keydown
+const char *HSCW			= "\x0C";	// N = lpm / 100
+const char *FARNS_WPM		= "\x0D";	// 10 .. N .. 99
+const char *SET_WK2_MODE	= "\x0E";	// N as per table page 9
+const char *LOAD_DEFAULTS	= "\x0F";
+	// A = MODE REGISTER	B = SPEED IN WPM		C = SIDETONE FREQ
+	// D = WEIGHT			E = LEAD-IN TIME		F = TAIL TIME
+	// G = MIN_WPM			H = WPM RANGE			I = 1ST EXTENSION
+	// J = KEY COMPENSATION	K = FARNSWORTH WPM		L = PADDLE SETPOINT
+	// M = DIT/DAH RATIO	N = PIN_CONFIGURATION	O = DONT CARE ==> zero
+const char *FIRST_EXT		= "\x10";		// see page 10/11
+const char *SET_KEY_COMP	= "\x11";	// see page 11
+const char *NULL_CMD		= "\023\023\023";
+const char *PADDLE_SW_PNT	= "\x12";	// 10 .. N .. 90%
+const char *SOFT_PADDLE		= "\x14";	// 0 - up, 1 - dit, 2 - dah, 3 - both
+const char *GET_STATUS		= "\x15";	// request status byte, see page 12
+const char *POINTER_CMD		= "\x16";	// see page 12
+const char *SET_DIT_DAH		= "\x17";	// 33 .. N .. 66 N = ratio * 50 / 3
 
-bool localptt = false;
-bool remoteptt = false;
-
-char szVfoB[20];
-
-FREQMODE oplist[LISTSIZE];
-int  numinlist = 0;
-vector<string> rigmodes_;
-vector<string> rigbws_;
-
-Cserial RigSerial;
-Cserial AuxSerial;
-Cserial SepSerial;
-
-bool using_buttons = false;
+// BUFFERED COMMANDS
+const char *PTT_ON_OFF		= "\x18";	// 1 = on 0 = off
+const char *KEY_BUFFERED	= "\x19";	// 0 .. N .. 99 seconds
+const char *WAIT			= "\x1A";	// 0 .. N .. 99 seconds
+const char *MERGE			= "\x1B";	// merger CD into prosign, ie AR, SK etc
+const char *CHANGE_BFR_SPD	= "\x1C";	// 5 .. N .. 99
+const char *CHANGE_HSCW_SPD	= "\x1D";	// N = lpm / 100
+const char *CANCEL_BFR_SPD	= "\x1E";
+const char *BUFFER_NOP		= "\x1F";
 
 //=============================================================================
 // loop for serial i/o thread
@@ -55,1417 +93,535 @@ bool using_buttons = false;
 // only accesses the serial port if it has been successfully opened
 //=============================================================================
 
+void version_(unsigned char);
+void echo_test(unsigned char);
+void status_(unsigned char);
+void speed_(unsigned char);
+void echo_(unsigned char);
+void eeprom_(unsigned char);
+
 bool bypass_serial_thread_loop = true;
 bool run_serial_thread = true;
 
 bool PTT = false;
 int  powerlevel = 0;
 
-// the following functions are ONLY CALLED by the serial loop
+string str_out;
+bool get_version = false;
+bool test_echo = false;
+bool host_is_up = false;
+bool wk2_version = false;
+bool read_EEPROM = false;
 
-// read current vfo frequency
-void read_vfo()
+int  wkeyer_ready = true;
+
+void upcase(string &s)
 {
-	if (RigSerial.IsOpen() == false) return;
-	static long  freq = 0;
-		freq = selrig->get_vfoA();
-	if (freq != vfoA.freq) {
-		vfoA.freq = freq;
-		Fl::awake(setFreqDisp);//, (void*)0);
+	for (size_t n = 0; n < s.length(); n++) s[n] = toupper(s[n]);
+}
+
+void noctrl(string &s)
+{
+	for (size_t n = 0; n < s.length(); n++)
+		if (s[n] < ' ' || s[n] > 'Z') s[n] = ' ';
+}
+
+enum {NOTHING, WAIT_ECHO, WAIT_VERSION};
+void sendCommand(string &cmd, int what = NOTHING)
+{
+	pthread_mutex_lock(&mutex_serial);
+	upcase(cmd);
+	str_out = cmd;
+	switch (what) {
+		case WAIT_ECHO : 
+			test_echo = true;
+			break;
+		case WAIT_VERSION :
+			get_version = true;
+			break;
+		default: ;
 	}
+	pthread_mutex_unlock(&mutex_serial);
+	int cnt = 101;
+	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
-// read current signal level
-void read_smeter()
+void sendText(string &cmd)
 {
-	if (RigSerial.IsOpen() == false) return;
-	int  sig;
-		sig = selrig->get_smeter();
-	if (sig == -1) return;
-	Fl::awake(updateSmeter, (void*)sig);
+	pthread_mutex_lock(&mutex_serial);
+	upcase(cmd);
+	noctrl(cmd);
+	str_out = cmd;
+	pthread_mutex_unlock(&mutex_serial);
+	int cnt = 101;
+	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
-// read power out
-void read_power_out()
+void sendChar(char c)
 {
-	if (RigSerial.IsOpen() == false) return;
-//	if (!selrig->has_power_control) return;
-	int sig;
-		sig = selrig->get_power_out();
-	Fl::awake(updateFwdPwr, (void*)sig);
+	pthread_mutex_lock(&mutex_serial);
+	c = toupper(c);
+	if (c < ' ') c = ' ';
+	str_out = c;
+	pthread_mutex_unlock(&mutex_serial);
 }
-
-// read swr
-void read_swr()
-{
-	if (RigSerial.IsOpen() == false) return;
-//	if (!selrig->has_swr_control) return;
-	int sig;
-		sig = selrig->get_swr();
-	Fl::awake(updateSWR, (void*)sig);
-}
-
-// alc
-void read_alc()
-{
-	if (RigSerial.IsOpen() == false) return;
-	if (!selrig->has_alc_control) return;
-	int sig;
-		sig = selrig->get_alc();
-	Fl::awake(updateALC, (void*)sig);
-}
-
-static bool resetrcv = true;
-static bool resetxmt = true;
 
 void * serial_thread_loop(void *d)
 {
-//  static int  loopcount = 0;
+unsigned char byte;
 	for(;;) {
 		if (!run_serial_thread) break;
 
-		MilliSleep(progStatus.serloop_timing / 2);
+		MilliSleep(1);//progStatus.serloop_timing);
 
-		if (bypass_serial_thread_loop) goto serial_bypass_loop;
-// rig specific data reads
-		if (!PTT) {
-			if (resetrcv) {
-				Fl::awake(zeroXmtMeters, 0);
-				resetrcv = false;
+		if (bypass_serial_thread_loop ||
+			!WKEY_serial.IsOpen()) goto serial_bypass_loop;
+
+		pthread_mutex_lock(&mutex_serial);
+// process outgoing
+			if (!str_out.empty()) {
+				sendString(str_out, true);
+				str_out.clear();
 			}
-			resetxmt = true;
-
-			pthread_mutex_lock(&mutex_serial);
-				read_vfo();
-			pthread_mutex_unlock(&mutex_serial);
-
-			MilliSleep(progStatus.serloop_timing / 2);
-
-			pthread_mutex_lock(&mutex_serial);
-				read_smeter();
-			pthread_mutex_unlock(&mutex_serial);
-
-/*
-			switch (loopcount) {
-				case 0: read_volume(); loopcount++; break;
-				case 1: read_mode(); loopcount++; break;
-				case 2: read_bandwidth(); loopcount++; break;
-				case 3: read_notch(); loopcount++; break;
-				case 4: read_ifshift(); loopcount++; break;
-				case 5: read_power_control(); loopcount++; break;
-				case 6: read_preamp_att(); loopcount++; break;
-				case 7: read_mic_gain(); loopcount++; break;
-				case 8: read_squelch(); loopcount++; break;
-				case 9: read_rfgain(); loopcount = 0;
+			if (WKEY_serial.ReadByte(byte)) {
+				if ((byte == 0xA5 || read_EEPROM))
+					eeprom_(byte);
+				else if ((byte & 0xC0) == 0xC0)
+					status_(byte);
+				else if ((byte & 0xC0) == 0x80)
+					speed_(byte);
+				else if (test_echo)
+					echo_test(byte);
+				else if (get_version)
+					version_(byte);
+				else
+					echo_(byte);
 			}
-*/
-		} else {
-			if (resetxmt) {
-				Fl::awake(updateSmeter, (void *)(0));
-				resetxmt = false;
-			}
-			resetrcv = true;
-
-			pthread_mutex_lock(&mutex_serial);
-				read_power_out();
-			pthread_mutex_unlock(&mutex_serial);
-
-			MilliSleep(progStatus.serloop_timing / 2);
-
-			pthread_mutex_lock(&mutex_serial);
-				read_swr();
-				read_alc();
-			pthread_mutex_unlock(&mutex_serial);
-
-		}
+		pthread_mutex_unlock(&mutex_serial);
 serial_bypass_loop: ;
 	}
 	return NULL;
 }
 
-//=============================================================================
-static bool nofocus = false;
-
-void setFocus()
+void display_byte(void *d)
 {
-	if (nofocus) return;
-	if (Fl::focus() != FreqDisp)
-		Fl::focus(FreqDisp);
+	long lch = (long)d;
+	char ch = (char)lch;
+	txt_sent->add(ch);
 }
 
-void setBW()
+void display_chars(void *d)
 {
-//	wait_query = true;
-	pthread_mutex_lock(&mutex_serial);
-		vfoA.iBW = opBW->index();
-		selrig->set_bandwidth(vfoA.iBW);
-	pthread_mutex_unlock(&mutex_serial);
-	send_bandwidth_changed();
-//	wait_query = false;
+	char *sz_chars = (char *)d;
+	txt_sent->add(sz_chars);
 }
 
-bool bws_changed = false;
-const char **old_bws = NULL;
-
-void updateBandwidthControl()
+void echo_(unsigned char byte)
 {
-	bws_changed = false;
-	if (selrig->has_bandwidth_control) {
-		int newbw = selrig->adjust_bandwidth(vfoA.imode);
-		if (newbw != -1) {
-			if (old_bws != selrig->bandwidths_) {
-				bws_changed = true;
-				old_bws = selrig->bandwidths_;
-				opBW->clear();
-				rigbws_.clear();
-				for (int i = 0; selrig->bandwidths_[i] != NULL; i++) {
-					rigbws_.push_back(selrig->bandwidths_[i]);
-					opBW->add(selrig->bandwidths_[i]);
-				}
-			}
-			opBW->index(newbw);
-			vfoA.iBW = newbw;
-		}
-	}
+	if (WKEY_DEBUG)
+		LOG_WARN("%2x", byte);
+	Fl::awake(display_byte, (void*)byte);
 }
 
-void setMode()
+void echo_test(unsigned char byte)
 {
-//	wait_query = true;
-	pthread_mutex_lock(&mutex_serial);
-		if (selrig->restore_mbw)
-			selrig->set_bandwidth(selrig->last_bw);
-		vfoA.imode = opMODE->index();
-		selrig->set_mode(vfoA.imode);
-		updateBandwidthControl();
-		if (selrig->restore_mbw) {
-			vfoA.iBW = selrig->last_bw = selrig->get_bandwidth();
-			opBW->index(vfoA.iBW);
-		} else
-			selrig->set_bandwidth(vfoA.iBW);
-	pthread_mutex_unlock(&mutex_serial);
-
-	send_mode_changed();
-	send_sideband();
-	if (bws_changed) send_bandwidths();
-	send_bandwidth_changed();
-//	wait_query = false;
+	if (byte == 'U') {
+		if (WKEY_DEBUG)
+			LOG_WARN("passed %c", byte);
+	} else
+		LOG_ERROR("failed %c", byte);
+	test_echo = false;
 }
 
-void sortList() {
-	if (!numinlist) return;
-	FREQMODE temp;
-	for (int i = 0; i < numinlist - 1; i++)
-		for (int j = i + 1; j < numinlist; j++)
-			if (oplist[i].freq > oplist[j].freq) {
-					temp = oplist[i];
-					oplist[i] = oplist[j];
-					oplist[j] = temp;
-			}
-}
-
-void clearList() {
-	if (!numinlist) return;
-	for (int i = 0; i < LISTSIZE; i++) {
-		oplist[i].freq = 0;
-		oplist[i].imode = USB;
-		oplist[i].iBW = 0;
-	}
-	FreqSelect->clear();
-	numinlist = 0;
-}
-
-void updateSelect() {
-	char szFREQMODE[20];
-	if (!numinlist) return;
-	sortList();
-	FreqSelect->clear();
-	for (int n = 0; n < numinlist; n++) {
-		snprintf(szFREQMODE, sizeof(szFREQMODE),
-			"%13.3f%7s", oplist[n].freq / 1000.0,
-			selrig->get_modename_(oplist[n].imode));
-		FreqSelect->add (szFREQMODE);
-	}
-}
-
-void addtoList(int val, int imode, int iBW) {
-	if (numinlist < LISTSIZE) {
-		oplist[numinlist].imode = imode;
-		oplist[numinlist].freq = val;
-		oplist[numinlist++].iBW = iBW;
-	}
-}
-
-void readFile() {
-	ifstream iList(defFileName.c_str());
-	if (!iList) {
-		fl_message ("Could not open %s", defFileName.c_str());
-		return;
-	}
-	clearList();
-	int i = 0, mode, bw;
-	long freq;
-	while (!iList.eof()) {
-		freq = 0L; mode = -1;
-		iList >> freq >> mode >> bw;
-		if (freq && (mode > -1)) {
-			oplist[i].freq = freq;
-			oplist[i].imode = mode;
-			oplist[i].iBW = (bw == -1 ? 0 : bw);
-			i++;
-		}
-	}
-	iList.close();
-	numinlist = i;
-	updateSelect();
-}
-
-void buildlist() {
-	defFileName = RigHomeDir;
-	defFileName.append(selrig->name_);
-	defFileName.append(".arv");
-	FILE *fh = fopen(defFileName.c_str(), "r");
-	if (fh != NULL) {
-		fclose (fh);
-		readFile();
-		return;
-	}
-	clearList();
-}
-
-int movFreq() {
-	pthread_mutex_lock(&mutex_serial);
-		vfoA.freq = FreqDisp->value();
-		selrig->set_vfoA(vfoA.freq);
-	pthread_mutex_unlock(&mutex_serial);
-	send_new_freq();
-	return 1;
-}
-
-void cbABactive()
+void version_(unsigned char byte)
 {
-	if (!vfoB.freq) return;
-	static  FREQMODE temp;
-
-	wait_query = true;
-
-	pthread_mutex_lock(&mutex_serial);
-		temp = vfoA;
-		vfoA = vfoB;
-		vfoB = temp;
-
-		FreqDisp->value(vfoA.freq);
-
-		snprintf(szVfoB, sizeof(szVfoB), "%13.3f", vfoB.freq / 1000.0);
-		txtInactive->label(szVfoB);
-		txtInactive->redraw_label();
-
-		selrig->set_vfoA(vfoA.freq);
-		if (vfoA.imode != vfoB.imode) {
-			opMODE->index(vfoA.imode);
-			selrig->set_mode(vfoA.imode);
-			updateBandwidthControl();
-		}
-		if (vfoA.iBW != vfoB.iBW) {
-			opBW->index(vfoA.iBW);
-			selrig->set_bandwidth(vfoA.iBW);
-		}
-	pthread_mutex_unlock(&mutex_serial);
-
-	send_new_freq();
-	if (vfoA.imode != vfoB.imode)
-		send_mode_changed();
-		send_sideband();
-	if (bws_changed) {
-		send_bandwidths();
-		send_bandwidth_changed();
-	}
-
-	wait_query = false;
-
+	static char ver[40];
+	snprintf(ver, sizeof(ver), "Version %d\n", byte);
+	host_is_up = true;
+	get_version = false;
+	Fl::awake(display_chars, ver);
+	if (byte >= 20) wk2_version = true;
 }
 
-void cbA2B()
+void show_status_change(void *d)
 {
-	if (Fl::event_button() == FL_RIGHT_MOUSE) {
-		cbABactive();
-		return;
-	}
-	vfoB.freq = FreqDisp->value();
-	vfoB.imode = opMODE->index();
-	vfoB.iBW = opBW->index();
-	snprintf(szVfoB, sizeof(szVfoB), "%13.3f", vfoB.freq / 1000.0);
-	txtInactive->label(szVfoB);
-	txtInactive->redraw_label();
+	long lbyte = (long)d;
+	unsigned char byte = (unsigned char)(lbyte & 0xFF);
+	box_wait->color(byte & 0x10 ? FL_RED : FL_BACKGROUND2_COLOR);
+	box_keydown->color(byte & 0x08 ? FL_RED : FL_BACKGROUND2_COLOR);
+	box_busy->color(byte & 0x04 ? FL_RED : FL_BACKGROUND2_COLOR);
+	box_break_in->color(byte & 0x02 ? FL_RED : FL_BACKGROUND2_COLOR);
+	box_xoff->color(byte & 0x01 ? FL_RED : FL_BACKGROUND2_COLOR);
+	box_wait->redraw();
+	box_keydown->redraw();
+	box_busy->redraw();
+	box_break_in->redraw();
+	box_xoff->redraw();
 }
 
-void setLower()
+void status_(unsigned char byte)
 {
+	Fl::awake(show_status_change, (void *)byte);
+	if (!(byte & 0x04)) wkeyer_ready = true;
+	if (WKEY_DEBUG)
+		LOG_WARN("Wait %c, Keydown %c, Busy %c, Breakin %c, Xoff %c", 
+			byte & 0x10 ? 'T' : 'F',
+			byte & 0x08 ? 'T' : 'F',
+			byte & 0x04 ? 'T' : 'F',
+			byte & 0x02 ? 'T' : 'F',
+			byte & 0x01 ? 'T' : 'F');
 }
 
-void setUpper()
+void show_speed_change(void *d)
 {
+	long wpm = (long)d;
+	int iwpm = (int)wpm;
+	static char szwpm[8];
+	snprintf(szwpm, sizeof(szwpm), "%3d", iwpm);
+	txt_wpm->value(szwpm);
+	txt_wpm->redraw();
+	if (!progStatus.use_pot) return;
+	string cmd = SET_WPM;
+	cmd += iwpm;
+	sendCommand(cmd);
 }
 
-void selectFreq() {
-	long n = FreqSelect->value();
-	if (!n) return;
-
-	n--;
-	pthread_mutex_lock(&mutex_serial);
-		wait_query = true;
-
-		vfoA.freq  = oplist[n].freq;
-		vfoA.imode = oplist[n].imode;
-		vfoA.iBW   = oplist[n].iBW;
-
-		FreqDisp->value(vfoA.freq);
-		selrig->set_vfoA(vfoA.freq);
-
-		opMODE->index(vfoA.imode);
-		selrig->set_mode(vfoA.imode);
-
-		updateBandwidthControl();
-		opBW->index(vfoA.iBW);
-		selrig->set_bandwidth(vfoA.iBW);
-
-		send_new_freq();
-		send_mode_changed();
-		if (bws_changed) send_bandwidths();
-		send_bandwidth_changed();
-		send_sideband();
-		wait_query = false;
-
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void delFreq() {
-	if (FreqSelect->value()) {
-		long n = FreqSelect->value() - 1;
-		for (int i = n; i < numinlist; i ++)
-			oplist[i] = oplist[i+1];
-		oplist[numinlist - 1].imode = USB;
-		oplist[numinlist - 1].freq = 0;
-		oplist[numinlist - 1].iBW = 0;
-		numinlist--;
-		updateSelect();
-	}
-}
-
-void addFreq() {
-	long freq = FreqDisp->value();
-	if (!freq) return;
-	int mode = opMODE->index();
-	int bw = opBW->index();
-	for (int n = 0; n < numinlist; n++)
-		if (freq == oplist[n].freq && mode == oplist[n].imode) {
-			oplist[n].iBW = bw;
-			return;
-		}
-	addtoList(freq, mode, bw);
-	updateSelect();
-	FreqDisp->visual_beep();
-}
-
-void cbRIT()
+void speed_(unsigned char byte)
 {
+	int val = (byte & 0x3F) + progStatus.min_wpm;
+	Fl::awake(show_speed_change, (void *)(val));
+	if (WKEY_DEBUG)
+		LOG_WARN("wpm: %d", val);
 }
 
-void cbXIT()
+void set_wpm()
 {
+	int wpm = (int)cntr_wpm->value();
+	progStatus.speed_wpm = wpm;
+	string cmd = SET_WPM;
+	cmd += wpm;
+	sendCommand(cmd);
 }
 
-void cbBFO()
+void use_pot_changed()
 {
-}
-
-void cbAttenuator()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_attenuator(btnAttenuator->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setAttControl(void *d)
-{
-	int val = (long)d;
-	btnAttenuator->value(val);
-}
-
-void cbPreamp()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_preamp(btnPreamp->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setPreampControl(void *d)
-{
-	int val = (long)d;
-	btnPreamp->value(val);
-}
-
-void cbNoise()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_noise(btnNOISE->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void cbNR()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_noise_reduction(btnNR->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setNR()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_noise_reduction_val(sldrNR->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setNoiseControl(void *d)
-{
-	btnNOISE->value((long)d);
-}
-
-void cbbtnNotch()
-{
-	pthread_mutex_lock(&mutex_serial);
-	if (btnNotch->value() == 0) {
-		selrig->set_notch(false, 0);
+	progStatus.use_pot = btn_use_pot->value();
+	if (progStatus.use_pot) {
+		string cmd = GET_SPEED_POT;
+		sendCommand(cmd);
 	} else {
-		selrig->set_notch(true, sldrNOTCH->value());
-	}
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setNotchButton(void *d)
-{
-	btnNotch->value((bool)d);
-}
-
-void setNotchControl(void *d)
-{
-	int val = (long)d;
-	if (sldrNOTCH->value() != val) sldrNOTCH->value(val);
-}
-
-void setNotch()
-{
-	if (btnNotch->value()) {
-		pthread_mutex_lock(&mutex_serial);
-			selrig->set_notch(true, sldrNOTCH->value());
-		pthread_mutex_unlock(&mutex_serial);
+		string cmd = SET_WPM;
+		cmd += (int)cntr_wpm->value();
+		sendCommand(cmd);
 	}
 }
 
-void setIFshiftButton(void *d)
+char eeprom_image[256];
+int eeprom_ptr = 0;
+void eeprom_(unsigned char byte)
 {
-	bool b = (bool)d;
-	if (b && !btnIFsh->value()) btnIFsh->value(1);
-	else if (!b && btnIFsh->value()) btnIFsh->value(0);
-}
-
-void setIFshiftControl(void *d)
-{
-	int val = (long)d;
-	if (sldrIFSHIFT->value() != val) sldrIFSHIFT->value(val);
-}
-
-void setIFshift()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_if_shift(sldrIFSHIFT->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void cbIFsh()
-{
-	if (btnIFsh->value() == 1) {
-		sldrIFSHIFT->value(0);
-		sldrIFSHIFT->activate();
-	} else {
-		sldrIFSHIFT->value(0);
-		sldrIFSHIFT->deactivate();
+	if (byte == 0xA5) {
+		memset( eeprom_image, 0, 256);
+		eeprom_ptr = 0;
+		read_EEPROM = true;
 	}
-	setIFshift();
-}
-
-void cbEventLog()
-{
-	debug::show();
-}
-
-void setVolume()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_volume_control(sldrVOLUME->value());
-		progStatus.volume = sldrVOLUME->value();
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void cbMute()
-{
-	if (btnVol->value() == 0) {
-		pthread_mutex_lock(&mutex_serial);
-			sldrVOLUME->deactivate();
-			selrig->set_volume_control(0.0);
-		pthread_mutex_unlock(&mutex_serial);
-	} else {
-		pthread_mutex_lock(&mutex_serial);
-			sldrVOLUME->activate();
-			selrig->set_volume_control(progStatus.volume);
-		pthread_mutex_unlock(&mutex_serial);
+	if (eeprom_ptr < 256)
+		eeprom_image[eeprom_ptr++] = byte;
+	if (eeprom_ptr == 256) {
+		read_EEPROM = false;
+		if (WKEY_DEBUG)
+			LOG_WARN("\n%s", str2hex(eeprom_image, 256));
+		eeprom_ptr = 0;
 	}
-}
-
-void setMicGain()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_mic_gain(sldrMICGAIN->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void cbbtnMicLine()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_mic_line(btnMicLine->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setMicGainControl(void* d)
-{
-	sldrMICGAIN->value((long)d);
-}
-
-void set_power_controlImage(double pwr)
-{
-	if (pwr < 26.0) {
-		scalePower->image(image_p25);
-		sldrFwdPwr->maximum(25.0);
-		sldrFwdPwr->minimum(0.0);
-	}
-	else if (pwr < 51.0) {
-		scalePower->image(image_p50);
-		sldrFwdPwr->maximum(50.0);
-		sldrFwdPwr->minimum(0.0);
-	}
-	else if (pwr < 101.0) {
-		scalePower->image(image_p100);
-		sldrFwdPwr->maximum(100.0);
-		sldrFwdPwr->minimum(0.0);
-	}
-	else {
-		scalePower->image(image_p200);
-		sldrFwdPwr->maximum(200.0);
-		sldrFwdPwr->minimum(0.0);
-	}
-	scalePower->redraw();
-	return;
-}
-
-void setPower()
-{
-	double pwr = sldrPOWER->value();
-	pthread_mutex_lock(&mutex_serial);
-		powerlevel = (int)pwr;
-		selrig->set_power_control(pwr);
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void reset_power_controlImage( void *d )
-{
-	int val = (long)d;
-	sldrPOWER->value(val);
-}
-
-void cbTune()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->tune_rig();
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void cbPTT()
-{
-	if (btnPTT->value() == 1) {
-		PTT = true;
-		localptt = true;
-	} else {
-		PTT = false;
-		localptt = false;
-	}
-
-	if (localptt) {
-		wait_query = true;
-		rigPTT(PTT);
-		wait_query - false;
-	} else {
-		wait_query = true;
-		send_ptt_changed(PTT);
-		rigPTT(PTT);
-		wait_query = false;
-	}
-
-}
-
-void setSQUELCH()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_squelch((int)sldrSQUELCH->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-void setRFGAIN()
-{
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_rf_gain((int)sldrRFGAIN->value());
-	pthread_mutex_unlock(&mutex_serial);
-}
-
-
-void updateALC(void * d)
-{
-	double data = (long)d;
-	Fl_Image *img = btnALC_SWR->image();
-	if (img == &image_alc) {
-		sldrALC_SWR->value(data);
-		sldrALC_SWR->redraw();
-	}
-}
-
-void updateSWR(void * d)
-{
-	double data = (long)d;
-	Fl_Image *img = btnALC_SWR->image();
-	if (img == &image_swr) {
-		sldrALC_SWR->value(data);
-		sldrALC_SWR->redraw();
-	}
-}
-
-float fp_ = 0.0, rp_ = 0.0;
-
-void updateFwdPwr(void *d)
-{
-	double power = (long)d;
-	if (!sldrFwdPwr->visible()) {
-		sldrRcvSignal->hide();
-		sldrFwdPwr->show();
-	}
-	sldrFwdPwr->value(power);
-	sldrFwdPwr->redraw();
-}
-
-void updateSquelch(void *d)
-{
-	sldrSQUELCH->value((long)d);
-	sldrSQUELCH->redraw();
-}
-
-void updateRFgain(void *d)
-{
-	sldrRFGAIN->value((long)d);
-	sldrRFGAIN->redraw();
-}
-
-void zeroXmtMeters(void *d)
-{
-	sldrFwdPwr->aging(1);
-	updateFwdPwr(0);
-	updateALC(0);
-	updateSWR(0);
-	sldrFwdPwr->aging(5);
-}
-
-void setFreqDisp(void *d)
-{
-	FreqDisp->value(vfoA.freq);
-	FreqDisp->redraw();
-	send_new_freq();
-}
-
-void updateSmeter(void *d) // 0 to 100;
-{
-	double swr = (long)d;
-	if (!sldrRcvSignal->visible()) {
-		sldrFwdPwr->hide();
-		sldrRcvSignal->show();
-	}
-	sldrRcvSignal->value(swr);
-	sldrRcvSignal->redraw();
-}
-
-void saveFreqList()
-{
-	if (!numinlist) {
-		remove(defFileName.c_str());
-		return;
-	}
-	ofstream oList(defFileName.c_str());
-	if (!oList) {
-		fl_message ("Could not write to %s", defFileName.c_str());
-		return;
-	}
-	for (int i = 0; i < numinlist; i++)
-		oList << oplist[i].freq << " " << oplist[i].imode << " " << oplist[i].iBW << endl;
-	oList.close();
-}
-
-void setPTT( void *d)
-{
-	int val = (long)d;
-	PTT = d;
-	btnPTT->value(val);
-	rigPTT(val);
 }
 
 void cbExit()
 {
+// shutdown serial thread
 	pthread_mutex_lock(&mutex_serial);
-		if (selrig->has_mode_control)
-			selrig->set_mode(transceiver_mode);
-		if (selrig->has_bandwidth_control) {
-			updateBandwidthControl();
-			selrig->set_bandwidth(transceiver_bw);
-		}
+		run_serial_thread = false;
 	pthread_mutex_unlock(&mutex_serial);
-
-	run_serial_thread = false;
 	pthread_join(*serial_thread, NULL);
-	RigSerial.ClosePort();
 
-	progStatus.rig_nbr = rig_nbr;
+// close host and close down the serial port
+	if (host_is_up) {
+		string cmd = " ";
+		cmd += HOST_CLOSE;
+		cmd[0] = ADMIN;
+		sendString(cmd, true);
+	}
 
-	progStatus.freq = vfoA.freq;
-	progStatus.opMODE = vfoA.imode;
-	progStatus.opBW = vfoA.iBW;
-
-	progStatus.freq_B = vfoB.freq;
-	progStatus.imode_B = vfoB.imode;
-	progStatus.iBW_B = vfoB.iBW;
-
-	progStatus.mute = btnVol->value();
-	progStatus.volume = sldrVOLUME->value();
-	progStatus.power_level = sldrPOWER->value();
-	progStatus.mic_gain = sldrMICGAIN->value();
-	progStatus.notch = btnNotch->value();
-	progStatus.notch_val = sldrNOTCH->value();
-	progStatus.shift = btnIFsh->value();
-	progStatus.shift_val = sldrIFSHIFT->value();
-	progStatus.noise_reduction = btnNR->value();
-	progStatus.noise_reduction_val = sldrNR->value();
-	progStatus.noise = btnNOISE->value();
-	progStatus.attenuator = btnAttenuator->value();
-	progStatus.preamp = btnPreamp->value();
+	WKEY_serial.ClosePort();
 
 	progStatus.saveLastState();
-
-	saveFreqList();
-
-	if (dlgDisplayConfig && dlgDisplayConfig->visible())
-		dlgDisplayConfig->hide();
-	if (dlgXcvrConfig && dlgXcvrConfig->visible())
-		dlgXcvrConfig->hide();
-	if (dlgMemoryDialog && dlgMemoryDialog->visible())
-		dlgMemoryDialog->hide();
-	debug::stop();
 
 	exit(0);
 }
 
-void cbALC_SWR()
+void open_wkeyer()
 {
-	Fl_Image *img = btnALC_SWR->image();
-	if (img == &image_swr)
-		btnALC_SWR->image(image_alc);
-	else
-		btnALC_SWR->image(image_swr);
-	btnALC_SWR->redraw();
-}
+	int cnt = 0;
+	string cmd = NULL_CMD;
+	sendCommand(cmd);
 
-void about()
-{
-	string msg = "\
-%s\n\
-Version %s\n\
-copyright W1HKJ, 2009\n\
-w1hkj@@w1hkj.com";
-	fl_message(msg.c_str(), PACKAGE_TARNAME, PACKAGE_VERSION);
-}
+	cmd = ADMIN;
+	cmd += ECHO_TEST;
+	cmd += 'U';
+	sendCommand(cmd, WAIT_ECHO);
 
-void adjust_control_positions()
-{
-	int y = 118;
-	if (selrig->has_rit || selrig->has_xit || selrig->has_bfo) {
-		y += 20;
-		cntRIT->position( cntRIT->x(), y );
-		cntXIT->position( cntXIT->x(), y );
-		cntBFO->position( cntBFO->x(), y );
-		cntRIT->redraw();
-		cntXIT->redraw();
-		cntBFO->redraw();
-	}
-	if (selrig->has_volume_control) {
-		y += 20;
-		sldrVOLUME->position( sldrVOLUME->x(), y );
-		btnVol->position( btnVol->x(), y);
-		sldrVOLUME->redraw();
-		btnVol->redraw();
-	}
-	if (selrig->has_rf_control) {
-		y += 20;
-		sldrRFGAIN->position( sldrRFGAIN->x(), y );
-		sldrRFGAIN->redraw();
-	}
-	if (selrig->has_sql_control) {
-		y += 20;
-		sldrSQUELCH->position( sldrSQUELCH->x(), y);
-		sldrSQUELCH->redraw();
-	}
-	if (selrig->has_noise_reduction_control) {
-		y += 20;
-		sldrNR->position( sldrNR->x(), y);
-		btnNR->position( btnNR->x(), y);
-		sldrNR->redraw();
-		btnNR->show();
-	}
-	if (selrig->has_ifshift_control) {
-		y += 20;
-		sldrIFSHIFT->position( sldrIFSHIFT->x(), y);
-		btnIFsh->position( btnIFsh->x(), y);
-		sldrIFSHIFT->redraw();
-		btnIFsh->show();
-	}
-	if (selrig->has_notch_control) {
-		y += 20;
-		sldrNOTCH->position( sldrNOTCH->x(), y);
-		btnNotch->position( btnNotch->x(), y);
-		sldrNOTCH->redraw();
-		btnNotch->show();
-	}
-	if (selrig->has_micgain_control) {
-		y += 20;
-		sldrMICGAIN->position( sldrMICGAIN->x(), y);
-		sldrMICGAIN->redraw();
-	}
-	if (selrig->has_power_control) {
-		y += 20;
-		sldrPOWER->position( sldrPOWER->x(), y);
-		sldrPOWER->redraw();
-	}
-	y += 20;
-	btnAttenuator->position( btnAttenuator->x(), y);
-	btnAttenuator->redraw();
-	btnPreamp->position( btnPreamp->x(), y);
-	btnPreamp->redraw();
-	btnNOISE->position( btnNOISE->x(), y);
-	btnNOISE->redraw();
-	btnTune->position( btnTune->x(), y);
-	btnTune->redraw();
-
-	int use_AuxPort = (progStatus.aux_serial_port != "NONE");
-	if (use_AuxPort) {
-		btnPTT->resize(btnPTT->x(), y, btnPTT->w(), 38);
-		btnPTT->redraw();
-		y += 20;
-		boxControl->position(boxControl->x(), y);
-		btnAuxRTS->position(btnAuxRTS->x(), y);
-		btnAuxDTR->position(btnAuxDTR->x(), y);
-		btnAuxRTS->value(progStatus.aux_rts);
-		btnAuxDTR->value(progStatus.aux_dtr);
-		boxControl->show();
-		btnAuxRTS->show();
-		btnAuxDTR->show();
-	} else {
-		boxControl->hide();
-		btnAuxRTS->hide();
-		btnAuxDTR->hide();
-		btnPTT->resize(btnPTT->x(), y, btnPTT->w(), 18);
-		btnPTT->redraw();
-	}
-	mainwindow->size( mainwindow->w(), y + 20);
-	mainwindow->redraw();
-
-	if (progStatus.tooltips) {
-		Fl_Tooltip::enable(1);
-		mnuTooltips->set();
-	} else {
-		mnuTooltips->clear();
-		Fl_Tooltip::enable(0);
+	cnt = 200;
+	while (test_echo == true && cnt) {
+		MilliSleep(10);
+		cnt--;
 	}
 
-}
-
-void initXcvrTab()
-{
-	if (selrig->has_line_out) cnt_line_out->activate(); else cnt_line_out->deactivate();
-	if (selrig->has_agc_level) cbo_agc_level->activate(); else cbo_agc_level->deactivate();
-	if (selrig->has_cw_wpm) cnt_cw_wpm->activate(); else cnt_cw_wpm->deactivate();
-	if (selrig->has_cw_vol) cnt_cw_vol->activate(); else cnt_cw_vol->deactivate();
-	if (selrig->has_cw_spot) cnt_cw_spot->activate(); else cnt_cw_spot->deactivate();
-	if (selrig->has_vox_onoff) btn_vox->activate(); else btn_vox->deactivate();
-	if (selrig->has_vox_gain) cnt_vox_gain->activate(); else cnt_vox_gain->deactivate();
-	if (selrig->has_vox_anti) cnt_anti_vox->activate(); else cnt_anti_vox->deactivate();
-	if (selrig->has_vox_hang) cnt_vox_hang->activate(); else cnt_vox_hang->deactivate();
-	if (selrig->has_compression) cnt_compression->activate(); else cnt_compression->deactivate();
-}
-
-void initRig()
-{
-	pthread_mutex_lock(&mutex_serial);
-	selrig->initialize();
-	if (selrig->has_mode_control)
-		transceiver_mode = selrig->get_mode();
-	if (selrig->has_bandwidth_control) {
-		transceiver_bw = selrig->get_bandwidth();
-		selrig->last_bw = transceiver_bw;
+	if (test_echo) {
+		debug::show();
+		LOG_ERROR("%s", "Winkeyer not responding");
+		test_echo = false;
+		pthread_mutex_lock(&mutex_serial);
+			bypass_serial_thread_loop = true;
+		pthread_mutex_unlock(&mutex_serial);
+		WKEY_serial.ClosePort();
+		progStatus.serial_port_name = "NONE";
+		selectCommPort->value(progStatus.serial_port_name.c_str());
+		return;
 	}
 
-	rigmodes_.clear();
-	opMODE->clear();
-	if (selrig->has_mode_control) {
-		for (int i = 0; selrig->modes_[i] != NULL; i++) {
-			rigmodes_.push_back(selrig->modes_[i]);
-			opMODE->add(selrig->modes_[i]);
-		}
-		opMODE->activate();
-		opMODE->index(progStatus.opMODE);
-		selrig->set_mode(progStatus.opMODE);
-		updateBandwidthControl();
-	} else {
-		opMODE->add(" ");
-		opMODE->index(0);
-		opMODE->deactivate();
+/*
+	cmd = ADMIN;
+	cmd += DUMP_EEPROM;
+	sendCommand(cmd);
+	read_EEPROM = true;
+
+	cnt = 4000;
+	while (read_EEPROM == true && cnt) {
+		MilliSleep(10);
+		cnt--;
+	}
+	if (WKEY_DEBUG)
+		LOG_WARN("EEprom read time %.2f sec", (4000 - cnt) * 0.01);
+*/
+
+	cmd = " ";
+	cmd += HOST_OPEN;
+	cmd[0] = ADMIN;
+	sendCommand(cmd, WAIT_VERSION);
+
+	cnt = 200;
+	while (get_version == true && cnt) {
+		MilliSleep(10);
+		cnt--;
 	}
 
-	rigbws_.clear();
-	opBW->clear();
-	if (selrig->has_bandwidth_control) {
-		selrig->adjust_bandwidth(vfoA.imode);
-		old_bws = selrig->bandwidths_;
-		for (int i = 0; selrig->bandwidths_[i] != NULL; i++) {
-			rigbws_.push_back(selrig->bandwidths_[i]);
-				opBW->add(selrig->bandwidths_[i]);
-			}
-		opBW->activate();
-		opBW->index(progStatus.opBW);
-		selrig->set_bandwidth(progStatus.opBW);
-	} else {
-		opBW->add(" ");
-		opBW->index(0);
-		opBW->deactivate();
-	}
+	cntr_wpm->minimum(progStatus.min_wpm);
+	cntr_wpm->maximum(progStatus.rng_wpm + progStatus.min_wpm);
+	btn_use_pot->value(progStatus.use_pot);
 
-	if (selrig->has_rit) {
-		cntRIT->activate();
-		cntRIT->show();
-	} else {
-		cntRIT->deactivate();
-		cntRIT->hide();
-	}
+	load_defaults();
 
-	if (selrig->has_xit) {
-		cntXIT->activate();
-		cntXIT->show();
-	} else {
-		cntXIT->deactivate();
-		cntXIT->hide();
-	}
+	cmd = GET_SPEED_POT;
+	sendCommand(cmd);
 
-	if (selrig->has_bfo) {
-		cntBFO->activate();
-		cntBFO->show();
-	} else {
-		cntBFO->deactivate();
-		cntBFO->hide();
-	}
+	cmd = ADMIN;
+	cmd = GET_VALUES;
+	sendCommand(cmd);
 	
-	if (selrig->has_volume_control) {
-		sldrVOLUME->value(progStatus.volume);
-		if (progStatus.mute == 0) {
-			btnVol->value(0);
-			sldrVOLUME->deactivate();
-			selrig->set_volume_control(0);
-		} else {
-			btnVol->value(1);
-			sldrVOLUME->activate();
-			selrig->set_volume_control(progStatus.volume);
-		}
-		btnVol->show();
-		sldrVOLUME->show();
-	} else {
-		btnVol->hide();
-		sldrVOLUME->hide();
+	cmd = SET_WPM;
+	cmd += progStatus.speed_wpm;
+	sendCommand(cmd);
+
+	if (wk2_version) {
+		cmd = ADMIN;
+		cmd += WK2_MODE;
+		sendCommand(cmd);
 	}
 
-	if (selrig->has_rf_control) {
-		sldrRFGAIN->value(
-			progStatus.rfgain = selrig->get_rf_gain());
-		sldrRFGAIN->show();
-	} else {
-		sldrRFGAIN->hide();
-	}
+	cmd = SET_SPEED_POT;
+	cmd += progStatus.min_wpm;
+	cmd += progStatus.rng_wpm;
+	cmd += '\0';
+	sendCommand(cmd);
 
-	if (selrig->has_sql_control) {
-		sldrSQUELCH->value(
-			progStatus.squelch = selrig->get_squelch());
-		sldrSQUELCH->show();
-	} else {
-		sldrSQUELCH->hide();
-	}
+	cmd = GET_SPEED_POT;
+	sendCommand(cmd);
 
-	if (selrig->has_noise_reduction_control) {
-		btnNR->show();
-		btnNR->value(progStatus.noise_reduction);
-		sldrNR->show();
-		sldrNR->value(progStatus.noise_reduction_val);
-	} else {
-		btnNR->hide();
-		sldrNR->hide();
-	}
-
-	if (selrig->has_ifshift_control) {
-		int min, max, step;
-		selrig->get_if_min_max_step(min, max, step);
-		sldrIFSHIFT->minimum(min);
-		sldrIFSHIFT->maximum(max);
-		sldrIFSHIFT->step(step);
-		if (progStatus.shift) {
-			btnIFsh->value(1);
-			sldrIFSHIFT->value(progStatus.shift_val);
-			selrig->set_if_shift(progStatus.shift_val);
-		} else {
-			btnIFsh->value(0);
-			sldrIFSHIFT->value(0);
-			sldrIFSHIFT->deactivate();
-			selrig->set_if_shift(0);
-		}
-		btnIFsh->show();
-		sldrIFSHIFT->show();
-	} else {
-		btnIFsh->hide();
-		sldrIFSHIFT->hide();
-	}
-
-	if (selrig->has_notch_control) {
-		int min, max, step;
-		selrig->get_notch_min_max_step(min, max, step);
-		sldrNOTCH->minimum(min);
-		sldrNOTCH->maximum(max);
-		sldrNOTCH->step(step);
-		btnNotch->value(progStatus.notch);
-		sldrNOTCH->value(progStatus.notch_val);
-		selrig->set_notch(progStatus.notch, progStatus.notch_val);
-		btnNotch->show();
-		sldrNOTCH->show();
-	} else {
-		btnNotch->hide();
-		sldrNOTCH->hide();
-	}
-
-	if (selrig->has_micgain_control) {
-		int min, max, step;
-		selrig->get_mic_min_max_step(min, max, step);
-		sldrMICGAIN->minimum(min);
-		sldrMICGAIN->maximum(max);
-		sldrMICGAIN->step(step);
-		sldrMICGAIN->value(progStatus.mic_gain);
-		selrig->set_mic_gain(progStatus.mic_gain);
-		sldrMICGAIN->show();
-	} else {
-		sldrMICGAIN->hide();
-	}
-
-	if (selrig->has_power_control) {
-		selrig->set_power_control(progStatus.power_level);
-		sldrPOWER->value(progStatus.power_level);
-		sldrPOWER->show();
-	} else {
-		sldrPOWER->hide();
-	}
-	set_power_controlImage(selrig->max_power);
-
-	if (selrig->has_attenuator_control) {
-		btnAttenuator->label("Att");
-		progStatus.attenuator = selrig->get_attenuator();
-		btnAttenuator->value(progStatus.attenuator);
-		btnAttenuator->show();
-	} else {
-		btnAttenuator->hide();
-	}
-
-	if (selrig->has_preamp_control) {
-		btnPreamp->label("Pre");
-		progStatus.preamp = selrig->get_preamp();
-		btnPreamp->value(progStatus.preamp);
-		btnPreamp->show();
-	} else {
-		btnPreamp->hide();
-	}
-
-	if (selrig->has_noise_control) {
-		btnNOISE->value(progStatus.noise);
-		selrig->set_noise(progStatus.noise);
-		btnNOISE->show();
-	}
-	else {
-		btnNOISE->hide();
-	}
-
-	if (selrig->has_tune_control) {
-		btnTune->show();
-	} else {
-		btnTune->hide();
-	}
-
-	if (selrig->has_ptt_control) {
-		btnPTT->show();
-	} else {
-		btnPTT->hide();
-	}
-
-	if (selrig->has_swr_control)
-		btnALC_SWR->activate();
-	else {
-		btnALC_SWR->deactivate();
-	}
-
-	if (selrig->has_compON || selrig->has_compression)
-		selrig->set_compression();
-
-	vfoB.freq  = vfoA.freq  = selrig->deffreq_;
-	vfoB.imode = vfoA.imode = selrig->def_mode;
-	vfoB.iBW   = vfoA.iBW   = selrig->defbw_;
-
-	FreqDisp->value( vfoA.freq );
-	opMODE->index( vfoA.imode  );
-	opBW->index( vfoA.iBW );
-
-	snprintf(szVfoB, sizeof(szVfoB), "%13.3f", vfoB.freq / 1000.0);
-	txtInactive->label(szVfoB);
-	txtInactive->redraw();
-
-	adjust_control_positions();
-	initXcvrTab();
-	pthread_mutex_unlock(&mutex_serial);
-
-	buildlist();
+	cmd = "ok ";
+	sendText(cmd);
 
 }
 
-void init_title()
+void load_defaults()
 {
-	title = PACKAGE_STRING;
-	title += " ";
-	title.append(selrig->name_);
-	mainwindow->label(title.c_str());
+	string cmd = LOAD_DEFAULTS;
+	cmd += progStatus.mode_register;
+	cmd += '\0';//progStatus.speed_wpm;
+	cmd += progStatus.sidetone;
+	cmd += progStatus.weight;
+	cmd += progStatus.lead_in_time;
+	cmd += progStatus.tail_time;
+	cmd += progStatus.min_wpm;
+	cmd += progStatus.rng_wpm;
+	cmd += progStatus.first_extension;
+	cmd += progStatus.key_compensation;
+	cmd += progStatus.farnsworth_wpm;
+	cmd += progStatus.paddle_setpoint;
+	cmd += progStatus.dit_dah_ratio;
+	cmd += progStatus.pin_configuration;
+	cmd += progStatus.dont_care;
+	sendCommand(cmd);
 }
 
-void initConfigDialog()
+void cb_clear_text_to_send()
 {
-	selectCommPort->index(0);
-	rigbase *selrig = rigs[selectRig->index()];
-
-	progStatus.loadXcvrState(selrig->name_);
-
-	selectCommPort->value(progStatus.xcvr_serial_port.c_str());
-	btnOneStopBit->value( progStatus.stopbits == 1 );
-	btnTwoStopBit->value( progStatus.stopbits == 2 );
-
-	mnuBaudrate->index( selrig->comm_baudrate );
-	btnOneStopBit->value( selrig->stopbits == 1 );
-	btnTwoStopBit->value( selrig->stopbits == 2 );
-	cntRigCatRetries->value( selrig->comm_retries );
-	cntRigCatTimeout->value( selrig->comm_timeout );
-	cntRigCatWait->value( selrig->comm_wait );
-	btnRigCatEcho->value( selrig->comm_echo );
-	btncatptt->value( selrig->comm_catptt );
-	btnrtsptt->value( selrig->comm_rtsptt );
-	btndtrptt->value( selrig->comm_dtrptt );
-	chkrtscts->value( selrig->comm_rtscts );
-	btnrtsplus->value( selrig->comm_rtsplus );
-	btndtrplus->value( selrig->comm_dtrplus );
+	txt_to_send->clear();
 }
 
-void initStatusConfigDialog()
+// idle function to handle text available in the Tx buffer
+void cb_send_text(void *)
 {
-	rig_nbr = progStatus.rig_nbr;
-	selrig = rigs[rig_nbr];
-
-	selectRig->index(rig_nbr);
-	mnuBaudrate->index( progStatus.comm_baudrate );
-
-	selectCommPort->value( progStatus.xcvr_serial_port.c_str() );
-	selectAuxPort->value( progStatus.aux_serial_port.c_str() );
-	selectSepPTTPort->value( progStatus.sep_serial_port.c_str() );
-	btnOneStopBit->value( progStatus.stopbits == 1 );
-	btnTwoStopBit->value( progStatus.stopbits == 2 );
-
-	cntRigCatRetries->value( progStatus.comm_retries );
-	cntRigCatTimeout->value( progStatus.comm_timeout );
-	cntRigCatWait->value( progStatus.comm_wait );
-	btnRigCatEcho->value( progStatus.comm_echo );
-
-	btncatptt->value( progStatus.comm_catptt );
-	btnrtsptt->value( progStatus.comm_rtsptt );
-	btndtrptt->value( progStatus.comm_dtrptt );
-	chkrtscts->value( progStatus.comm_rtscts );
-	btnrtsplus->value( progStatus.comm_rtsplus );
-	btndtrplus->value( progStatus.comm_dtrplus );
-
-	btnSepDTRplus->value(progStatus.sep_dtrplus);
-	btnSepDTRptt->value(progStatus.sep_dtrptt);
-	btnSepRTSplus->value(progStatus.sep_rtsplus);
-	btnSepRTSptt->value(progStatus.sep_rtsptt);
-
-	init_title();
-
-	if (!startXcvrSerial()) {
-		if (progStatus.xcvr_serial_port.compare("NONE") == 0) {
-			LOG_WARN("No comm port ... test mode");
-		} else {
-			LOG_WARN("%s cannot be accessed", progStatus.xcvr_serial_port.c_str());
-			progStatus.xcvr_serial_port = "NONE";
-			selectCommPort->value(progStatus.xcvr_serial_port.c_str());
-		}
-	} else {
-		selectCommPort->value(progStatus.xcvr_serial_port.c_str());
+	char c;
+// only process if Tx enabled and not busy
+	if (!btn_send->value()) 
+		return;
+	if (!wkeyer_ready) return;
+	switch (c = txt_to_send->nextChar()) {
+		case -1 : return;
+		case '\n':
+		case '\t':
+			c = ' ';
+			break;
+		default: ;
 	}
-	if (!startAuxSerial()) {
-		if (progStatus.aux_serial_port.compare("NONE") == 0) {
-			LOG_WARN("Aux port not selected");
-		} else {
-			LOG_WARN("%s cannot be accessed", progStatus.aux_serial_port.c_str());
-			progStatus.aux_serial_port = "NONE";
-			selectAuxPort->value(progStatus.aux_serial_port.c_str());
+	sendChar(c);
+	wkeyer_ready = false;
+}
+
+void cb_cancel_transmit()
+{
+	string cmd = CLEAR_BUFFER;
+	sendCommand(cmd);
+	cb_clear_text_to_send();
+}
+
+void cb_tune()
+{
+	string cmd = KEY_IMMEDIATE;
+	if (btn_tune->value()) cmd += '\1';
+	else cmd += '\0';
+	sendCommand(cmd);
+}
+
+void expand_msg(string &msg)
+{
+	size_t ptr;
+	upcase(msg);
+	while ((ptr = msg.find("<STA>")) != string::npos)
+		msg.replace(ptr, 5, txt_sta->value());
+	while ((ptr = msg.find("<NAM>")) != string::npos)
+		msg.replace(ptr, 5, txt_name->value());
+	while ((ptr = msg.find("<CLL>")) != string::npos)
+		msg.replace(ptr, 5, progStatus.tag_cll);
+	while ((ptr = msg.find("<QTH>")) != string::npos)
+		msg.replace(ptr, 5, progStatus.tag_qth);
+	while ((ptr = msg.find("<LOC>")) != string::npos)
+		msg.replace(ptr, 5, progStatus.tag_loc);
+	while ((ptr = msg.find("<OPR>")) != string::npos)
+		msg.replace(ptr, 5, progStatus.tag_opr);
+}
+
+void do_config_messages(void *)
+{
+	config_messages();
+}
+
+void send_message(string &msg)
+{
+	if (Fl::event_button() == FL_RIGHT_MOUSE) {
+		Fl::awake(do_config_messages, 0);
+		return;
+	}
+	if (msg.empty()) return;
+	expand_msg(msg);
+	txt_to_send->add(msg.c_str());
+}
+
+void exec_msg1()
+{
+	send_message(progStatus.edit_msg1);
+}
+
+void exec_msg2()
+{
+	send_message(progStatus.edit_msg2);
+}
+
+void exec_msg3()
+{
+	send_message(progStatus.edit_msg3);
+}
+
+void exec_msg4()
+{
+	send_message(progStatus.edit_msg4);
+}
+
+void exec_msg5()
+{
+	send_message(progStatus.edit_msg5);
+}
+
+void exec_msg6()
+{
+	send_message(progStatus.edit_msg6);
+}
+
+void exec_msg7()
+{
+	send_message(progStatus.edit_msg7);
+}
+
+void exec_msg8()
+{
+	send_message(progStatus.edit_msg8);
+}
+
+void exec_msg9()
+{
+	send_message(progStatus.edit_msg9);
+}
+
+void exec_msg10()
+{
+	send_message(progStatus.edit_msg10);
+}
+
+int main_handler(int event)
+{
+	if (event != FL_SHORTCUT)
+		return 0;
+
+	Fl_Widget* w = Fl::focus();
+
+	if (w == mainwindow || w->window() == mainwindow) {
+		int key = Fl::event_key();
+		if (key == FL_Escape || (key > FL_F && key <= (FL_F + 10))) {
+			switch (key) {
+				case (FL_F + 1): exec_msg1(); break;
+				case (FL_F + 2): exec_msg2(); break;
+				case (FL_F + 3): exec_msg3(); break;
+				case (FL_F + 4): exec_msg4(); break;
+				case (FL_F + 5): exec_msg5(); break;
+				case (FL_F + 6): exec_msg6(); break;
+				case (FL_F + 7): exec_msg7(); break;
+				case (FL_F + 8): exec_msg8(); break;
+				case (FL_F + 9): exec_msg9(); break;
+				case (FL_F + 10): exec_msg10(); break;
+				default:
+					LOG_WARN("key = %d", key);
+			}
+			return 1;
 		}
 	}
-	if (!startSepSerial()) {
-		if (progStatus.sep_serial_port.compare("NONE") != 0) {
-			progStatus.sep_serial_port = "NONE";
-			selectSepPTTPort->value(progStatus.sep_serial_port.c_str());
-		}
-	}
-
-	initRig();
-
-	wait_query = true;
-
-	FreqDisp->value( vfoA.freq = progStatus.freq );
-
-	pthread_mutex_lock(&mutex_serial);
-		selrig->set_vfoA(progStatus.freq);
-		opMODE->index( vfoA.imode = progStatus.opMODE );
-		selrig->set_mode(progStatus.opMODE);
-
-		updateBandwidthControl();
-		opBW->index( vfoA.iBW = progStatus.opBW );
-		selrig->set_bandwidth(progStatus.opBW);
-	pthread_mutex_unlock(&mutex_serial);
-
-	send_name();
-	send_modes();
-	send_bandwidths();
-	send_mode_changed();
-	send_sideband();
-	send_bandwidth_changed();
-	send_new_freq();
-
-	wait_query = false;
-
-	vfoB.freq = progStatus.freq_B;
-	vfoB.imode = progStatus.imode_B;
-	vfoB.iBW = progStatus.iBW_B;
-
-
-	snprintf(szVfoB, sizeof(szVfoB), "%13.3f", vfoB.freq / 1000.0);
-	txtInactive->label(szVfoB);
-	txtInactive->redraw();
-
-	bypass_serial_thread_loop = false;
-
-}
-
-void initRigCombo()
-{
-	selectRig->clear();
-	int i = 0;
-	while (rigs[i] != NULL)
-		selectRig->add(rigs[i++]->name_);
-
-	selectRig->index(rig_nbr = 0);
-}
-
-void preamp_label(const char * l, bool on = false)
-{
-	btnPreamp->value(on);
-	btnPreamp->label(l);
-	btnPreamp->redraw_label();
-}
-
-void atten_label(const char * l, bool on = false)
-{
-	btnAttenuator->value(on);
-	btnAttenuator->label(l);
-	btnAttenuator->redraw_label();
-}
-
-void cbAuxPort()
-{
-	AuxSerial.setRTS(progStatus.aux_rts);
-	AuxSerial.setDTR(progStatus.aux_dtr);
-}
-
-void cb_line_out()
-{
-	selrig->set_line_out();
-}
-
-void cb_agc_level()
-{
-	selrig->set_agc_level();
-}
-
-void cb_cw_wpm()
-{
-	selrig->set_cw_wpm();
-}
-
-void cb_cw_vol()
-{
-	selrig->set_cw_vol();
-}
-
-void cb_cw_spot()
-{
-	selrig->set_cw_spot();
-}
-
-void cb_vox_gain()
-{
-	selrig->set_vox_gain();
-}
-
-void cb_vox_anti()
-{
-	selrig->set_vox_anti();
-}
-
-void cb_vox_hang()
-{
-	selrig->set_vox_hang();
-}
-
-void cb_vox_onoff()
-{
-	selrig->set_vox_onoff();
-}
-
-void cb_compression()
-{
-	selrig->set_compression();
+	return 0;
 }

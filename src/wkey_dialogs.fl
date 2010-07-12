@@ -1,0 +1,568 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0110 
+i18n_type 1 
+i18n_include "gettext.h" 
+i18n_function _ 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "support.h"} {} 
+
+Function {SetupDialog()} {open
+} {
+  Fl_Window {} {
+    label {Select Serial Port}
+    xywh {699 383 274 78} type Double hide
+  } {
+    Fl_Group selectCommPort {
+      label {Ser. Port} open
+      tooltip {Xcvr serial port} xywh {75 13 190 23} box DOWN_BOX color 53 align 4
+      code0 {\#include "combo.h"}
+      class Fl_ComboBox
+    } {}
+    Fl_Return_Button btn_ser_port_ok {
+      label OK
+      callback {cbOkSetupDialog();}
+      xywh {198 46 67 20}
+    }
+    Fl_Button btn_serial_port_cancel {
+      label Cancel
+      callback {cbCancelSetupDialog();}
+      xywh {120 47 70 20}
+    }
+  }
+} 
+
+Function {WKey_window()} {open
+} {
+  Fl_Window {} {
+    label Fl_WinKey open
+    xywh {558 60 600 279} type Double resizable visible
+  } {
+    Fl_Menu_Bar {} {open
+      xywh {0 0 600 20}
+    } {
+      Submenu {} {
+        label {&File} open
+        xywh {0 0 70 21}
+      } {
+        MenuItem mnu_exit {
+          label {E&xit}
+          callback {cbExit();}
+          xywh {0 0 36 21}
+        }
+      }
+      Submenu {} {
+        label Configure open
+        xywh {0 0 70 21}
+      } {
+        MenuItem mnu_sel_port {
+          label {Select Port}
+          callback {config_comm_port();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_parameters {
+          label Parameters
+          callback {config_parameters();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_messages {
+          label Messages
+          callback {config_messages();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_operator {
+          label Operator
+          callback {open_operator_dialog();}
+          xywh {0 0 36 21}
+        }
+      }
+      MenuItem mnu_events {
+        label Events
+        callback {cb_events();}
+        xywh {0 0 36 21}
+      }
+    }
+    Fl_Output txt_sent {
+      xywh {5 23 590 96} type Multiline resizable
+      code0 {\#include "FTextView.h"}
+      class FTextView
+    }
+    Fl_Input txt_to_send {
+      label {input:}
+      xywh {5 121 590 68} type Multiline align 16 when 1
+      code0 {\#include "FTextRXTX.h"}
+      class FTextTX
+    }
+    Fl_Light_Button btn_send {
+      label Send selected
+      xywh {525 221 70 25}
+    }
+    Fl_Light_Button btn_tune {
+      label Tune
+      callback {cb_tune();}
+      xywh {525 250 70 25} selection_color 5
+    }
+    Fl_Button btn_cancel {
+      label Cancel
+      callback {cb_cancel_transmit();}
+      xywh {446 221 70 25}
+    }
+    Fl_Box box_busy {
+      label Busy
+      xywh {12 241 16 16} box DIAMOND_DOWN_BOX align 8
+    }
+    Fl_Box box_keydown {
+      label KeyDn
+      xywh {12 260 16 16} box DIAMOND_DOWN_BOX align 8
+    }
+    Fl_Box box_break_in {
+      label Bk_in
+      xywh {78 222 16 16} box DIAMOND_DOWN_BOX align 8
+    }
+    Fl_Box box_xoff {
+      label {Bfr Full}
+      xywh {78 241 16 16} box DIAMOND_DOWN_BOX align 8
+    }
+    Fl_Box box_wait {
+      label Wait
+      xywh {12 222 16 16} box DIAMOND_DOWN_BOX align 8
+    }
+    Fl_Output txt_wpm {
+      xywh {206 250 38 22}
+    }
+    Fl_Counter cntr_wpm {
+      label {WPM:}
+      callback {set_wpm();}
+      xywh {193 223 64 22} type Simple align 4 minimum 10 maximum 35 step 1 value 20
+    }
+    Fl_Check_Button btn_use_pot {
+      label Pot
+      callback {use_pot_changed();}
+      xywh {247 254 46 15} down_box DOWN_BOX when 1
+    }
+    Fl_Button btn_msg1 {
+      label Msg1
+      callback {exec_msg1();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {4 197 56 20}
+    }
+    Fl_Button btn_msg2 {
+      label Msg2
+      callback {exec_msg2();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {63 197 56 20}
+    }
+    Fl_Button btn_msg3 {
+      label Msg3
+      callback {exec_msg3();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {122 197 56 20}
+    }
+    Fl_Button btn_msg4 {
+      label Msg4
+      callback {exec_msg4();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {182 197 56 20}
+    }
+    Fl_Button btn_msg5 {
+      label Msg5
+      callback {exec_msg5();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {241 197 56 20}
+    }
+    Fl_Button btn_msg6 {
+      label Msg6
+      callback {exec_msg6();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {300 197 56 20}
+    }
+    Fl_Button btn_msg7 {
+      label Msg7
+      callback {exec_msg7();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {360 197 56 20}
+    }
+    Fl_Button btn_msg8 {
+      label Msg8
+      callback {exec_msg8();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {419 197 56 20}
+    }
+    Fl_Button btn_msg9 {
+      label Msg9
+      callback {exec_msg9();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {478 197 56 20}
+    }
+    Fl_Button btn_msg10 {
+      label Msg10
+      callback {exec_msg10();}
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {538 197 56 20}
+    }
+    Fl_Input txt_sta {
+      label {<STA>}
+      xywh {357 222 82 22}
+      code0 {\#include "flinput2.h"}
+      class Fl_Input2
+    }
+    Fl_Input txt_name {
+      label {<NAM>}
+      xywh {357 251 82 22}
+      class Fl_Input2
+    }
+  }
+} 
+
+Function {make_parameters_dialog()} {open
+} {
+  Fl_Window {} {
+    label {WKeyer Parameters}
+    xywh {555 376 402 270} type Double hide
+  } {
+    Fl_Group {} {
+      label ModeReg open
+      xywh {9 23 115 164} box ENGRAVED_FRAME
+    } {
+      Fl_Check_Button btn_swap {
+        label Swap
+        callback {change_btn_swap();}
+        xywh {14 31 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_auto_space {
+        label {Auto Space}
+        callback {change_btn_auto_space();}
+        xywh {14 50 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_ct_space {
+        label {CT space}
+        callback {change_btn_ct_space();}
+        xywh {14 69 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_paddledog {
+        label {Paddle Dog}
+        callback {change_btn_paddledog();}
+        xywh {14 88 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_cut_zeronine {
+        label {Cut 0/9}
+        callback {change_btn_cut_zeronine();}
+        xywh {14 108 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_msg_break {
+        label {Msg Break}
+        callback {change_btn_msg_break();}
+        xywh {14 127 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_paddle_echo {
+        label {Paddle echo}
+        callback {change_btn_paddle_echo();}
+        xywh {14 146 70 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_serial_echo {
+        label {Serial echo}
+        callback {change_btn_serial_echo();}
+        xywh {14 166 70 15} down_box DOWN_BOX
+      }
+    }
+    Fl_Group {} {
+      label {WPM Settings} open
+      xywh {125 23 112 164} box ENGRAVED_FRAME
+    } {
+      Fl_Counter cntr_min_wpm {
+        label {Min WPM}
+        callback {change_cntr_min_wpm();}
+        xywh {146 31 64 20} type Simple
+      }
+      Fl_Counter cntr_rng_wpm {
+        label {Rng WPM}
+        callback {change_cntr_rng_wpm();}
+        xywh {146 68 64 20} type Simple
+      }
+      Fl_Counter cntr_farnsworth {
+        label Farsnworth
+        callback {change_cntr_farnsworth();}
+        xywh {146 105 64 20} type Simple
+      }
+      Fl_Counter cntr_cmd_wpm {
+        label {Cmd WPM}
+        callback {change_cntr_cmd_wpm();}
+        xywh {146 143 64 20} type Simple
+      }
+    }
+    Fl_Group {} {
+      label {Timing/Settings} open
+      xywh {238 23 159 164} box ENGRAVED_FRAME
+    } {
+      Fl_Counter cntr_ratio {
+        label Ratio
+        callback {change_cntr_ratio();}
+        xywh {250 31 64 20} type Simple
+      }
+      Fl_Counter cntr_comp {
+        label Comp
+        callback {change_cntr_comp();}
+        xywh {250 68 64 20} type Simple
+      }
+      Fl_Counter cntr_first_ext {
+        label {1st Ext}
+        callback {change_cntr_first_ext();}
+        xywh {250 105 64 20} type Simple
+      }
+      Fl_Counter cntr_sample {
+        label Sample
+        callback {change_cntr_sample();}
+        xywh {250 143 64 20} type Simple
+      }
+      Fl_Counter cntr_weight {
+        label Weight
+        callback {change_cntr_weight();}
+        xywh {321 31 64 20} type Simple
+      }
+      Fl_Counter cntr_leadin {
+        label Leadin
+        callback {change_cntr_leadin();}
+        xywh {321 68 64 20} type Simple
+      }
+      Fl_Counter cntr_tail {
+        label Tail
+        callback {change_cntr_tail();}
+        xywh {321 105 64 20} type Simple
+      }
+    }
+    Fl_Group {} {open
+      xywh {9 188 388 50} box ENGRAVED_FRAME
+    } {
+      Fl_Group choice_keyer_mode {
+        label {Keyer Mode}
+        callback {change_choice_keyer_mode();} open
+        xywh {13 193 90 22} box BORDER_BOX align 2
+        code0 {\#include "combo.h"}
+        class Fl_ComboBox
+      } {}
+      Fl_Group choice_hang {
+        label Hang
+        callback {change_choice_hang();} open
+        xywh {109 193 90 22} box BORDER_BOX align 2
+        class Fl_ComboBox
+      } {}
+      Fl_Group choice_sidetone {
+        label Sidetone
+        callback {change_choice_sidetone();} open
+        xywh {205 193 90 22} box BORDER_BOX align 2
+        class Fl_ComboBox
+      } {}
+      Fl_Group choice_output_pins {
+        label {Output PIns}
+        callback {change_choice_output_pins();} open
+        xywh {301 193 90 22} box BORDER_BOX align 2
+        class Fl_ComboBox
+      } {}
+    }
+    Fl_Button btn_done_parameters {
+      label Done
+      callback {done_parameters();}
+      xywh {308 243 70 20}
+    }
+  }
+} 
+
+Function {make_message_editor()} {open
+} {
+  Fl_Window {} {
+    label {Message Editor}
+    xywh {558 629 552 354} type Double hide
+  } {
+    Fl_Input label_1 {
+      label {1:}
+      xywh {30 35 50 25}
+      code0 {\#include "flinput2.h"}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg1 {
+      xywh {85 35 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_2 {
+      label {2:}
+      xywh {30 63 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg2 {
+      xywh {85 63 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_3 {
+      label {3:}
+      xywh {30 92 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg3 {
+      xywh {85 92 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_4 {
+      label {4:}
+      xywh {30 121 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg4 {
+      xywh {85 121 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_5 {
+      label {5:}
+      xywh {30 149 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg5 {
+      xywh {85 149 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_6 {
+      label {6:}
+      xywh {30 178 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg6 {
+      xywh {85 178 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_7 {
+      label {7:}
+      xywh {30 207 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg7 {
+      xywh {85 207 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_8 {
+      label {8:}
+      xywh {30 235 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg8 {
+      xywh {85 235 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_9 {
+      label {9:}
+      xywh {30 264 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg9 {
+      xywh {85 264 375 25}
+      class Fl_Input2
+    }
+    Fl_Input label_10 {
+      label {10:}
+      xywh {30 293 50 25}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg10 {
+      xywh {85 293 375 25}
+      class Fl_Input2
+    }
+    Fl_Button btn_done_edit {
+      label Done
+      callback {done_edit();}
+      xywh {472 325 70 20}
+    }
+    Fl_Button btn_cancel_edit {
+      label Cancel
+      callback {cancel_edit();}
+      xywh {390 325 70 20}
+    }
+    Fl_Box {} {
+      label {Message Text}
+      xywh {201 9 223 19}
+    }
+    Fl_Box {} {
+      label {Msg Label}
+      xywh {12 8 84 23}
+    }
+    Fl_Group {} {open
+      xywh {462 4 87 319} box ENGRAVED_FRAME
+    } {
+      Fl_Box {} {
+        label Tags
+        xywh {467 7 78 23}
+      }
+      Fl_Box {} {
+        label {<CLL>}
+        tooltip {Your call} xywh {467 36 78 23}
+      }
+      Fl_Box {} {
+        label {<QTH>}
+        tooltip {Your qth} xywh {467 64 78 23}
+      }
+      Fl_Box {} {
+        label {<LOC>}
+        tooltip {Your location} xywh {467 93 78 23}
+      }
+      Fl_Box {} {
+        label {<OPR>}
+        tooltip {Your name} xywh {467 122 78 23}
+      }
+      Fl_Box {} {
+        label {<STA>}
+        tooltip {Other stations callsign} xywh {467 150 78 23}
+      }
+      Fl_Box {} {
+        label {<NAM>}
+        tooltip {Other stations name} xywh {467 179 78 23}
+      }
+      Fl_Box {} {
+        xywh {467 208 78 23}
+      }
+      Fl_Box {} {
+        xywh {467 236 78 23}
+      }
+      Fl_Box {} {
+        xywh {467 265 78 23}
+      }
+      Fl_Box {} {
+        xywh {467 294 78 23}
+      }
+    }
+  }
+} 
+
+Function {make_operator_dialog()} {open
+} {
+  Fl_Window {} {
+    label {Operator Setup} open
+    xywh {559 373 296 162} type Double hide
+  } {
+    Fl_Input txt_cll {
+      label {<CLL>}
+      callback {change_txt_cll();}
+      tooltip {Your callsign} xywh {63 10 224 23}
+      class Fl_Input2
+    }
+    Fl_Input txt_opr {
+      label {<OPR>}
+      callback {change_txt_opr();}
+      xywh {63 41 224 23}
+      class Fl_Input2
+    }
+    Fl_Input txt_qth {
+      label {<QTH>}
+      callback {change_txt_qth();}
+      tooltip {Your QTH} xywh {63 72 224 23}
+      class Fl_Input2
+    }
+    Fl_Input txt_loc {
+      label {<LOC>}
+      callback {change_txt_loc();}
+      tooltip {Your locator} xywh {63 103 224 23}
+      class Fl_Input2
+    }
+    Fl_Button btn_done_op_dialog {
+      label Done
+      callback {cb_done_op_dialog();}
+      xywh {204 133 70 20}
+    }
+  }
+} 

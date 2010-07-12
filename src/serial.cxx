@@ -28,7 +28,7 @@ LOG_FILE_SOURCE(debug::LOG_RIGCONTROL);
 using namespace std;
 
 Cserial::Cserial() {
-	device = "ttyS0";
+	device = "/dev/ttyS0";
 	baud = 1200;
 	timeout = 50; //msec
 	retries = 5;
@@ -53,9 +53,7 @@ Cserial::~Cserial() {
 // Argument		 : c_string strPortName
 ///////////////////////////////////////////////////////
 bool Cserial::CheckPort(string dev)  {
-	string devstr = "/dev/";
-	devstr.append(dev);
-	int testfd = open( devstr.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+	int testfd = open( dev.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
 	if (testfd < 0)
 		return false;
 	close(fd);
@@ -70,12 +68,7 @@ bool Cserial::CheckPort(string dev)  {
 ///////////////////////////////////////////////////////
 bool Cserial::OpenPort()  {
 
-#ifdef __CYGWIN__
-	com_to_tty(device);
-#endif
-	string devstr = "/dev/";
-	devstr.append(device);
-	if ((fd = open( devstr.c_str(), O_RDWR | O_NOCTTY | O_NDELAY)) < 0)
+	if ((fd = open( device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY )) < 0)
 		return false;
 // save current port settings
 	tcflush (fd, TCIFLUSH);
@@ -83,25 +76,36 @@ bool Cserial::OpenPort()  {
 	tcgetattr (fd, &oldtio);
 	newtio = oldtio;
 
+	// 8 data bits
 	newtio.c_cflag &= ~CSIZE;
-	newtio.c_cflag |= CS8 | CLOCAL | CREAD;
-
+	newtio.c_cflag |= CS8;
+	// enable receiver, set local mode
+	newtio.c_cflag |= (CLOCAL | CREAD);
+	// no parity
 	newtio.c_cflag &= ~PARENB;
 
 	if (stopbits == 1)
-		newtio.c_cflag &= ~CSTOPB; // 1 stop bit
+		// 1 stop bit
+		newtio.c_cflag &= ~CSTOPB;
 	else
-		newtio.c_cflag |= CSTOPB; // 2 stop bit
+		// 2 stop bit
+		newtio.c_cflag |= CSTOPB;
 
 	if (rtscts)
+		// h/w handshake
 		newtio.c_cflag |= CRTSCTS;
 	else
+		// no h/w handshake
 		newtio.c_cflag &= ~CRTSCTS;
 
+	// raw input
 	newtio.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+	// raw output
 	newtio.c_oflag &= ~OPOST;
-
+	// software flow control disabled
 	newtio.c_iflag &= ~IXON;
+	// do not translate CR to NL
+	newtio.c_iflag &= ~ICRNL;
 
 	switch(baud) {
 		case 300:
@@ -255,6 +259,16 @@ bool  Cserial::IOselect ()
 	if (retval <= 0) // no response from serial port or error returned
 		return false;
 	return true;
+}
+
+
+bool Cserial::ReadByte(unsigned char &resp)
+{
+	if (!IOselect()) {
+		resp = 0;
+		return false;
+	}
+	return (read (fd, &resp, 1));
 }
 
 
@@ -419,7 +433,7 @@ DWORD Cserial::GetBytesWritten()
 // Return type	  : bool
 // Argument		 : BYTE& by
 ///////////////////////////////////////////////////////
-bool Cserial::ReadByte(char & by)
+bool Cserial::ReadByte(unsigned char & by)
 {
 static  BYTE byResByte[1024];
 static  DWORD dwBytesTxD=0;
@@ -451,7 +465,7 @@ int Cserial::ReadChars (char *buf, int nchars, int msec)
 
 void Cserial::FlushBuffer()
 {
-	char c;
+	unsigned char c;
 	int count = 200;
 	while (ReadByte(c) == true) {
 		if (count-- == 0) break;
@@ -744,42 +758,4 @@ void Cserial::setDTR(bool b)
 	SetCommState(hComm, &dcb);
 }
 
-#endif //__WIN32__
-
-
-#ifdef __WIN32__
-#include <sstream>
-
-// convert COMx to /dev/ttySy with y = x - 1
-void com_to_tty(string& port)
-{
-	int pos = port.find('m');
-	if (pos == string::npos) pos = port.find('M');
-	if (pos == string::npos) return;
-	stringstream ss;
-	int n;
-	ss << port.substr(pos+1);
-	ss >> n;
-	if (--n < 0)
-		n = 0;
-	ss.clear(); ss.str("");
-	ss << "/dev/ttyS" << n;
-	ss.seekp(0);
-	port = ss.str();
-}
-
-// convert  /dev/ttySx to COMy with y = x + 1
-void tty_to_com(string& port)
-{
-	int pos = port.find('S');
-	if (pos == string::npos) return;
-	stringstream ss;
-	int n;
-	ss << port.substr(pos+1);
-	ss >> n;
-	ss.clear(); ss.str("");
-	ss << "COM" << n + 1;
-	ss.seekp(0);
-	port = ss.str();
-}
 #endif

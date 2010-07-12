@@ -2,106 +2,79 @@
 #define _status_H
 
 #include <string>
-#include "rig.h"
+#include <FL/Fl.H>
+#include <FL/Enumerations.H>
+
+#include "flwkey.h"
 
 using namespace std;
 
 struct status {
 	int		mainX;
 	int		mainY;
-	int		rig_nbr;
-	string	xcvr_serial_port;
+	string	serial_port_name;
 	int		comm_baudrate;
 	int		stopbits;
 	int		comm_retries;
 	int		comm_wait;
 	int		comm_timeout;
 	bool	comm_echo;
-	bool	comm_catptt;
-	bool	comm_rtsptt;
-	bool	comm_dtrptt;
-	bool	comm_rtscts;
-	bool	comm_rtsplus;
-	bool	comm_dtrplus;
+//	bool	comm.rtscts;
+//	bool	comm.rts;
+//	bool	comm.dtr;
+
 	int		serloop_timing;
 
-	string	aux_serial_port;
-	bool	aux_rts;
-	bool	aux_dtr;
+// wkeyer values
+	unsigned char mode_register;
+	unsigned char speed_wpm;
+	unsigned char sidetone;
+	unsigned char weight;
+	unsigned char lead_in_time;
+	unsigned char tail_time;
+	unsigned char min_wpm;
+	unsigned char rng_wpm;
+	unsigned char first_extension;
+	unsigned char key_compensation;
+	unsigned char farnsworth_wpm;
+	unsigned char paddle_setpoint;
+	unsigned char dit_dah_ratio;
+	unsigned char pin_configuration;
+	unsigned char dont_care;
 
-	string	sep_serial_port;
-	bool	sep_rtsptt;
-	bool	sep_dtrptt;
-	bool	sep_rtsplus;
-	bool	sep_dtrplus;
+	unsigned char cmd_wpm;
+	bool	use_pot;
 
-	int		opBW;
-	int		opMODE;
-	int		freq;
-	int		iBW_B;
-	int		imode_B;
-	int		freq_B;
+// message store
+	string	label_1;
+	string	edit_msg1;
+	string	label_2;
+	string	edit_msg2;
+	string	label_3;
+	string	edit_msg3;
+	string	label_4;
+	string	edit_msg4;
+	string	label_5;
+	string	edit_msg5;
+	string	label_6;
+	string	edit_msg6;
+	string	label_7;
+	string	edit_msg7;
+	string	label_8;
+	string	edit_msg8;
+	string	label_9;
+	string	edit_msg9;
+	string	label_10;
+	string	edit_msg10;
 
-	bool	mute;
-	int		volume;
-	int		power_level;
-	int		mic_gain;
-	bool	notch;
-	int		notch_val;
-	bool	shift;
-	int		shift_val;
-	int		rfgain;
-	int		squelch;
-	int		line_out;
-	int		agc_level;
-	int		cw_wpm;
-	int		cw_vol;
-	int		cw_spot;
-	bool	vox_onoff;
-	int		vox_gain;
-	int		vox_anti;
-	int		vox_hang;
-	int		compression;
-	bool	compON;
-
-	bool	noise_reduction;
-	int		noise_reduction_val;
-
-	bool	noise;
-	int		attenuator;
-	int		preamp;
-
-	int		s_red;
-	int		s_green;
-	int		s_blue;
-
-	int		bg_red;
-	int		bg_green;
-	int		bg_blue;
-
-	int		fg_red;
-	int		fg_green;
-	int		fg_blue;
-
-	int		meter_red;
-	int		meter_green;
-	int		meter_blue;
-
-	int		pwrRed;
-	int		pwrGreen;
-	int		pwrBlue;
-
-	int		swrRed;
-	int		swrGreen;
-	int		swrBlue;
-
-	bool	tooltips;
-
-	string server_port;
+// message tags
+	string	tag_cll;
+	string	tag_qth;
+	string	tag_loc;
+	string	tag_opr;
 
 	void saveLastState();
 	void loadLastState();
-	bool loadXcvrState(const char *);
 };
 
 extern status progStatus;

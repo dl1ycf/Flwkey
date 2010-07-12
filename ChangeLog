@@ -1,0 +1,70 @@
+2010-07-04  David Freese  <w1hkj@w1hkj.com>
+
+	8de1f01: TT550 work
+	6654181: RTS-DTR ptt
+	8091162: TT-538 Po/SWR
+	66f7861: Menu update
+	b567f0f: Restore Xcvr
+	a58d4f6: FT817 mods
+	eda4e7e: Fluid source
+	8654ddb: Read Stream
+
+2010-04-30  Jason Turning, N6WBL  <jturning@sbcglobal.net>
+
+	2594d0a: IC718 Auto Notch
+
+2010-04-29  David Freese  <w1hkj@w1hkj.com>
+
+	b97848d: ICgeneric split
+	500628b: IC703 Compression
+	739a7b4: IC703 / TS450S
+
+2010-04-29  Jason Turning, N6WBL  <jturning@sbcglobal.net>
+
+	32492ac: IC718 additions
+
+2010-04-27  David Freese  <w1hkj@w1hkj.com>
+
+	3f5e11e: IC718 rf gain
+	52f8e17: Added rigpanel.fl
+	04ef71f: IC7200 Data mode
+	cf066d3: IC718 corrections
+	5df3c55: ICOM update
+	b0b0afc: Freq Control Widget
+	9d9864b: IC7200 changes
+	195fcd9: IC718
+	526150b: K3 mode
+	a2a004d: IC7200
+	70f138e: K3 bug fixes
+	8ff9611: Build static distribution
+	90250ee: K3 mods
+	3f7ac25: Exec during config
+	5c111de: SWR enable
+	b36ef3c: Power - 7600
+
+2010-04-13  Andrew Hart, VE3NVK  <andylhart@gmail.com>
+
+	96005f5: IC7600 update
+
+2010-03-29  David Freese  <w1hkj@w1hkj.com>
+
+	3fbeee1: FT1000 series
+	fa215e2: OS X serial device
+	e2a1ff0: FT1000 FT1000MV update
+	fe2bc28: TT550 AM mod
+	8079933: DLL dependency
+	462bc39: IC7000 mods
+	e087a07: TT550 bug fixes
+	713b0a7: TT-538 gain table
+	c324e27: IC746 / Pro Disassociation
+	37f9660: FT1000MV
+	018b344: FT1000
+	5c232a5: FT450 Volume range
+	e53f04c: FT2000 debug strings
+	a59c478: TS2000 Mic Gain
+	b240047: IC-746 BW
+	20c3253: Split Operation
+	5b17be2: TT-550 update
+	f8b355b: K2 serial baud rate
+	8ee433c: Pegasus TT550 mic gain
+	2792b74: On Line Help link

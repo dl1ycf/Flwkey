@@ -9,9 +9,6 @@
 
 using namespace std;
 
-void com_to_tty(std::string& port);
-void tty_to_com(std::string& port);
-
 #ifndef __WIN32__
 
 #include <termios.h>
@@ -61,6 +58,7 @@ public:
 	void Stopbits(int n) {stopbits = (n == 1 ? 1 : 2);}
 	int  Stopbits() { return stopbits;}
 
+	bool ReadByte(unsigned char &resp);
 	int  ReadBuffer (char *b, int nbr);
 	int  WriteBuffer(const char *str, int nbr);
 	void FlushBuffer();
@@ -122,7 +120,7 @@ public:
 	bool IsBusy() { return busyflag; };
 	void IsBusy(bool val) { busyflag = val; };
 
-	bool ReadByte(char &resp);
+	bool ReadByte(unsigned char &resp);
 	int  ReadData (char *b, int nbr);
 	int  ReadBuffer (char *b, int nbr) {
 	  return ReadData (b,nbr);
