@@ -491,6 +491,12 @@ void cb_send_text(void *)
 		case '\t':
 			c = ' ';
 			break;
+		case '0' : 
+			if (progStatus.cut_zeronine) c = 'T';
+			break;
+		case '9' : 
+			if (progStatus.cut_zeronine) c = 'N';
+			break;
 		default: ;
 	}
 	sendChar(c);

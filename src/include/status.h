@@ -42,6 +42,7 @@ struct status {
 	unsigned char pin_configuration;
 	unsigned char dont_care;
 
+	bool	cut_zeronine;
 	unsigned char cmd_wpm;
 	bool	use_pot;
 

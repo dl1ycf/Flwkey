@@ -364,12 +364,6 @@ static void cb_btn_cut_zeronine(Fl_Check_Button*, void*) {
   change_btn_cut_zeronine();
 }
 
-Fl_Check_Button *btn_msg_break=(Fl_Check_Button *)0;
-
-static void cb_btn_msg_break(Fl_Check_Button*, void*) {
-  change_btn_msg_break();
-}
-
 Fl_Check_Button *btn_paddle_echo=(Fl_Check_Button *)0;
 
 static void cb_btn_paddle_echo(Fl_Check_Button*, void*) {
@@ -380,6 +374,12 @@ Fl_Check_Button *btn_serial_echo=(Fl_Check_Button *)0;
 
 static void cb_btn_serial_echo(Fl_Check_Button*, void*) {
   change_btn_serial_echo();
+}
+
+Fl_Check_Button *btn_sidetone_on=(Fl_Check_Button *)0;
+
+static void cb_btn_sidetone_on(Fl_Check_Button*, void*) {
+  change_btn_sidetone_on();
 }
 
 Fl_Counter *cntr_min_wpm=(Fl_Counter *)0;
@@ -500,22 +500,22 @@ Fl_Double_Window* make_parameters_dialog() {
         btn_paddledog->down_box(FL_DOWN_BOX);
         btn_paddledog->callback((Fl_Callback*)cb_btn_paddledog);
       } // Fl_Check_Button* btn_paddledog
-      { btn_cut_zeronine = new Fl_Check_Button(14, 108, 70, 15, _("Cut 0/9"));
+      { btn_cut_zeronine = new Fl_Check_Button(14, 107, 70, 15, _("Cut 0/9"));
         btn_cut_zeronine->down_box(FL_DOWN_BOX);
         btn_cut_zeronine->callback((Fl_Callback*)cb_btn_cut_zeronine);
       } // Fl_Check_Button* btn_cut_zeronine
-      { btn_msg_break = new Fl_Check_Button(14, 127, 70, 15, _("Msg Break"));
-        btn_msg_break->down_box(FL_DOWN_BOX);
-        btn_msg_break->callback((Fl_Callback*)cb_btn_msg_break);
-      } // Fl_Check_Button* btn_msg_break
-      { btn_paddle_echo = new Fl_Check_Button(14, 146, 70, 15, _("Paddle echo"));
+      { btn_paddle_echo = new Fl_Check_Button(14, 126, 70, 15, _("Paddle echo"));
         btn_paddle_echo->down_box(FL_DOWN_BOX);
         btn_paddle_echo->callback((Fl_Callback*)cb_btn_paddle_echo);
       } // Fl_Check_Button* btn_paddle_echo
-      { btn_serial_echo = new Fl_Check_Button(14, 166, 70, 15, _("Serial echo"));
+      { btn_serial_echo = new Fl_Check_Button(14, 145, 70, 15, _("Serial echo"));
         btn_serial_echo->down_box(FL_DOWN_BOX);
         btn_serial_echo->callback((Fl_Callback*)cb_btn_serial_echo);
       } // Fl_Check_Button* btn_serial_echo
+      { btn_sidetone_on = new Fl_Check_Button(14, 165, 70, 15, _("Sidetone"));
+        btn_sidetone_on->down_box(FL_DOWN_BOX);
+        btn_sidetone_on->callback((Fl_Callback*)cb_btn_sidetone_on);
+      } // Fl_Check_Button* btn_sidetone_on
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(125, 23, 112, 164, _("WPM Settings"));

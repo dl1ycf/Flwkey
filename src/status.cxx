@@ -52,6 +52,7 @@ status progStatus = {
 	7,			// unsigned char pin_configuration;
 	255,		// unsigned char dont_care;
 
+	false,		// bool cut_zeronine;
 	18,			// unsigned char cmd_wpm;
 	true,		// bool use_pot
 	

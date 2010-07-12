@@ -336,6 +336,8 @@ void config_parameters()
 	choice_hang->index((progStatus.pin_configuration & 0x30) >> 4);
 	choice_sidetone->index((progStatus.sidetone & 0x0F) - 1);
 
+	btn_sidetone_on->value((progStatus.sidetone & 0x80) ? false : true);
+	btn_cut_zeronine->value(progStatus.cut_zeronine);
 	btn_paddledog->value(progStatus.mode_register & 0x80);
 	btn_ct_space->value(progStatus.mode_register & 0x01);
 	btn_auto_space->value(progStatus.mode_register & 0x02);
@@ -368,7 +370,8 @@ void change_choice_output_pins()
 
 void change_choice_sidetone()
 {
-	progStatus.sidetone = (progStatus.sidetone & 0x80) | (choice_sidetone->index() + 1);
+	progStatus.sidetone = choice_sidetone->index() + 1;
+	progStatus.sidetone |= (btn_sidetone_on->value() ? 0x00 : 0x80);
 	load_defaults();
 }
 
@@ -456,12 +459,14 @@ void change_cntr_min_wpm()
 	load_defaults();
 }
 
-void change_btn_msg_break()
+void change_btn_sidetone_on()
 {
+	change_choice_sidetone();
 }
 
 void change_btn_cut_zeronine()
 {
+	progStatus.cut_zeronine = btn_cut_zeronine->value();
 }
 
 void change_btn_paddledog()

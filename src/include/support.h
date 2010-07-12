@@ -64,7 +64,7 @@ extern void change_cntr_cmd_wpm();
 extern void change_cntr_farnsworth();
 extern void change_cntr_rng_wpm();
 extern void change_cntr_min_wpm();
-extern void change_btn_msg_break();
+extern void change_btn_sidetone_on();
 extern void change_btn_cut_zeronine();
 extern void change_btn_paddledog();
 extern void change_btn_ct_space();
