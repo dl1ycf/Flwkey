@@ -446,9 +446,6 @@ void open_wkeyer()
 	cmd = GET_SPEED_POT;
 	sendCommand(cmd);
 
-	cmd = "ok ";
-	sendText(cmd);
-
 }
 
 void load_defaults()
