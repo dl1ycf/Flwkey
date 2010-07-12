@@ -66,6 +66,38 @@ static void cb_mnu_operator(Fl_Menu_*, void*) {
   open_operator_dialog();
 }
 
+static void cb_mnu_display_log(Fl_Menu_*, void*) {
+  cb_mnuShowLogbook();
+}
+
+static void cb_mnu_open_logbook(Fl_Menu_*, void*) {
+  cb_mnuOpenLogbook();
+}
+
+static void cb_mnu_save_logbook(Fl_Menu_*, void*) {
+  cb_mnuSaveLogbook();
+}
+
+static void cb_mnu_merge_logbook(Fl_Menu_*, void*) {
+  cb_mnuMergeADIF_log();
+}
+
+static void cb_mnu_export_adif(Fl_Menu_*, void*) {
+  cb_mnuExportADIF_log();
+}
+
+static void cb_mnu_export_logbook_text(Fl_Menu_*, void*) {
+  cb_mnuExportTEXT_log();
+}
+
+static void cb_mnu_export_logbook_csv(Fl_Menu_*, void*) {
+  cb_mnuExportCSV_log();
+}
+
+static void cb_mnu_export_cabrillo(Fl_Menu_*, void*) {
+  cb_Export_Cabrillo();
+}
+
 static void cb_mnu_events(Fl_Menu_*, void*) {
   cb_events();
 }
@@ -79,6 +111,16 @@ Fl_Menu_Item menu_[] = {
  {_("Parameters"), 0,  (Fl_Callback*)cb_mnu_parameters, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Messages"), 0,  (Fl_Callback*)cb_mnu_messages, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Operator"), 0,  (Fl_Callback*)cb_mnu_operator, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {0,0,0,0,0,0,0,0,0},
+ {_("Logbook"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Display Log"), 0,  (Fl_Callback*)cb_mnu_display_log, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Open"), 0,  (Fl_Callback*)cb_mnu_open_logbook, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Save"), 0,  (Fl_Callback*)cb_mnu_save_logbook, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Merge Log"), 0,  (Fl_Callback*)cb_mnu_merge_logbook, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Export Log"), 0,  (Fl_Callback*)cb_mnu_export_adif, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Export text"), 0,  (Fl_Callback*)cb_mnu_export_logbook_text, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Export CSV"), 0,  (Fl_Callback*)cb_mnu_export_logbook_csv, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Cabrillo Report"), 0,  (Fl_Callback*)cb_mnu_export_cabrillo, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
  {_("Events"), 0,  (Fl_Callback*)cb_mnu_events, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
@@ -187,6 +229,10 @@ static void cb_btn_msg10(Fl_Button*, void*) {
 }
 
 Fl_Input2 *txt_sta=(Fl_Input2 *)0;
+
+static void cb_txt_sta(Fl_Input2*, void*) {
+  check_call();
+}
 
 Fl_Input2 *txt_name=(Fl_Input2 *)0;
 
@@ -315,8 +361,9 @@ Fl_Double_Window* WKey_window() {
       txt_sta->labelfont(0);
       txt_sta->labelsize(14);
       txt_sta->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      txt_sta->callback((Fl_Callback*)cb_txt_sta);
       txt_sta->align(FL_ALIGN_LEFT);
-      txt_sta->when(FL_WHEN_RELEASE);
+      txt_sta->when(FL_WHEN_CHANGED);
     } // Fl_Input2* txt_sta
     { txt_name = new Fl_Input2(357, 251, 82, 22, _("<NAM>"));
       txt_name->box(FL_DOWN_BOX);

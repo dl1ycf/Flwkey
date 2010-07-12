@@ -49,6 +49,7 @@
 #include "flwkey_icon.cxx"
 #include "wkey_dialogs.h"
 #include "fileselect.h"
+#include "logbook.h"
 
 int parse_args(int argc, char **argv, int& idx);
 
@@ -259,12 +260,13 @@ int main (int argc, char *argv[])
 	}
 
 	progStatus.loadLastState();
-//	createSetupDialog();
 
 	mainwindow->resize( progStatus.mainX, progStatus.mainY, mainwindow->w(), mainwindow->h());
 
 	mainwindow->xclass(KNAME);
 	Fl::add_handler(main_handler);
+
+	start_logbook();
 
 #if defined(__WOE32__)
 #  ifndef IDI_ICON
@@ -282,9 +284,8 @@ int main (int argc, char *argv[])
 
 	FSEL::create();
 
-	Fl::add_idle(cb_send_text);
-
-	Fl::add_timeout(0.250, startup);
+	Fl::add_idle(send_char, 0);
+	Fl::add_timeout(0.20, startup);
 
 	return Fl::run();
 

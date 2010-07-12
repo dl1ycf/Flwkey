@@ -36,13 +36,13 @@ extern void cbOkSetupDialog();
 extern void open_wkeyer();
 
 extern void cb_clear_text_to_send();
-extern void cb_send_text();
+extern void send_char(void *);
 extern void cb_cancel_transmit();
 extern void cb_transmit_text();
 extern void set_wpm();
 extern void use_pot_changed();
-extern void cb_send_text(void *);
 extern void load_defaults();
+extern void check_call();
 
 extern void config_parameters();
 extern void config_messages();
@@ -94,5 +94,14 @@ extern void change_txt_qth();
 extern void change_txt_loc();
 extern void change_txt_opr();
 
+extern void cb_mnuNewLogbook();
+extern void cb_mnuOpenLogbook();
+extern void cb_mnuSaveLogbook();
+extern void cb_mnuMergeADIF_log();
+extern void cb_mnuExportADIF_log();
+extern void cb_mnuExportTEXT_log();
+extern void cb_mnuExportCSV_log();
+extern void cb_Export_Cabrillo();
+extern void cb_mnuShowLogbook();
 
 #endif

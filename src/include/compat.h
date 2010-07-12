@@ -39,7 +39,7 @@
 #  include <sys/msg.h>
 #endif
 
-#include "compat-mingw.h"
+#include "mingw.h"
 
 #ifdef __cplusplus
 extern "C" {

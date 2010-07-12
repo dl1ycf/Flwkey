@@ -284,51 +284,52 @@ Fl_Double_Window *parameter_dialog = (Fl_Double_Window *)0;
 
 void config_parameters()
 {
-	if (!parameter_dialog)
+	if (!parameter_dialog) {
 		parameter_dialog = make_parameters_dialog();
+		choice_keyer_mode->add("Iambic B");
+		choice_keyer_mode->add("Iambic A");
+		choice_keyer_mode->add("Ultimatic");
+		choice_keyer_mode->add("Bug Mode");
+		choice_output_pins->add("Key 1");
+		choice_output_pins->add("Key 2");
+		choice_output_pins->add("Key 1 & 2");
+		choice_sidetone->add("4000");
+		choice_sidetone->add("2000");
+		choice_sidetone->add("1333");
+		choice_sidetone->add("1000");
+		choice_sidetone->add("800");
+		choice_sidetone->add("666");
+		choice_sidetone->add("571");
+		choice_sidetone->add("500");
+		choice_sidetone->add("444");
+		choice_sidetone->add("400");
+		choice_hang->add("Wait 1.0");
+		choice_hang->add("Wait 1.33");
+		choice_hang->add("Wait 1.66");
+		choice_hang->add("Wait 2.0");
+		cntr_tail->minimum(0); cntr_tail->maximum(250); cntr_tail->step(10);
+		cntr_leadin->minimum(0); cntr_leadin->maximum(250); cntr_leadin->step(10);
+		cntr_weight->minimum(10); cntr_weight->maximum(90); cntr_weight->step(1);
+		cntr_sample->minimum(10); cntr_sample->maximum(90); cntr_sample->step(1);
+		cntr_first_ext->minimum(0); cntr_first_ext->maximum(250); cntr_first_ext->step(1);
+		cntr_comp->minimum(0); cntr_comp->maximum(250); cntr_comp->step(1);
+		cntr_ratio->minimum(2.0); cntr_ratio->maximum(4.0); cntr_ratio->step(0.1);
+		cntr_cmd_wpm->minimum(10); cntr_cmd_wpm->maximum(30); cntr_cmd_wpm->step(1);
+		cntr_farnsworth->minimum(10); cntr_farnsworth->maximum(99); cntr_farnsworth->step(1);
+		cntr_rng_wpm->minimum(10); cntr_rng_wpm->maximum(40); cntr_rng_wpm->step(1);
+		cntr_min_wpm->minimum(5); cntr_min_wpm->maximum(89); cntr_min_wpm->step(1);
+	}
 
-	choice_keyer_mode->add("Iambic B");
-	choice_keyer_mode->add("Iambic A");
-	choice_keyer_mode->add("Ultimatic");
-	choice_keyer_mode->add("Bug Mode");
-	choice_output_pins->add("Key 1");
-	choice_output_pins->add("Key 2");
-	choice_output_pins->add("Key 1 & 2");
-	choice_sidetone->add("4000");
-	choice_sidetone->add("2000");
-	choice_sidetone->add("1333");
-	choice_sidetone->add("1000");
-	choice_sidetone->add("800");
-	choice_sidetone->add("666");
-	choice_sidetone->add("571");
-	choice_sidetone->add("500");
-	choice_sidetone->add("444");
-	choice_sidetone->add("400");
-	choice_hang->add("Wait 1.0");
-	choice_hang->add("Wait 1.33");
-	choice_hang->add("Wait 1.66");
-	choice_hang->add("Wait 2.0");
-	cntr_tail->minimum(0); cntr_tail->maximum(250); cntr_tail->step(10);
 	cntr_tail->value(progStatus.tail_time);
-	cntr_leadin->minimum(0); cntr_leadin->maximum(250); cntr_leadin->step(10);
 	cntr_leadin->value(progStatus.lead_in_time);
-	cntr_weight->minimum(10); cntr_weight->maximum(90); cntr_weight->step(1);
 	cntr_weight->value(progStatus.weight);
-	cntr_sample->minimum(10); cntr_sample->maximum(90); cntr_sample->step(1);
 	cntr_sample->value(progStatus.paddle_setpoint);
-	cntr_first_ext->minimum(0); cntr_first_ext->maximum(250); cntr_first_ext->step(1);
 	cntr_first_ext->value(progStatus.first_extension);
-	cntr_comp->minimum(0); cntr_comp->maximum(250); cntr_comp->step(1);
 	cntr_comp->value(progStatus.key_compensation);
-	cntr_ratio->minimum(2.0); cntr_ratio->maximum(4.0); cntr_ratio->step(0.1);
 	cntr_ratio->value(progStatus.dit_dah_ratio);
-	cntr_cmd_wpm->minimum(10); cntr_cmd_wpm->maximum(30); cntr_cmd_wpm->step(1);
 	cntr_cmd_wpm->value(progStatus.cmd_wpm);
-	cntr_farnsworth->minimum(10); cntr_farnsworth->maximum(99); cntr_farnsworth->step(1);
 	cntr_farnsworth->value(progStatus.farnsworth_wpm);
-	cntr_rng_wpm->minimum(10); cntr_rng_wpm->maximum(40); cntr_rng_wpm->step(1);
 	cntr_rng_wpm->value(progStatus.rng_wpm);
-	cntr_min_wpm->minimum(5); cntr_min_wpm->maximum(89); cntr_min_wpm->step(1);
 	cntr_min_wpm->value(progStatus.min_wpm);
 
 	choice_keyer_mode->index((progStatus.mode_register & 0x30) >> 4);

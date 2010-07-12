@@ -7,8 +7,7 @@ header_name {.h}
 code_name {.cxx}
 decl {\#include "support.h"} {} 
 
-Function {SetupDialog()} {open
-} {
+Function {SetupDialog()} {} {
   Fl_Window {} {
     label {Select Serial Port}
     xywh {699 383 274 78} type Double hide
@@ -32,7 +31,8 @@ Function {SetupDialog()} {open
   }
 } 
 
-Function {WKey_window()} {} {
+Function {WKey_window()} {open
+} {
   Fl_Window {} {
     label Fl_WinKey open
     xywh {558 60 600 279} type Double resizable visible
@@ -72,6 +72,51 @@ Function {WKey_window()} {} {
         MenuItem mnu_operator {
           label Operator
           callback {open_operator_dialog();}
+          xywh {0 0 36 21}
+        }
+      }
+      Submenu mnu_Logbook {
+        label Logbook open
+        xywh {0 0 70 21}
+      } {
+        MenuItem mnu_display_log {
+          label {Display Log}
+          callback {cb_mnuShowLogbook();}
+          xywh {0 0 36 21} divider
+        }
+        MenuItem mnu_open_logbook {
+          label Open
+          callback {cb_mnuOpenLogbook();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_save_logbook {
+          label Save
+          callback {cb_mnuSaveLogbook();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_merge_logbook {
+          label {Merge Log}
+          callback {cb_mnuMergeADIF_log();}
+          xywh {0 0 36 21} divider
+        }
+        MenuItem mnu_export_adif {
+          label {Export Log}
+          callback {cb_mnuExportADIF_log();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_export_logbook_text {
+          label {Export text}
+          callback {cb_mnuExportTEXT_log();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_export_logbook_csv {
+          label {Export CSV}
+          callback {cb_mnuExportCSV_log();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_export_cabrillo {
+          label {Cabrillo Report}
+          callback {cb_Export_Cabrillo();}
           xywh {0 0 36 21}
         }
       }
@@ -201,7 +246,8 @@ Edit - Right click} xywh {538 197 56 20}
     }
     Fl_Input txt_sta {
       label {<STA>}
-      xywh {357 222 82 22}
+      callback {check_call();} selected
+      xywh {357 222 82 22} when 1
       code0 {\#include "flinput2.h"}
       class Fl_Input2
     }
@@ -213,14 +259,13 @@ Edit - Right click} xywh {538 197 56 20}
   }
 } 
 
-Function {make_parameters_dialog()} {open
-} {
+Function {make_parameters_dialog()} {} {
   Fl_Window {} {
-    label {WKeyer Parameters} open
-    xywh {555 376 402 270} type Double visible
+    label {WKeyer Parameters}
+    xywh {555 376 402 270} type Double hide
   } {
     Fl_Group {} {
-      label ModeReg open selected
+      label ModeReg open
       xywh {9 23 115 164} box ENGRAVED_FRAME
     } {
       Fl_Check_Button btn_swap {
@@ -366,8 +411,7 @@ Function {make_parameters_dialog()} {open
   }
 } 
 
-Function {make_message_editor()} {open
-} {
+Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor}
     xywh {558 629 552 354} type Double hide
@@ -528,8 +572,7 @@ Function {make_message_editor()} {open
   }
 } 
 
-Function {make_operator_dialog()} {open
-} {
+Function {make_operator_dialog()} {} {
   Fl_Window {} {
     label {Operator Setup} open
     xywh {559 373 296 162} type Double hide

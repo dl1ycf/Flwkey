@@ -12,8 +12,8 @@ MINGW32_SRC = \
 	flwkey-rc.rc \
 	include/flwkeyrc.h \
 	mingw.c \
-	include/compat.h \
-	include/compat-mingw.h
+	compat/regex.c \
+	include/compat.h
 
 
 # We distribute these but do not always compile them
@@ -136,17 +136,43 @@ flwkey_SOURCES += \
 	icons.cxx \
 	fileselect.cxx \
 	FTextRXTX.cxx \
+	logbook/adif_io.cxx \
+	logbook/date.cxx \
+	logbook/logsupport.cxx \
+	logbook/table.cxx \
+	logbook/calendar.cxx \
+	logbook/lgbook.cxx \
+	logbook/logbook.cxx \
+	logbook/qso_db.cxx \
+	logbook/textio.cxx \
+	re.cxx \
 	wkey_dialogs.cxx
 
 # Additional source files that are distributed
 EXTRA_DIST = \
 	config.h \
 	flnfc_common.cxx \
+	compat/regex.c \
+	compat/regex.h \
 	Fl_Native_File_Chooser_FLTK.cxx \
 	Fl_Native_File_Chooser_MAC.cxx \
 	Fl_Native_File_Chooser_WIN32.cxx \
 	flwkey_icon.cxx \
 	wkey_dialogs.fl \
+	logbook/lgbook.fl \
+	include/adif_def.h \
+	include/adif_io.h \
+	include/calendar.h \
+	include/date.h \
+	include/field_def.h \
+	include/lgbook.h \
+	include/log.h \
+	include/logbook.h \
+	include/logger.h \
+	include/logsupport.h \
+	include/qso_db.h \
+	include/table.h \
+	include/textio.h \
 	include/combo.h \
 	include/debug.h \
 	include/dialogs.h \
@@ -162,6 +188,7 @@ EXTRA_DIST = \
 	include/status.h \
 	include/support.h \
 	include/threads.h \
+	include/re.h \
 	include/util.h \
 	include/ValueSlider.h \
 	include/FTextView.h \

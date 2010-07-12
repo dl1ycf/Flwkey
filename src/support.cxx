@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <pthread.h>
 
+#include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Enumerations.H>
 
@@ -19,6 +20,7 @@
 #include "dialogs.h"
 #include "wkey_dialogs.h"
 #include "status.h"
+#include "logbook.h"
 
 using namespace std;
 
@@ -157,13 +159,33 @@ void sendText(string &cmd)
 	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
-void sendChar(char c)
+static int send_count = 10;
+void send_char(void *)
 {
-	pthread_mutex_lock(&mutex_serial);
-	c = toupper(c);
-	if (c < ' ') c = ' ';
-	str_out = c;
-	pthread_mutex_unlock(&mutex_serial);
+	MilliSleep(10);
+	if (!wkeyer_ready) {
+		if (!send_count) {
+			wkeyer_ready = true;
+			send_count = 10;
+		}
+		return;
+	}
+	send_count = 10;
+	if (!btn_send->value()) {
+		return;
+	}
+	char c;
+	c = txt_to_send->nextChar();
+	if (c > -1) {
+		c = toupper(c);
+		if (c < ' ') c = ' ';
+		if (c == '0' && progStatus.cut_zeronine) c = 'T';
+		if (c == '9' && progStatus.cut_zeronine) c = 'N';
+		pthread_mutex_lock(&mutex_serial);
+			str_out = c;
+			wkeyer_ready = false;
+		pthread_mutex_unlock(&mutex_serial);
+	}
 }
 
 void * serial_thread_loop(void *d)
@@ -172,7 +194,7 @@ unsigned char byte;
 	for(;;) {
 		if (!run_serial_thread) break;
 
-		MilliSleep(1);//progStatus.serloop_timing);
+		MilliSleep(10);//progStatus.serloop_timing);
 
 		if (bypass_serial_thread_loop ||
 			!WKEY_serial.IsOpen()) goto serial_bypass_loop;
@@ -183,6 +205,7 @@ unsigned char byte;
 				sendString(str_out, true);
 				str_out.clear();
 			}
+			
 			if (WKEY_serial.ReadByte(byte)) {
 				if ((byte == 0xA5 || read_EEPROM))
 					eeprom_(byte);
@@ -259,9 +282,11 @@ void show_status_change(void *d)
 	box_xoff->redraw();
 }
 
+unsigned char old_status = 0;
 void status_(unsigned char byte)
 {
-	Fl::awake(show_status_change, (void *)byte);
+	if (old_status == byte) return;
+	old_status = byte;
 	if (!(byte & 0x04)) wkeyer_ready = true;
 	if (WKEY_DEBUG)
 		LOG_WARN("Wait %c, Keydown %c, Busy %c, Breakin %c, Xoff %c", 
@@ -270,6 +295,7 @@ void status_(unsigned char byte)
 			byte & 0x04 ? 'T' : 'F',
 			byte & 0x02 ? 'T' : 'F',
 			byte & 0x01 ? 'T' : 'F');
+	Fl::awake(show_status_change, (void *)byte);
 }
 
 void show_speed_change(void *d)
@@ -354,6 +380,8 @@ void cbExit()
 	WKEY_serial.ClosePort();
 
 	progStatus.saveLastState();
+
+	close_logbook();
 
 	exit(0);
 }
@@ -474,32 +502,6 @@ void cb_clear_text_to_send()
 	txt_to_send->clear();
 }
 
-// idle function to handle text available in the Tx buffer
-void cb_send_text(void *)
-{
-	char c;
-// only process if Tx enabled and not busy
-	if (!btn_send->value()) 
-		return;
-	if (!wkeyer_ready) return;
-	switch (c = txt_to_send->nextChar()) {
-		case -1 : return;
-		case '\n':
-		case '\t':
-			c = ' ';
-			break;
-		case '0' : 
-			if (progStatus.cut_zeronine) c = 'T';
-			break;
-		case '9' : 
-			if (progStatus.cut_zeronine) c = 'N';
-			break;
-		default: ;
-	}
-	sendChar(c);
-	wkeyer_ready = false;
-}
-
 void cb_cancel_transmit()
 {
 	string cmd = CLEAR_BUFFER;
@@ -538,7 +540,7 @@ void do_config_messages(void *)
 	config_messages();
 }
 
-void send_message(string &msg)
+void send_message(string msg)
 {
 	if (Fl::event_button() == FL_RIGHT_MOUSE) {
 		Fl::awake(do_config_messages, 0);
@@ -627,4 +629,31 @@ int main_handler(int event)
 		}
 	}
 	return 0;
+}
+
+void check_call()
+{
+	string chkcall = txt_sta->value();
+	if (chkcall.empty()) {
+		txt_sta->color(FL_BACKGROUND2_COLOR);
+		txt_sta->redraw();
+		txt_name->value("");
+		return;
+	}
+	upcase(chkcall);
+	size_t pos = txt_sta->position();
+
+	txt_sta->value(chkcall.c_str());
+	txt_sta->position(pos);
+
+	if (strlen(txt_sta->value()) < 3) return;
+
+//	sDate_on = zdate();
+
+//	if (progdefaults.EnableDupCheck) {
+//		DupCheck();
+//	}
+
+	SearchLastQSO(txt_sta->value());
+
 }

@@ -74,6 +74,9 @@ struct status {
 	string	tag_loc;
 	string	tag_opr;
 
+// logbook entries
+	string logbookfilename;
+
 	void saveLastState();
 	void loadLastState();
 };
