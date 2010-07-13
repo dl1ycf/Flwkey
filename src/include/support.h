@@ -48,8 +48,12 @@ extern void check_call();
 extern void config_parameters();
 extern void config_messages();
 extern void done_parameters();
+
+extern void update_msg_labels();
+extern void apply_edit();
 extern void done_edit();
 extern void cancel_edit();
+
 extern void change_choice_keyer_mode();
 extern void change_choice_output_pins();
 extern void change_choice_sidetone();
@@ -86,7 +90,6 @@ extern void exec_msg7();
 extern void exec_msg8();
 extern void exec_msg9();
 extern void exec_msg10();
-extern void update_msg_labels();
 
 extern void open_operator_dialog();
 extern void cb_done_op_dialog();

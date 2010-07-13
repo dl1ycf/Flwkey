@@ -34,8 +34,8 @@ Function {SetupDialog()} {} {
 Function {WKey_window()} {open
 } {
   Fl_Window {} {
-    label Fl_WinKey open
-    xywh {558 60 600 279} type Double resizable visible
+    label Fl_WinKey
+    xywh {558 60 600 279} type Double hide resizable
   } {
     Fl_Menu_Bar {} {open
       xywh {0 0 600 20}
@@ -253,7 +253,7 @@ Edit - Right click} xywh {538 197 56 20}
       class Fl_Input2
     }
     Fl_Input txt_name {
-      label {<NAM>} selected
+      label {<NAM>}
       xywh {357 251 82 22}
       class Fl_Input2
     }
@@ -412,10 +412,11 @@ Function {make_parameters_dialog()} {} {
   }
 } 
 
-Function {make_message_editor()} {} {
+Function {make_message_editor()} {open
+} {
   Fl_Window {} {
-    label {Message Editor}
-    xywh {558 629 552 354} type Double hide
+    label {Message Editor} open
+    xywh {558 217 597 325} type Double visible
   } {
     Fl_Input label_1 {
       label {1:}
@@ -511,12 +512,12 @@ Function {make_message_editor()} {} {
     Fl_Button btn_done_edit {
       label Done
       callback {done_edit();}
-      xywh {472 325 70 20}
+      xywh {536 290 56 26}
     }
     Fl_Button btn_cancel_edit {
       label Cancel
       callback {cancel_edit();}
-      xywh {390 325 70 20}
+      xywh {463 260 65 26}
     }
     Fl_Box {} {
       label {Message Text}
@@ -526,49 +527,106 @@ Function {make_message_editor()} {} {
       label {Msg Label}
       xywh {12 8 84 23}
     }
-    Fl_Group {} {open
-      xywh {462 4 87 319} box ENGRAVED_FRAME
+    Fl_Group {} {
+      xywh {462 4 65 252} box ENGRAVED_FRAME
     } {
       Fl_Box {} {
         label Tags
-        xywh {467 7 78 23}
+        xywh {467 7 54 20}
       }
       Fl_Box {} {
         label {<CLL>}
-        tooltip {Your call} xywh {467 36 78 23}
+        tooltip {Your call} xywh {467 36 55 20}
       }
       Fl_Box {} {
         label {<QTH>}
-        tooltip {Your qth} xywh {467 64 78 23}
+        tooltip {Your qth} xywh {467 56 55 20}
       }
       Fl_Box {} {
         label {<LOC>}
-        tooltip {Your location} xywh {467 93 78 23}
+        tooltip {Your location} xywh {467 76 55 20}
       }
       Fl_Box {} {
         label {<OPR>}
-        tooltip {Your name} xywh {467 122 78 23}
+        tooltip {Your name} xywh {467 96 55 20}
       }
       Fl_Box {} {
         label {<STA>}
-        tooltip {Other stations callsign} xywh {467 150 78 23}
+        tooltip {Other stations callsign} xywh {467 115 55 20}
       }
       Fl_Box {} {
         label {<NAM>}
-        tooltip {Other stations name} xywh {467 179 78 23}
+        tooltip {Other stations name} xywh {467 134 55 20}
       }
       Fl_Box {} {
-        xywh {467 208 78 23}
+        xywh {467 208 55 20}
       }
       Fl_Box {} {
-        xywh {467 236 78 23}
+        xywh {467 154 55 20}
       }
       Fl_Box {} {
-        xywh {467 265 78 23}
+        xywh {467 155 55 20}
       }
       Fl_Box {} {
-        xywh {467 294 78 23}
+        xywh {467 153 55 20}
       }
+    }
+    Fl_Group {} {open
+      xywh {527 4 65 252} box ENGRAVED_FRAME
+    } {
+      Fl_Box {} {
+        label ProSign
+        xywh {530 7 59 20}
+      }
+      Fl_Box {} {
+        label {" RR}
+        tooltip {Your call} xywh {529 36 60 20}
+      }
+      Fl_Box {} {
+        label {$ SX}
+        tooltip {Your qth} xywh {529 56 60 20}
+      }
+      Fl_Box {} {
+        label {' WG}
+        tooltip {Your location} xywh {529 75 60 20}
+      }
+      Fl_Box {} {
+        label {( KN}
+        tooltip {Your name} xywh {529 94 60 20}
+      }
+      Fl_Box {} {
+        label {) KK}
+        tooltip {Other stations callsign} xywh {529 113 60 20}
+      }
+      Fl_Box {} {
+        label {+ AR}
+        tooltip {Other stations name} xywh {529 132 60 20}
+      }
+      Fl_Box {} {
+        label {< AR}
+        xywh {529 151 60 20}
+      }
+      Fl_Box {} {
+        label {> SK}
+        xywh {529 170 60 20}
+      }
+      Fl_Box {} {
+        label {= BT}
+        xywh {529 189 60 20}
+      }
+      Fl_Box {} {
+        label {- DU}
+        xywh {529 208 60 20}
+      }
+      Fl_Box {} {
+        label {@@ AC}
+        xywh {529 227 60 20}
+      }
+    }
+    Fl_Button btn_apply_edit {
+      label Apply
+      callback {apply_edit();} selected
+      xywh {463 290 65 26}
     }
   }
 } 

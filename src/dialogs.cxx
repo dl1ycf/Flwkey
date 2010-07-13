@@ -562,7 +562,7 @@ void update_msg_labels()
 	btn_msg10->label(progStatus.label_10.c_str()); btn_msg10->redraw();
 }
 
-void done_edit()
+void apply_edit()
 {
 	progStatus.label_1 = label_1->value();
 	progStatus.edit_msg1 = edit_msg1->value();
@@ -595,7 +595,11 @@ void done_edit()
 	progStatus.edit_msg10 = edit_msg10->value();
 
 	update_msg_labels();
+}
 
+void done_edit()
+{
+	apply_edit();
 	dialog_messages->hide();
 }
 

@@ -110,6 +110,7 @@ extern Fl_Input2 *label_10;
 extern Fl_Input2 *edit_msg10;
 extern Fl_Button *btn_done_edit;
 extern Fl_Button *btn_cancel_edit;
+extern Fl_Button *btn_apply_edit;
 Fl_Double_Window* make_message_editor();
 extern Fl_Input2 *txt_cll;
 extern Fl_Input2 *txt_opr;

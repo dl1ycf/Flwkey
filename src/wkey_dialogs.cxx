@@ -749,9 +749,15 @@ static void cb_btn_cancel_edit(Fl_Button*, void*) {
   cancel_edit();
 }
 
+Fl_Button *btn_apply_edit=(Fl_Button *)0;
+
+static void cb_btn_apply_edit(Fl_Button*, void*) {
+  apply_edit();
+}
+
 Fl_Double_Window* make_message_editor() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(552, 354, _("Message Editor"));
+  { Fl_Double_Window* o = new Fl_Double_Window(597, 325, _("Message Editor"));
     w = o;
     { label_1 = new Fl_Input2(30, 35, 50, 25, _("1:"));
       label_1->box(FL_DOWN_BOX);
@@ -973,48 +979,85 @@ Fl_Double_Window* make_message_editor() {
       edit_msg10->align(FL_ALIGN_LEFT);
       edit_msg10->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg10
-    { btn_done_edit = new Fl_Button(472, 325, 70, 20, _("Done"));
+    { btn_done_edit = new Fl_Button(536, 290, 56, 26, _("Done"));
       btn_done_edit->callback((Fl_Callback*)cb_btn_done_edit);
     } // Fl_Button* btn_done_edit
-    { btn_cancel_edit = new Fl_Button(390, 325, 70, 20, _("Cancel"));
+    { btn_cancel_edit = new Fl_Button(463, 260, 65, 26, _("Cancel"));
       btn_cancel_edit->callback((Fl_Callback*)cb_btn_cancel_edit);
     } // Fl_Button* btn_cancel_edit
     { new Fl_Box(201, 9, 223, 19, _("Message Text"));
     } // Fl_Box* o
     { new Fl_Box(12, 8, 84, 23, _("Msg Label"));
     } // Fl_Box* o
-    { Fl_Group* o = new Fl_Group(462, 4, 87, 319);
+    { Fl_Group* o = new Fl_Group(462, 4, 65, 252);
       o->box(FL_ENGRAVED_FRAME);
-      { new Fl_Box(467, 7, 78, 23, _("Tags"));
+      { new Fl_Box(467, 7, 54, 20, _("Tags"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 36, 78, 23, _("<CLL>"));
+      { Fl_Box* o = new Fl_Box(467, 36, 55, 20, _("<CLL>"));
         o->tooltip(_("Your call"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 64, 78, 23, _("<QTH>"));
+      { Fl_Box* o = new Fl_Box(467, 56, 55, 20, _("<QTH>"));
         o->tooltip(_("Your qth"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 93, 78, 23, _("<LOC>"));
+      { Fl_Box* o = new Fl_Box(467, 76, 55, 20, _("<LOC>"));
         o->tooltip(_("Your location"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 122, 78, 23, _("<OPR>"));
+      { Fl_Box* o = new Fl_Box(467, 96, 55, 20, _("<OPR>"));
         o->tooltip(_("Your name"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 150, 78, 23, _("<STA>"));
+      { Fl_Box* o = new Fl_Box(467, 115, 55, 20, _("<STA>"));
         o->tooltip(_("Other stations callsign"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 179, 78, 23, _("<NAM>"));
+      { Fl_Box* o = new Fl_Box(467, 134, 55, 20, _("<NAM>"));
         o->tooltip(_("Other stations name"));
       } // Fl_Box* o
-      { new Fl_Box(467, 208, 78, 23);
+      { new Fl_Box(467, 208, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 236, 78, 23);
+      { new Fl_Box(467, 154, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 265, 78, 23);
+      { new Fl_Box(467, 155, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 294, 78, 23);
+      { new Fl_Box(467, 153, 55, 20);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
+    { Fl_Group* o = new Fl_Group(527, 4, 65, 252);
+      o->box(FL_ENGRAVED_FRAME);
+      { new Fl_Box(530, 7, 59, 20, _("ProSign"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 36, 60, 20, _("\" RR"));
+        o->tooltip(_("Your call"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 56, 60, 20, _("$ SX"));
+        o->tooltip(_("Your qth"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 75, 60, 20, _("\' WG"));
+        o->tooltip(_("Your location"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 94, 60, 20, _("( KN"));
+        o->tooltip(_("Your name"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 113, 60, 20, _(") KK"));
+        o->tooltip(_("Other stations callsign"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(529, 132, 60, 20, _("+ AR"));
+        o->tooltip(_("Other stations name"));
+      } // Fl_Box* o
+      { new Fl_Box(529, 151, 60, 20, _("< AR"));
+      } // Fl_Box* o
+      { new Fl_Box(529, 170, 60, 20, _("> SK"));
+      } // Fl_Box* o
+      { new Fl_Box(529, 189, 60, 20, _("= BT"));
+      } // Fl_Box* o
+      { new Fl_Box(529, 208, 60, 20, _("- DU"));
+      } // Fl_Box* o
+      { new Fl_Box(529, 227, 60, 20, _("@@ AC"));
+      } // Fl_Box* o
+      o->end();
+    } // Fl_Group* o
+    { btn_apply_edit = new Fl_Button(463, 290, 65, 26, _("Apply"));
+      btn_apply_edit->callback((Fl_Callback*)cb_btn_apply_edit);
+    } // Fl_Button* btn_apply_edit
     o->end();
   } // Fl_Double_Window* o
   return w;
