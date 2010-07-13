@@ -39,6 +39,7 @@ extern void cb_clear_text_to_send();
 extern void send_char(void *);
 extern void cb_cancel_transmit();
 extern void cb_transmit_text();
+extern void cb_send_button();
 extern void set_wpm();
 extern void use_pot_changed();
 extern void load_defaults();

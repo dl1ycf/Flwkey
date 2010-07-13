@@ -139,6 +139,7 @@ Function {WKey_window()} {open
     }
     Fl_Light_Button btn_send {
       label Send
+      callback {cb_send_button();}
       xywh {525 221 70 25}
     }
     Fl_Light_Button btn_tune {
@@ -246,13 +247,13 @@ Edit - Right click} xywh {538 197 56 20}
     }
     Fl_Input txt_sta {
       label {<STA>}
-      callback {check_call();} selected
+      callback {check_call();}
       xywh {357 222 82 22} when 1
       code0 {\#include "flinput2.h"}
       class Fl_Input2
     }
     Fl_Input txt_name {
-      label {<NAM>}
+      label {<NAM>} selected
       xywh {357 251 82 22}
       class Fl_Input2
     }

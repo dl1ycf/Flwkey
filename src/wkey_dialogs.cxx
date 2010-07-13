@@ -132,6 +132,10 @@ FTextTX *txt_to_send=(FTextTX *)0;
 
 Fl_Light_Button *btn_send=(Fl_Light_Button *)0;
 
+static void cb_btn_send(Fl_Light_Button*, void*) {
+  cb_send_button();
+}
+
 Fl_Light_Button *btn_tune=(Fl_Light_Button *)0;
 
 static void cb_btn_tune(Fl_Light_Button*, void*) {
@@ -269,6 +273,7 @@ Fl_Double_Window* WKey_window() {
       txt_to_send->when(FL_WHEN_CHANGED);
     } // FTextTX* txt_to_send
     { btn_send = new Fl_Light_Button(525, 221, 70, 25, _("Send"));
+      btn_send->callback((Fl_Callback*)cb_btn_send);
     } // Fl_Light_Button* btn_send
     { btn_tune = new Fl_Light_Button(525, 250, 70, 25, _("Tune"));
       btn_tune->selection_color((Fl_Color)5);

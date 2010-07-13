@@ -284,7 +284,6 @@ int main (int argc, char *argv[])
 
 	FSEL::create();
 
-	Fl::add_idle(send_char, 0);
 	Fl::add_timeout(0.20, startup);
 
 	return Fl::run();

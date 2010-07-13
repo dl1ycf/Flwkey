@@ -159,21 +159,11 @@ void sendText(string &cmd)
 	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
-static int send_count = 10;
 void send_char(void *)
 {
-	MilliSleep(10);
-	if (!wkeyer_ready) {
-		if (!send_count) {
-			wkeyer_ready = true;
-			send_count = 10;
-		}
+	if (!btn_send->value() || !wkeyer_ready)
 		return;
-	}
-	send_count = 10;
-	if (!btn_send->value()) {
-		return;
-	}
+
 	char c;
 	c = txt_to_send->nextChar();
 	if (c > -1) {
@@ -183,7 +173,7 @@ void send_char(void *)
 		if (c == '9' && progStatus.cut_zeronine) c = 'N';
 		pthread_mutex_lock(&mutex_serial);
 			str_out = c;
-			wkeyer_ready = false;
+//			wkeyer_ready = false;
 		pthread_mutex_unlock(&mutex_serial);
 	}
 }
@@ -194,7 +184,7 @@ unsigned char byte;
 	for(;;) {
 		if (!run_serial_thread) break;
 
-		MilliSleep(10);//progStatus.serloop_timing);
+		MilliSleep(1);//progStatus.serloop_timing);
 
 		if (bypass_serial_thread_loop ||
 			!WKEY_serial.IsOpen()) goto serial_bypass_loop;
@@ -204,8 +194,9 @@ unsigned char byte;
 			if (!str_out.empty()) {
 				sendString(str_out, true);
 				str_out.clear();
-			}
-			
+			} else
+				Fl::awake(send_char, 0);
+
 			if (WKEY_serial.ReadByte(byte)) {
 				if ((byte == 0xA5 || read_EEPROM))
 					eeprom_(byte);
@@ -285,9 +276,10 @@ void show_status_change(void *d)
 unsigned char old_status = 0;
 void status_(unsigned char byte)
 {
+	if ((byte & 0x04)== 0x04) wkeyer_ready = false;
+	else wkeyer_ready = true;
 	if (old_status == byte) return;
 	old_status = byte;
-	if (!(byte & 0x04)) wkeyer_ready = true;
 	if (WKEY_DEBUG)
 		LOG_WARN("Wait %c, Keydown %c, Busy %c, Breakin %c, Xoff %c", 
 			byte & 0x10 ? 'T' : 'F',
@@ -497,9 +489,15 @@ void load_defaults()
 	sendCommand(cmd);
 }
 
+void cb_send_button()
+{
+	Fl::focus(txt_to_send);
+}
+
 void cb_clear_text_to_send()
 {
 	txt_to_send->clear();
+	Fl::focus(txt_to_send);
 }
 
 void cb_cancel_transmit()
@@ -507,6 +505,7 @@ void cb_cancel_transmit()
 	string cmd = CLEAR_BUFFER;
 	sendCommand(cmd);
 	cb_clear_text_to_send();
+	Fl::focus(txt_to_send);
 }
 
 void cb_tune()
@@ -515,6 +514,7 @@ void cb_tune()
 	if (btn_tune->value()) cmd += '\1';
 	else cmd += '\0';
 	sendCommand(cmd);
+	Fl::focus(txt_to_send);
 }
 
 void expand_msg(string &msg)
@@ -554,77 +554,107 @@ void send_message(string msg)
 void exec_msg1()
 {
 	send_message(progStatus.edit_msg1);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg2()
 {
 	send_message(progStatus.edit_msg2);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg3()
 {
 	send_message(progStatus.edit_msg3);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg4()
 {
 	send_message(progStatus.edit_msg4);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg5()
 {
 	send_message(progStatus.edit_msg5);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg6()
 {
 	send_message(progStatus.edit_msg6);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg7()
 {
 	send_message(progStatus.edit_msg7);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg8()
 {
 	send_message(progStatus.edit_msg8);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg9()
 {
 	send_message(progStatus.edit_msg9);
+	Fl::focus(txt_to_send);
 }
 
 void exec_msg10()
 {
 	send_message(progStatus.edit_msg10);
+	Fl::focus(txt_to_send);
 }
 
 int main_handler(int event)
 {
 	if (event != FL_SHORTCUT)
 		return 0;
-
 	Fl_Widget* w = Fl::focus();
 
 	if (w == mainwindow || w->window() == mainwindow) {
 		int key = Fl::event_key();
-		if (key == FL_Escape || (key > FL_F && key <= (FL_F + 10))) {
+		if (key == FL_Escape) return 1;
+		if ((key > FL_F) && key <= (FL_F + 10)) {
 			switch (key) {
-				case (FL_F + 1): exec_msg1(); break;
-				case (FL_F + 2): exec_msg2(); break;
-				case (FL_F + 3): exec_msg3(); break;
-				case (FL_F + 4): exec_msg4(); break;
-				case (FL_F + 5): exec_msg5(); break;
-				case (FL_F + 6): exec_msg6(); break;
-				case (FL_F + 7): exec_msg7(); break;
-				case (FL_F + 8): exec_msg8(); break;
-				case (FL_F + 9): exec_msg9(); break;
-				case (FL_F + 10): exec_msg10(); break;
-				default:
-					LOG_WARN("key = %d", key);
+				case (FL_F + 1):
+					send_message(progStatus.edit_msg1);
+					break;
+				case (FL_F + 2):
+					send_message(progStatus.edit_msg2);
+					break;
+				case (FL_F + 3):
+					send_message(progStatus.edit_msg3);
+					break;
+				case (FL_F + 4):
+					send_message(progStatus.edit_msg4);
+					break;
+				case (FL_F + 5):
+					send_message(progStatus.edit_msg5);
+					break;
+				case (FL_F + 6):
+					send_message(progStatus.edit_msg6);
+					break;
+				case (FL_F + 7):
+					send_message(progStatus.edit_msg7);
+					break;
+				case (FL_F + 8): 
+					send_message(progStatus.edit_msg8);
+					break;
+				case (FL_F + 9): 
+					send_message(progStatus.edit_msg9);
+					break;
+				case (FL_F + 10):
+					send_message(progStatus.edit_msg10);
+					break;
+				default: break;
 			}
+			Fl::focus(txt_to_send);
 			return 1;
 		}
 	}
