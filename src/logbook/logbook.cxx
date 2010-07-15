@@ -25,26 +25,23 @@ void do_load_browser(void *)
 
 static void *logbook_loop(void *args)
 {
-	int cnt = 10;
+	int cnt = 5;
 	for (;;) {
 	/* see if we are being canceled */
 		if (logbook_exit)
 			break;
 		if (!cnt--) {
-			cnt = 10;
+			cnt = 5;
 			pthread_mutex_lock (&logbook_mutex);
 			if (adifFile.log_changed(logbook_filename.c_str())) {
 				qsodb.deleteRecs();
 				adifFile.readFile (logbook_filename.c_str(), &qsodb);
-				LOG_DEBUG("Log db changed %s", 
-					(log_checksum = adifFile.get_file_checksum()).c_str());
-				adifFile.set_checksum(log_checksum);
 				Fl::awake(do_load_browser);
 				qsodb.isdirty(0);
 			}
 			pthread_mutex_unlock (&logbook_mutex);
 		}
-		MilliSleep(200);
+		MilliSleep(100);
 	}
 // exit the arq thread
 	return NULL;
@@ -65,9 +62,6 @@ void start_logbook ()
 	string label = "Logbook - ";
 	label.append(fl_filename_name(logbook_filename.c_str()));
 	dlgLogbook->copy_label(label.c_str());
-
-	log_checksum = adifFile.get_file_checksum();
-	adifFile.set_checksum(log_checksum);
 
 	loadBrowser();
 	qsodb.isdirty(0);

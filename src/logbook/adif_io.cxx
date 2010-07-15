@@ -227,6 +227,7 @@ void cAdifIO::readFile (const char *fname, cQsoDb *db) {
 		p2 = strchr(p1,'<');
 	}
 
+	log_checksum = file_checksum;
 	db->SortByDate();
 	delete [] buff;
 }
@@ -307,8 +308,10 @@ int cAdifIO::writeLog (const char *fname, cQsoDb *db) {
 	string s_checksum;
 
 	adiFile = fopen (fname, "w");
-	if (!adiFile)
+	if (!adiFile) {
+		LOG_ERROR("Cannot write to %s", fname);
 		return 1;
+	}
 
 	string records;
 	string record;
@@ -375,7 +378,6 @@ void cAdifIO::do_checksum(cQsoDb &db)
 		records.append(record);
 	}
 	log_checksum = checksum.scrc16(records);
-//	LOG_WARN("checksum %s", log_checksum.c_str());
 }
 
 bool cAdifIO::log_changed (const char *fname)
@@ -383,8 +385,10 @@ bool cAdifIO::log_changed (const char *fname)
 	int retval;
 // open the adif file
 	FILE *adiFile = fopen (fname, "r");
-	if (!adiFile)
+	if (!adiFile) {
+		LOG_ERROR("Cannot open %s", fname);
 		return false;
+	}
 
 // read first 2048 chars
 	char buff[2048];
@@ -398,12 +402,8 @@ bool cAdifIO::log_changed (const char *fname)
 		p = sbuff.find(">", p);
 		if (p == string::npos) return false;
 		p++;
-		if (log_checksum == sbuff.substr(p, 4)) {
-//			LOG_WARN("%s", "false");
-			return false;
-		}
-//		LOG_WARN("%s is not %s", log_checksum.c_str(), sbuff.substr(p,4).c_str());
-		return true;
+		if (log_checksum != sbuff.substr(p, 4))
+			return true;
 	}
 	return  false;
 }

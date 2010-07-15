@@ -148,7 +148,7 @@ void status::saveLastState()
 	spref.set("tag_loc", tag_loc.c_str());
 	spref.set("tag_opr", tag_opr.c_str());
 
-	spref.set("logbook_filename", logbook_filename.c_str());
+	spref.set("logbook_filename", logbookfilename.c_str());
 
 }
 
@@ -209,7 +209,7 @@ void status::loadLastState()
 		spref.get("tag_qth", defbuffer, "", 199); tag_qth = defbuffer;
 		spref.get("tag_loc", defbuffer, "", 199); tag_loc = defbuffer;
 		spref.get("tag_opr", defbuffer, "", 199); tag_opr = defbuffer;
-		spref.get("logbook_filename", defbuffer, "", 199); logbook_filename = defbuffer;
+		spref.get("logbook_filename", defbuffer, "", 199); logbookfilename = defbuffer;
 
 		update_msg_labels();
 	}

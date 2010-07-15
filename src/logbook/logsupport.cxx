@@ -502,8 +502,9 @@ void clearRecord() {
 }
 
 void saveRecord() {
-cQsoRec rec;
-/*
+
+	cQsoRec rec;
+
 	rec.putField(CALL, inpCall_log->value());
 	rec.putField(NAME, inpName_log->value());
 	rec.putField(QSO_DATE, inpDate_log->value());
@@ -524,24 +525,15 @@ cQsoRec rec;
 	rec.putField(SRX, inpSerNoIn_log->value());
 	rec.putField(STX, inpSerNoOut_log->value());
 	rec.putField(XCHG1, inpXchgIn_log->value());
-	if (!qso_exchange.empty()) {
-		rec.putField(MYXCHG, qso_exchange.c_str());
-		qso_exchange.clear();
-		qso_time.clear();
-	} else if (!qso_time.empty()) {
-		string myexch = inpMyXchg_log->value();
-		myexch.append(" ").append(qso_time);
-		rec.putField(MYXCHG, myexch.c_str());
-		qso_time.clear();
-	} else {
-		rec.putField(MYXCHG, inpMyXchg_log->value());
-	}
+	rec.putField(MYXCHG, inpMyXchg_log->value());
 	rec.putField(IOTA, inpIOTA_log->value());
 	rec.putField(DXCC, inpDXCC_log->value());
 	rec.putField(CONT, inpCONT_log->value());
 	rec.putField(CQZ, inpCQZ_log->value());
 	rec.putField(ITUZ, inpITUZ_log->value());
 	rec.putField(TX_PWR, inpTX_pwr_log->value());
+
+	qsodb.qsoNewRec (&rec);
 
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
@@ -553,14 +545,14 @@ cQsoRec rec;
 	qsodb.isdirty(0);
 	restore_sort();
 
-	qsodb.qsoNewRec (&rec);
-//	dxcc_entity_cache_add(&rec);
-*/
+	loadBrowser();
+	logState = VIEWREC;
+	activateButtons();
 }
 
 void updateRecord() {
 cQsoRec rec;
-/*
+
 	if (qsodb.nbrRecs() == 0) return;
 	rec.putField(CALL, inpCall_log->value());
 	rec.putField(NAME, inpName_log->value());
@@ -589,9 +581,7 @@ cQsoRec rec;
 	rec.putField(CQZ, inpCQZ_log->value());
 	rec.putField(ITUZ, inpITUZ_log->value());
 	rec.putField(TX_PWR, inpTX_pwr_log->value());
-	dxcc_entity_cache_rm(qsodb.getRec(editNbr));
 	qsodb.qsoUpdRec (editNbr, &rec);
-//	dxcc_entity_cache_add(&rec);
 
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
@@ -604,7 +594,6 @@ cQsoRec rec;
 	restore_sort();
 
 	loadBrowser(true);
-*/
 }
 
 void deleteRecord () {
@@ -667,54 +656,39 @@ std::string sDate_on = "";
 
 void AddRecord ()
 {
-//	inpCall_log->value(inpCall->value());
-//	inpName_log->value (inpName->value());
-//	inpTimeOn_log->value (inpTimeOn->value());
-//	inpTimeOff_log->value (ztime());
-//	inpDate_log->value(sDate_on.c_str());
-//	inpRstR_log->value (inpRstIn->value());
-//	inpRstS_log->value (inpRstOut->value());
-//	{
-//		char Mhz[30];
-//		snprintf(Mhz, sizeof(Mhz), "%-f", atof(inpFreq->value()) / 1000.0);
-//		inpFreq_log->value(Mhz);
-//	}
-//	inpMode_log->value (logmode);
-//	inpState_log->value (inpState->value());
-//	inpVE_Prov_log->value (inpVEprov->value());
-//	inpCountry_log->value (inpCountry->value());
+	inpCall_log->value(txt_sta->value());
+	inpName_log->value (txt_name->value());
+	inpTimeOn_log->value ("");
+	inpTimeOff_log->value ("");
+	inpDate_log->value("");
+	inpRstR_log->value ("599");
+	inpRstS_log->value ("599");
+	inpFreq_log->value("");
+	inpMode_log->value ("");
+	inpState_log->value ("");
+	inpVE_Prov_log->value ("");
+	inpCountry_log->value ("");
 
-//	inpSerNoIn_log->value(inpSerNo->value());
-//	inpSerNoOut_log->value(outSerNo->value());
-//	inpXchgIn_log->value(inpXchgIn->value());
-//	inpMyXchg_log->value(progdefaults.myXchg.c_str());
+	inpSerNoIn_log->value("");
+	inpSerNoOut_log->value("");
+	inpXchgIn_log->value("");
+	inpMyXchg_log->value("");
 
-//	inpQth_log->value (inpQth->value());
-//	inpLoc_log->value (inpLoc->value());
-//	inpQSLrcvddate_log->value ("");
-//	inpQSLsentdate_log->value ("");
-//	inpNotes_log->value (inpNotes->value());
+	inpQth_log->value ("");
+	inpLoc_log->value ("");
+	inpQSLrcvddate_log->value ("");
+	inpQSLsentdate_log->value ("");
+	inpNotes_log->value ("");
 
-//	inpTX_pwr_log->value (progdefaults.mytxpower.c_str());
-//	inpIOTA_log->value("");
-//	inpDXCC_log->value("");
-//	inpCONT_log->value("");
-//	inpCQZ_log->value("");
-//	inpITUZ_log->value("");
+	inpTX_pwr_log->value ("");
+	inpIOTA_log->value("");
+	inpDXCC_log->value("");
+	inpCONT_log->value("");
+	inpCQZ_log->value("");
+	inpITUZ_log->value("");
 
-//	saveRecord();
+	saveRecord();
 
-//	qsodb.SortByDate();
-
-//	pthread_mutex_lock (&logbook_mutex);
-//	adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-//	pthread_mutex_unlock (&logbook_mutex);
-
-//	qsodb.isdirty(0);
-
-	loadBrowser();
-	logState = VIEWREC;
-	activateButtons();
 }
 
 void cb_browser (Fl_Widget *w, void *data )
