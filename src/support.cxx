@@ -173,10 +173,11 @@ void send_char(void *)
 		if (c == '9' && progStatus.cut_zeronine) c = 'N';
 		pthread_mutex_lock(&mutex_serial);
 			str_out = c;
-//			wkeyer_ready = false;
 		pthread_mutex_unlock(&mutex_serial);
 	}
 }
+
+int status_query = 50;
 
 void * serial_thread_loop(void *d)
 {
@@ -210,6 +211,11 @@ unsigned char byte;
 					version_(byte);
 				else
 					echo_(byte);
+			}
+			if (status_query-- == 0) {
+				string cmd = GET_STATUS;
+				sendString(cmd);
+				status_query = 100;
 			}
 		pthread_mutex_unlock(&mutex_serial);
 serial_bypass_loop: ;
@@ -260,26 +266,29 @@ void version_(unsigned char byte)
 void show_status_change(void *d)
 {
 	long lbyte = (long)d;
-	unsigned char byte = (unsigned char)(lbyte & 0xFF);
-	box_wait->color(byte & 0x10 ? FL_RED : FL_BACKGROUND2_COLOR);
-	box_keydown->color(byte & 0x08 ? FL_RED : FL_BACKGROUND2_COLOR);
-	box_busy->color(byte & 0x04 ? FL_RED : FL_BACKGROUND2_COLOR);
-	box_break_in->color(byte & 0x02 ? FL_RED : FL_BACKGROUND2_COLOR);
-	box_xoff->color(byte & 0x01 ? FL_RED : FL_BACKGROUND2_COLOR);
+	unsigned char byte = (unsigned char)(lbyte & 0x3F);
+
+	box_wait->color((byte & 0x10) == 0x10 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_wait->redraw();
+
+	box_keydown->color((byte & 0x08) == 0x08 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_keydown->redraw();
+
+	box_busy->color((byte & 0x04) == 0x04 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_busy->redraw();
+
+	box_break_in->color((byte & 0x02) == 0x02 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_break_in->redraw();
+
+	box_xoff->color((byte & 0x01) == 0x01 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_xoff->redraw();
 }
 
-unsigned char old_status = 0;
 void status_(unsigned char byte)
 {
+	status_query = 50;
 	if ((byte & 0x04)== 0x04) wkeyer_ready = false;
 	else wkeyer_ready = true;
-	if (old_status == byte) return;
-	old_status = byte;
 	if (WKEY_DEBUG)
 		LOG_WARN("Wait %c, Keydown %c, Busy %c, Breakin %c, Xoff %c", 
 			byte & 0x10 ? 'T' : 'F',
@@ -378,6 +387,7 @@ void cbExit()
 	exit(0);
 }
 
+
 void open_wkeyer()
 {
 	int cnt = 0;
@@ -443,10 +453,6 @@ void open_wkeyer()
 	cmd = GET_SPEED_POT;
 	sendCommand(cmd);
 
-	cmd = ADMIN;
-	cmd = GET_VALUES;
-	sendCommand(cmd);
-	
 	cmd = SET_WPM;
 	cmd += progStatus.speed_wpm;
 	sendCommand(cmd);

@@ -296,7 +296,7 @@ int parse_args(int argc, char **argv, int& idx)
 		printf("Usage: \n\
   --help this help text\n\
   --version\n\
-  --wkey_debug\n");
+  --debug\n");
 		exit(0);
 	} 
 	if (strcasecmp("--version", argv[1]) == 0) {
