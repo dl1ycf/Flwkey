@@ -260,163 +260,178 @@ Edit - Right click} xywh {538 197 56 20}
   }
 } 
 
-Function {make_parameters_dialog()} {} {
+Function {make_parameters_dialog()} {open
+} {
   Fl_Window {} {
-    label {WKeyer Parameters}
-    xywh {555 376 402 270} type Double hide
+    label {WKeyer Parameters} open
+    xywh {555 376 515 232} type Double visible
   } {
     Fl_Group {} {
       label ModeReg open
-      xywh {9 23 115 164} box ENGRAVED_FRAME
+      xywh {5 23 115 114} box ENGRAVED_FRAME
     } {
       Fl_Check_Button btn_swap {
         label Swap
         callback {change_btn_swap();}
-        xywh {14 31 70 15} down_box DOWN_BOX
+        xywh {15 31 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_auto_space {
         label {Auto Space}
         callback {change_btn_auto_space();}
-        xywh {14 50 70 15} down_box DOWN_BOX
+        xywh {15 51 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_ct_space {
         label {CT space}
         callback {change_btn_ct_space();}
-        xywh {14 69 70 15} down_box DOWN_BOX
+        xywh {15 72 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_paddledog {
         label {Paddle Dog}
         callback {change_btn_paddledog();}
-        xywh {14 88 70 15} down_box DOWN_BOX
+        xywh {15 92 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_cut_zeronine {
         label {Cut 0/9}
         callback {change_btn_cut_zeronine();}
-        xywh {14 107 70 15} down_box DOWN_BOX
+        xywh {15 113 70 15} down_box DOWN_BOX
       }
+    }
+    Fl_Group {} {
+      label ModeReg open
+      xywh {122 23 115 114} box ENGRAVED_FRAME
+    } {
       Fl_Check_Button btn_paddle_echo {
         label {Paddle echo}
         callback {change_btn_paddle_echo();}
-        xywh {14 126 70 15} down_box DOWN_BOX
+        xywh {128 31 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_serial_echo {
         label {Serial echo}
         callback {change_btn_serial_echo();}
-        xywh {14 145 70 15} down_box DOWN_BOX
+        xywh {128 51 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btn_sidetone_on {
-        label Sidetone
+        label {Tone Keyer}
         callback {change_btn_sidetone_on();}
-        xywh {14 165 70 15} down_box DOWN_BOX
+        xywh {128 71 103 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_tone_on {
+        label {Tone ON}
+        callback {change_btn_tone_on();}
+        xywh {128 92 87 15} down_box DOWN_BOX
+      }
+      Fl_Check_Button btn_ptt_on {
+        label {PTT ON}
+        callback {change_btn_ptt_on();} selected
+        xywh {128 113 87 15} down_box DOWN_BOX
       }
     }
     Fl_Group {} {
       label {WPM Settings} open
-      xywh {125 23 112 164} box ENGRAVED_FRAME
+      xywh {240 23 112 165} box ENGRAVED_FRAME
     } {
       Fl_Counter cntr_min_wpm {
         label {Min WPM}
         callback {change_cntr_min_wpm();}
-        xywh {146 31 64 20} type Simple
+        xywh {261 31 64 20} type Simple
       }
       Fl_Counter cntr_rng_wpm {
         label {Rng WPM}
         callback {change_cntr_rng_wpm();}
-        xywh {146 68 64 20} type Simple
+        xywh {261 68 64 20} type Simple
       }
       Fl_Counter cntr_farnsworth {
         label Farsnworth
         callback {change_cntr_farnsworth();}
-        xywh {146 105 64 20} type Simple
+        xywh {261 105 64 20} type Simple
       }
       Fl_Counter cntr_cmd_wpm {
         label {Cmd WPM}
         callback {change_cntr_cmd_wpm();}
-        xywh {146 143 64 20} type Simple
+        xywh {261 143 64 20} type Simple
       }
     }
     Fl_Group {} {
       label {Timing/Settings} open
-      xywh {238 23 159 164} box ENGRAVED_FRAME
+      xywh {353 23 159 165} box ENGRAVED_FRAME
     } {
       Fl_Counter cntr_ratio {
         label Ratio
         callback {change_cntr_ratio();}
-        xywh {250 31 64 20} type Simple
+        xywh {365 31 64 20} type Simple
       }
       Fl_Counter cntr_comp {
         label Comp
         callback {change_cntr_comp();}
-        xywh {250 68 64 20} type Simple
+        xywh {365 68 64 20} type Simple
       }
       Fl_Counter cntr_first_ext {
         label {1st Ext}
         callback {change_cntr_first_ext();}
-        xywh {250 105 64 20} type Simple
+        xywh {365 105 64 20} type Simple
       }
       Fl_Counter cntr_sample {
         label Sample
         callback {change_cntr_sample();}
-        xywh {250 143 64 20} type Simple
+        xywh {365 143 64 20} type Simple
       }
       Fl_Counter cntr_weight {
         label Weight
         callback {change_cntr_weight();}
-        xywh {321 31 64 20} type Simple
+        xywh {436 31 64 20} type Simple
       }
       Fl_Counter cntr_leadin {
         label Leadin
         callback {change_cntr_leadin();}
-        xywh {321 68 64 20} type Simple
+        xywh {436 68 64 20} type Simple
       }
       Fl_Counter cntr_tail {
         label Tail
         callback {change_cntr_tail();}
-        xywh {321 105 64 20} type Simple
+        xywh {436 105 64 20} type Simple
       }
     }
     Fl_Group {} {open
-      xywh {9 188 388 50} box ENGRAVED_FRAME
+      xywh {5 138 232 90} box ENGRAVED_FRAME
     } {
       Fl_Group choice_keyer_mode {
         label {Keyer Mode}
         callback {change_choice_keyer_mode();} open
-        xywh {13 193 90 22} box BORDER_BOX align 2
+        xywh {20 143 90 22} box BORDER_BOX align 2
         code0 {\#include "combo.h"}
         class Fl_ComboBox
       } {}
       Fl_Group choice_hang {
         label Hang
         callback {change_choice_hang();} open
-        xywh {109 193 90 22} box BORDER_BOX align 2
+        xywh {130 143 90 22} box BORDER_BOX align 2
         class Fl_ComboBox
       } {}
       Fl_Group choice_sidetone {
         label Sidetone
         callback {change_choice_sidetone();} open
-        xywh {205 193 90 22} box BORDER_BOX align 2
+        xywh {20 185 90 22} box BORDER_BOX align 2
         class Fl_ComboBox
       } {}
       Fl_Group choice_output_pins {
         label {Output PIns}
         callback {change_choice_output_pins();} open
-        xywh {301 193 90 22} box BORDER_BOX align 2
+        xywh {130 185 90 22} box BORDER_BOX align 2
         class Fl_ComboBox
       } {}
     }
     Fl_Button btn_done_parameters {
       label Done
       callback {done_parameters();}
-      xywh {308 243 70 20}
+      xywh {411 194 75 27}
     }
   }
 } 
 
-Function {make_message_editor()} {open
-} {
+Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {558 217 597 325} type Double visible
+    xywh {558 217 597 325} type Double hide
   } {
     Fl_Input label_1 {
       label {1:}
@@ -625,7 +640,7 @@ Function {make_message_editor()} {open
     }
     Fl_Button btn_apply_edit {
       label Apply
-      callback {apply_edit();} selected
+      callback {apply_edit();}
       xywh {463 290 65 26}
     }
   }

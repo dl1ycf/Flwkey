@@ -71,6 +71,8 @@ extern Fl_Check_Button *btn_cut_zeronine;
 extern Fl_Check_Button *btn_paddle_echo;
 extern Fl_Check_Button *btn_serial_echo;
 extern Fl_Check_Button *btn_sidetone_on;
+extern Fl_Check_Button *btn_tone_on;
+extern Fl_Check_Button *btn_ptt_on;
 extern Fl_Counter *cntr_min_wpm;
 extern Fl_Counter *cntr_rng_wpm;
 extern Fl_Counter *cntr_farnsworth;

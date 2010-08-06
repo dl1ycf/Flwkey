@@ -333,11 +333,14 @@ void config_parameters()
 	cntr_min_wpm->value(progStatus.min_wpm);
 
 	choice_keyer_mode->index((progStatus.mode_register & 0x30) >> 4);
-	choice_output_pins->index((progStatus.pin_configuration & 0x06) >> 2);
+printf("pins %02X\n", progStatus.pin_configuration & 0x06);
+	choice_output_pins->index(((progStatus.pin_configuration & 0x06) >> 2) - 1);
 	choice_hang->index((progStatus.pin_configuration & 0x30) >> 4);
 	choice_sidetone->index((progStatus.sidetone & 0x0F) - 1);
 
-	btn_sidetone_on->value((progStatus.sidetone & 0x80) ? false : true);
+	btn_sidetone_on->value((progStatus.sidetone & 0x80) ? true : false);
+	btn_tone_on->value(progStatus.pin_configuration & 0x02 ? true : false);
+	btn_ptt_on->value(progStatus.pin_configuration & 0x01);
 	btn_cut_zeronine->value(progStatus.cut_zeronine);
 	btn_paddledog->value(progStatus.mode_register & 0x80);
 	btn_ct_space->value(progStatus.mode_register & 0x01);
@@ -358,23 +361,37 @@ void change_choice_keyer_mode()
 {
 	int modebits = choice_keyer_mode->index() << 4;
 	progStatus.mode_register = (progStatus.mode_register & 0xCF) | modebits;
-	LOG_WARN("mode reg: %2X", progStatus.mode_register);
+	LOG_WARN("mode reg: %02X", progStatus.mode_register);
 	load_defaults();
 }
 
 void change_choice_output_pins()
 {
-	int pinbits = choice_output_pins->index() << 2;
+	int pinbits = (choice_output_pins->index() + 1) << 2;
 	progStatus.pin_configuration = (progStatus.pin_configuration & 0xF3) | pinbits;
+printf("pinbits %02X, new pins %02X\n", pinbits, progStatus.pin_configuration);
 	load_defaults();
 }
 
 void change_choice_sidetone()
 {
 	progStatus.sidetone = choice_sidetone->index() + 1;
-	progStatus.sidetone |= (btn_sidetone_on->value() ? 0x00 : 0x80);
+	progStatus.sidetone |= (btn_sidetone_on->value() ? 0x80 : 0x00);
 	load_defaults();
 }
+
+void change_btn_tone_on()
+{
+	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFD) | btn_tone_on->value() ? 2 : 0;
+	load_defaults();
+}
+
+void change_btn_ptt_on()
+{
+	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFE) | btn_ptt_on->value() ? 1 : 0;
+	load_defaults();
+}
+
 
 void change_choice_hang()
 {

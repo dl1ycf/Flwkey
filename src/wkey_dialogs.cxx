@@ -434,6 +434,18 @@ static void cb_btn_sidetone_on(Fl_Check_Button*, void*) {
   change_btn_sidetone_on();
 }
 
+Fl_Check_Button *btn_tone_on=(Fl_Check_Button *)0;
+
+static void cb_btn_tone_on(Fl_Check_Button*, void*) {
+  change_btn_tone_on();
+}
+
+Fl_Check_Button *btn_ptt_on=(Fl_Check_Button *)0;
+
+static void cb_btn_ptt_on(Fl_Check_Button*, void*) {
+  change_btn_ptt_on();
+}
+
 Fl_Counter *cntr_min_wpm=(Fl_Counter *)0;
 
 static void cb_cntr_min_wpm(Fl_Counter*, void*) {
@@ -532,110 +544,122 @@ static void cb_btn_done_parameters(Fl_Button*, void*) {
 
 Fl_Double_Window* make_parameters_dialog() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(402, 270, _("WKeyer Parameters"));
+  { Fl_Double_Window* o = new Fl_Double_Window(515, 232, _("WKeyer Parameters"));
     w = o;
-    { Fl_Group* o = new Fl_Group(9, 23, 115, 164, _("ModeReg"));
+    { Fl_Group* o = new Fl_Group(5, 23, 115, 114, _("ModeReg"));
       o->box(FL_ENGRAVED_FRAME);
-      { btn_swap = new Fl_Check_Button(14, 31, 70, 15, _("Swap"));
+      { btn_swap = new Fl_Check_Button(15, 31, 70, 15, _("Swap"));
         btn_swap->down_box(FL_DOWN_BOX);
         btn_swap->callback((Fl_Callback*)cb_btn_swap);
       } // Fl_Check_Button* btn_swap
-      { btn_auto_space = new Fl_Check_Button(14, 50, 70, 15, _("Auto Space"));
+      { btn_auto_space = new Fl_Check_Button(15, 51, 70, 15, _("Auto Space"));
         btn_auto_space->down_box(FL_DOWN_BOX);
         btn_auto_space->callback((Fl_Callback*)cb_btn_auto_space);
       } // Fl_Check_Button* btn_auto_space
-      { btn_ct_space = new Fl_Check_Button(14, 69, 70, 15, _("CT space"));
+      { btn_ct_space = new Fl_Check_Button(15, 72, 70, 15, _("CT space"));
         btn_ct_space->down_box(FL_DOWN_BOX);
         btn_ct_space->callback((Fl_Callback*)cb_btn_ct_space);
       } // Fl_Check_Button* btn_ct_space
-      { btn_paddledog = new Fl_Check_Button(14, 88, 70, 15, _("Paddle Dog"));
+      { btn_paddledog = new Fl_Check_Button(15, 92, 70, 15, _("Paddle Dog"));
         btn_paddledog->down_box(FL_DOWN_BOX);
         btn_paddledog->callback((Fl_Callback*)cb_btn_paddledog);
       } // Fl_Check_Button* btn_paddledog
-      { btn_cut_zeronine = new Fl_Check_Button(14, 107, 70, 15, _("Cut 0/9"));
+      { btn_cut_zeronine = new Fl_Check_Button(15, 113, 70, 15, _("Cut 0/9"));
         btn_cut_zeronine->down_box(FL_DOWN_BOX);
         btn_cut_zeronine->callback((Fl_Callback*)cb_btn_cut_zeronine);
       } // Fl_Check_Button* btn_cut_zeronine
-      { btn_paddle_echo = new Fl_Check_Button(14, 126, 70, 15, _("Paddle echo"));
+      o->end();
+    } // Fl_Group* o
+    { Fl_Group* o = new Fl_Group(122, 23, 115, 114, _("ModeReg"));
+      o->box(FL_ENGRAVED_FRAME);
+      { btn_paddle_echo = new Fl_Check_Button(128, 31, 70, 15, _("Paddle echo"));
         btn_paddle_echo->down_box(FL_DOWN_BOX);
         btn_paddle_echo->callback((Fl_Callback*)cb_btn_paddle_echo);
       } // Fl_Check_Button* btn_paddle_echo
-      { btn_serial_echo = new Fl_Check_Button(14, 145, 70, 15, _("Serial echo"));
+      { btn_serial_echo = new Fl_Check_Button(128, 51, 70, 15, _("Serial echo"));
         btn_serial_echo->down_box(FL_DOWN_BOX);
         btn_serial_echo->callback((Fl_Callback*)cb_btn_serial_echo);
       } // Fl_Check_Button* btn_serial_echo
-      { btn_sidetone_on = new Fl_Check_Button(14, 165, 70, 15, _("Sidetone"));
+      { btn_sidetone_on = new Fl_Check_Button(128, 71, 103, 15, _("Tone Keyer"));
         btn_sidetone_on->down_box(FL_DOWN_BOX);
         btn_sidetone_on->callback((Fl_Callback*)cb_btn_sidetone_on);
       } // Fl_Check_Button* btn_sidetone_on
+      { btn_tone_on = new Fl_Check_Button(128, 92, 87, 15, _("Tone ON"));
+        btn_tone_on->down_box(FL_DOWN_BOX);
+        btn_tone_on->callback((Fl_Callback*)cb_btn_tone_on);
+      } // Fl_Check_Button* btn_tone_on
+      { btn_ptt_on = new Fl_Check_Button(128, 113, 87, 15, _("PTT ON"));
+        btn_ptt_on->down_box(FL_DOWN_BOX);
+        btn_ptt_on->callback((Fl_Callback*)cb_btn_ptt_on);
+      } // Fl_Check_Button* btn_ptt_on
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(125, 23, 112, 164, _("WPM Settings"));
+    { Fl_Group* o = new Fl_Group(240, 23, 112, 165, _("WPM Settings"));
       o->box(FL_ENGRAVED_FRAME);
-      { cntr_min_wpm = new Fl_Counter(146, 31, 64, 20, _("Min WPM"));
+      { cntr_min_wpm = new Fl_Counter(261, 31, 64, 20, _("Min WPM"));
         cntr_min_wpm->type(1);
         cntr_min_wpm->step(0.1);
         cntr_min_wpm->callback((Fl_Callback*)cb_cntr_min_wpm);
       } // Fl_Counter* cntr_min_wpm
-      { cntr_rng_wpm = new Fl_Counter(146, 68, 64, 20, _("Rng WPM"));
+      { cntr_rng_wpm = new Fl_Counter(261, 68, 64, 20, _("Rng WPM"));
         cntr_rng_wpm->type(1);
         cntr_rng_wpm->step(0.1);
         cntr_rng_wpm->callback((Fl_Callback*)cb_cntr_rng_wpm);
       } // Fl_Counter* cntr_rng_wpm
-      { cntr_farnsworth = new Fl_Counter(146, 105, 64, 20, _("Farsnworth"));
+      { cntr_farnsworth = new Fl_Counter(261, 105, 64, 20, _("Farsnworth"));
         cntr_farnsworth->type(1);
         cntr_farnsworth->step(0.1);
         cntr_farnsworth->callback((Fl_Callback*)cb_cntr_farnsworth);
       } // Fl_Counter* cntr_farnsworth
-      { cntr_cmd_wpm = new Fl_Counter(146, 143, 64, 20, _("Cmd WPM"));
+      { cntr_cmd_wpm = new Fl_Counter(261, 143, 64, 20, _("Cmd WPM"));
         cntr_cmd_wpm->type(1);
         cntr_cmd_wpm->step(0.1);
         cntr_cmd_wpm->callback((Fl_Callback*)cb_cntr_cmd_wpm);
       } // Fl_Counter* cntr_cmd_wpm
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(238, 23, 159, 164, _("Timing/Settings"));
+    { Fl_Group* o = new Fl_Group(353, 23, 159, 165, _("Timing/Settings"));
       o->box(FL_ENGRAVED_FRAME);
-      { cntr_ratio = new Fl_Counter(250, 31, 64, 20, _("Ratio"));
+      { cntr_ratio = new Fl_Counter(365, 31, 64, 20, _("Ratio"));
         cntr_ratio->type(1);
         cntr_ratio->step(0.1);
         cntr_ratio->callback((Fl_Callback*)cb_cntr_ratio);
       } // Fl_Counter* cntr_ratio
-      { cntr_comp = new Fl_Counter(250, 68, 64, 20, _("Comp"));
+      { cntr_comp = new Fl_Counter(365, 68, 64, 20, _("Comp"));
         cntr_comp->type(1);
         cntr_comp->step(0.1);
         cntr_comp->callback((Fl_Callback*)cb_cntr_comp);
       } // Fl_Counter* cntr_comp
-      { cntr_first_ext = new Fl_Counter(250, 105, 64, 20, _("1st Ext"));
+      { cntr_first_ext = new Fl_Counter(365, 105, 64, 20, _("1st Ext"));
         cntr_first_ext->type(1);
         cntr_first_ext->step(0.1);
         cntr_first_ext->callback((Fl_Callback*)cb_cntr_first_ext);
       } // Fl_Counter* cntr_first_ext
-      { cntr_sample = new Fl_Counter(250, 143, 64, 20, _("Sample"));
+      { cntr_sample = new Fl_Counter(365, 143, 64, 20, _("Sample"));
         cntr_sample->type(1);
         cntr_sample->step(0.1);
         cntr_sample->callback((Fl_Callback*)cb_cntr_sample);
       } // Fl_Counter* cntr_sample
-      { cntr_weight = new Fl_Counter(321, 31, 64, 20, _("Weight"));
+      { cntr_weight = new Fl_Counter(436, 31, 64, 20, _("Weight"));
         cntr_weight->type(1);
         cntr_weight->step(0.1);
         cntr_weight->callback((Fl_Callback*)cb_cntr_weight);
       } // Fl_Counter* cntr_weight
-      { cntr_leadin = new Fl_Counter(321, 68, 64, 20, _("Leadin"));
+      { cntr_leadin = new Fl_Counter(436, 68, 64, 20, _("Leadin"));
         cntr_leadin->type(1);
         cntr_leadin->step(0.1);
         cntr_leadin->callback((Fl_Callback*)cb_cntr_leadin);
       } // Fl_Counter* cntr_leadin
-      { cntr_tail = new Fl_Counter(321, 105, 64, 20, _("Tail"));
+      { cntr_tail = new Fl_Counter(436, 105, 64, 20, _("Tail"));
         cntr_tail->type(1);
         cntr_tail->step(0.1);
         cntr_tail->callback((Fl_Callback*)cb_cntr_tail);
       } // Fl_Counter* cntr_tail
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(9, 188, 388, 50);
+    { Fl_Group* o = new Fl_Group(5, 138, 232, 90);
       o->box(FL_ENGRAVED_FRAME);
-      { choice_keyer_mode = new Fl_ComboBox(13, 193, 90, 22, _("Keyer Mode"));
+      { choice_keyer_mode = new Fl_ComboBox(20, 143, 90, 22, _("Keyer Mode"));
         choice_keyer_mode->box(FL_BORDER_BOX);
         choice_keyer_mode->color((Fl_Color)FL_BACKGROUND_COLOR);
         choice_keyer_mode->selection_color((Fl_Color)FL_BACKGROUND_COLOR);
@@ -648,7 +672,7 @@ Fl_Double_Window* make_parameters_dialog() {
         choice_keyer_mode->when(FL_WHEN_RELEASE);
         choice_keyer_mode->end();
       } // Fl_ComboBox* choice_keyer_mode
-      { choice_hang = new Fl_ComboBox(109, 193, 90, 22, _("Hang"));
+      { choice_hang = new Fl_ComboBox(130, 143, 90, 22, _("Hang"));
         choice_hang->box(FL_BORDER_BOX);
         choice_hang->color((Fl_Color)FL_BACKGROUND_COLOR);
         choice_hang->selection_color((Fl_Color)FL_BACKGROUND_COLOR);
@@ -661,7 +685,7 @@ Fl_Double_Window* make_parameters_dialog() {
         choice_hang->when(FL_WHEN_RELEASE);
         choice_hang->end();
       } // Fl_ComboBox* choice_hang
-      { choice_sidetone = new Fl_ComboBox(205, 193, 90, 22, _("Sidetone"));
+      { choice_sidetone = new Fl_ComboBox(20, 185, 90, 22, _("Sidetone"));
         choice_sidetone->box(FL_BORDER_BOX);
         choice_sidetone->color((Fl_Color)FL_BACKGROUND_COLOR);
         choice_sidetone->selection_color((Fl_Color)FL_BACKGROUND_COLOR);
@@ -674,7 +698,7 @@ Fl_Double_Window* make_parameters_dialog() {
         choice_sidetone->when(FL_WHEN_RELEASE);
         choice_sidetone->end();
       } // Fl_ComboBox* choice_sidetone
-      { choice_output_pins = new Fl_ComboBox(301, 193, 90, 22, _("Output PIns"));
+      { choice_output_pins = new Fl_ComboBox(130, 185, 90, 22, _("Output PIns"));
         choice_output_pins->box(FL_BORDER_BOX);
         choice_output_pins->color((Fl_Color)FL_BACKGROUND_COLOR);
         choice_output_pins->selection_color((Fl_Color)FL_BACKGROUND_COLOR);
@@ -689,7 +713,7 @@ Fl_Double_Window* make_parameters_dialog() {
       } // Fl_ComboBox* choice_output_pins
       o->end();
     } // Fl_Group* o
-    { btn_done_parameters = new Fl_Button(308, 243, 70, 20, _("Done"));
+    { btn_done_parameters = new Fl_Button(411, 194, 75, 27, _("Done"));
       btn_done_parameters->callback((Fl_Callback*)cb_btn_done_parameters);
     } // Fl_Button* btn_done_parameters
     o->end();
