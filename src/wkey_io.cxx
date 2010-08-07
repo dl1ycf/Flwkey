@@ -40,7 +40,7 @@ bool start_wkey_serial()
 	WKEY_serial.Baud(1200);
 	WKEY_serial.Stopbits(2);
 	WKEY_serial.Retries(1);
-	WKEY_serial.Timeout(50);
+	WKEY_serial.Timeout(1);//50);
 	WKEY_serial.RTSptt(false);
 	WKEY_serial.DTRptt(false);
 	WKEY_serial.RTSCTS(false);
