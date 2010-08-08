@@ -220,11 +220,6 @@ int main (int argc, char *argv[])
 	std::terminate_handler(flwkey_terminate);
 
 	int arg_idx;
-	Fl::args(argc, argv, arg_idx, parse_args);
-
-	mainwindow = WKey_window();
-	mainwindow->callback(exit_main);
-	create_comm_dialog();
 
 	char dirbuf[FL_PATH_MAX + 1];
 #ifdef __WIN32__
@@ -233,6 +228,12 @@ int main (int argc, char *argv[])
 	fl_filename_expand(dirbuf, sizeof(dirbuf) - 1, "$HOME/.flwkey/");
 #endif
 	WKeyHomeDir = dirbuf;
+	Fl::args(argc, argv, arg_idx, parse_args);
+
+	mainwindow = WKey_window();
+	mainwindow->callback(exit_main);
+	create_comm_dialog();
+
 	checkdirectories();
 
 	try {
@@ -296,6 +297,7 @@ int parse_args(int argc, char **argv, int& idx)
 		printf("Usage: \n\
   --help this help text\n\
   --version\n\
+  --config-dir [pathname]\n\
   --debug\n");
 		exit(0);
 	} 
@@ -306,6 +308,13 @@ int parse_args(int argc, char **argv, int& idx)
 	if (strcasecmp("--debug", argv[1]) == 0) {
 		WKEY_DEBUG = 1;
 		idx++;
+		return 1;
+	}
+	if (strcasecmp("--config-dir", argv[1]) == 0) {
+		WKeyHomeDir = argv[2];
+		if (WKeyHomeDir[WKeyHomeDir.length() -1] != '/')
+			WKeyHomeDir += '/';
+		idx += 2;
 		return 1;
 	}
 	return 0;
