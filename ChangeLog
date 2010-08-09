@@ -1,8 +1,14 @@
 
 
-=Version 0.9.96=
+=Version 0.9.97=
 
-2010-08-06  David Freese  <w1hkj@w1hkj.com>
+2010-08-08  David Freese  <w1hkj@w1hkj.com>
+
+	a92cb82: Logbook
+	bd998a7: Serial timing
+
+
+=Version 0.9.96=
 
 	e92e25a: Key Port
 
@@ -26,4 +32,3 @@
 =Version 0.9.92=
 
 	16db6ee: Logbook
-	2c7f002: OK removed
