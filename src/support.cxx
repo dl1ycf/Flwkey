@@ -177,7 +177,7 @@ void send_char(void *)
 	}
 }
 
-int status_query = 50;
+int status_query = 100;
 
 void * serial_thread_loop(void *d)
 {
@@ -185,7 +185,7 @@ unsigned char byte;
 	for(;;) {
 		if (!run_serial_thread) break;
 
-		MilliSleep(1);//progStatus.serloop_timing);
+		MilliSleep(progStatus.serloop_timing);
 
 		if (bypass_serial_thread_loop ||
 			!WKEY_serial.IsOpen()) goto serial_bypass_loop;
@@ -215,7 +215,7 @@ unsigned char byte;
 			if (status_query-- == 0) {
 				string cmd = GET_STATUS;
 				sendString(cmd);
-				status_query = 100;
+				status_query = 1000;
 			}
 		pthread_mutex_unlock(&mutex_serial);
 serial_bypass_loop: ;
@@ -245,6 +245,8 @@ void echo_(unsigned char byte)
 
 void echo_test(unsigned char byte)
 {
+	if (WKEY_DEBUG)
+		LOG_WARN("%02X", byte & 0xFF);
 	if (byte == 'U') {
 		if (WKEY_DEBUG)
 			LOG_WARN("passed %c", byte);
@@ -255,6 +257,8 @@ void echo_test(unsigned char byte)
 
 void version_(unsigned char byte)
 {
+	if (WKEY_DEBUG)
+		LOG_WARN("%02X", byte & 0xFF);
 	static char ver[40];
 	snprintf(ver, sizeof(ver), "Version %d\n", byte);
 	host_is_up = true;
@@ -286,7 +290,9 @@ void show_status_change(void *d)
 
 void status_(unsigned char byte)
 {
-	status_query = 50;
+	if (WKEY_DEBUG)
+		LOG_WARN("%02X", byte & 0xFF);
+	status_query = 1000;
 	if ((byte & 0x04)== 0x04) wkeyer_ready = false;
 	else wkeyer_ready = true;
 	if (WKEY_DEBUG)
@@ -315,6 +321,8 @@ void show_speed_change(void *d)
 
 void speed_(unsigned char byte)
 {
+	if (WKEY_DEBUG)
+		LOG_WARN("%02X", byte & 0xFF);
 	int val = (byte & 0x3F) + progStatus.min_wpm;
 	Fl::awake(show_speed_change, (void *)(val));
 	if (WKEY_DEBUG)
@@ -347,6 +355,8 @@ char eeprom_image[256];
 int eeprom_ptr = 0;
 void eeprom_(unsigned char byte)
 {
+	if (WKEY_DEBUG)
+		LOG_WARN("%02X", byte & 0xFF);
 	if (byte == 0xA5) {
 		memset( eeprom_image, 0, 256);
 		eeprom_ptr = 0;
@@ -466,7 +476,7 @@ void open_wkeyer()
 	cmd = SET_SPEED_POT;
 	cmd += progStatus.min_wpm;
 	cmd += progStatus.rng_wpm;
-	cmd += '\0';
+	cmd += 0xFF;
 	sendCommand(cmd);
 
 	cmd = GET_SPEED_POT;

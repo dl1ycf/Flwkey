@@ -36,7 +36,7 @@ status progStatus = {
 	5,			// int comm_wait;
 	50,			// int comm_timeout;
 	false,		// bool comm_echo;
-	20,			// int  serloop_timing;
+	5,			// int  serloop_timing;
 // wkeyer defaults
 	0xC4,		// unsigned char mode_register;
 	18,			// unsigned char speed_wpm;

@@ -57,7 +57,6 @@ void start_logbook ()
 		progStatus.logbookfilename = logbook_filename;
 	} else
 		logbook_filename = progStatus.logbookfilename;
-printf("logbook filename = %s\n", logbook_filename.c_str());
 
 	adifFile.readFile (logbook_filename.c_str(), &qsodb);
 	if (qsodb.nbrRecs() == 0)
