@@ -1,6 +1,14 @@
-2010-08-09  David Freese  <w1hkj@w1hkj.com>
 
-	63e0377: Winkey1
+
+=Version 0.9.99=
+
+2010-08-12  David Freese  <w1hkj@w1hkj.com>
+
+	6cb42b9: Echo testing
+
+
+=Version 0.9.98=
+
 
 
 =Version 0.9.97=
@@ -27,8 +35,3 @@
 =Version 0.9.93=
 
 	a59cfa8: Prosigns
-	eb3404c: Transmit Text
-
-
-=Version 0.9.92=
-
