@@ -159,7 +159,9 @@ void sendText(string &cmd)
 	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
-void send_char(void *)
+bool echo_ok = true;
+
+void send_char()
 {
 	if (!btn_send->value() || !wkeyer_ready)
 		return;
@@ -171,13 +173,10 @@ void send_char(void *)
 		if (c < ' ') c = ' ';
 		if (c == '0' && progStatus.cut_zeronine) c = 'T';
 		if (c == '9' && progStatus.cut_zeronine) c = 'N';
-		pthread_mutex_lock(&mutex_serial);
-			str_out = c;
-		pthread_mutex_unlock(&mutex_serial);
+		str_out = c;
+		echo_ok = false;
 	}
 }
-
-int status_query = 100;
 
 void * serial_thread_loop(void *d)
 {
@@ -195,8 +194,8 @@ unsigned char byte;
 			if (!str_out.empty()) {
 				sendString(str_out, true);
 				str_out.clear();
-			} else
-				Fl::awake(send_char, 0);
+			} else if (echo_ok)
+				send_char();
 
 			if (WKEY_serial.ReadByte(byte)) {
 				if ((byte == 0xA5 || read_EEPROM))
@@ -211,11 +210,7 @@ unsigned char byte;
 					version_(byte);
 				else
 					echo_(byte);
-			}
-			if (status_query-- == 0) {
-				string cmd = GET_STATUS;
-				sendString(cmd);
-				status_query = 1000;
+				echo_ok = true;
 			}
 		pthread_mutex_unlock(&mutex_serial);
 serial_bypass_loop: ;
@@ -292,7 +287,7 @@ void status_(unsigned char byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
-	status_query = 1000;
+//	status_query = 1000;
 	if ((byte & 0x04)== 0x04) wkeyer_ready = false;
 	else wkeyer_ready = true;
 	if (WKEY_DEBUG)
@@ -333,6 +328,7 @@ void set_wpm()
 {
 	int wpm = (int)cntr_wpm->value();
 	progStatus.speed_wpm = wpm;
+	if (progStatus.use_pot) return;
 	string cmd = SET_WPM;
 	cmd += wpm;
 	sendCommand(cmd);
