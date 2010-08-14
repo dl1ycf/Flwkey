@@ -27,6 +27,10 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
 
 #include "debug.h"
 #include "status.h"
@@ -46,6 +50,125 @@
 #include <FL/fl_ask.H>
 
 using namespace std;
+
+char *szTime(int typ)
+{
+	static char szDt[80];
+	time_t tmptr;
+	tm sTime;
+	time (&tmptr);
+	switch (typ) {
+		case 0:
+			localtime_r(&tmptr, &sTime);
+			strftime(szDt, 79, "%H%M", &sTime);
+			break;
+		case 1:
+			localtime_r(&tmptr, &sTime);
+			strftime(szDt, 79, "%H:%M", &sTime);
+			break;
+		case 2:
+			gmtime_r (&tmptr, &sTime);
+			strftime(szDt, 79, "%H%MZ", &sTime);
+			break;
+		case 3:
+			gmtime_r (&tmptr, &sTime);
+			strftime(szDt, 79, "%H:%MZ", &sTime);
+			break;
+		case 4:
+			gmtime_r (&tmptr, &sTime);
+			strftime(szDt, 79, "%H%M UTC", &sTime);
+			break;
+		case 5:
+			gmtime_r (&tmptr, &sTime);
+			strftime(szDt, 79, "%H:%M UTC", &sTime);
+			break;
+		default:
+			localtime_r(&tmptr, &sTime);
+			strftime(szDt, 79, "%H%ML", &sTime);
+	}
+	return szDt;
+}
+
+static const char *month_name[] =
+{
+  "January",
+  "Febuary",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+};
+
+char *szDate(int fmt)
+{
+	static char szDt[20];
+	static char szMonth[10];
+
+	time_t tmptr;
+	tm sTime;
+	time (&tmptr);
+	if ((fmt & 0x80) == 0x80) {
+		gmtime_r (&tmptr, &sTime);
+	} else {
+		localtime_r(&tmptr, &sTime);
+	}
+	switch (fmt & 0x7F) {
+		case 1 :
+			snprintf (szDt, sizeof(szDt), "%02d/%02d/%02d",
+				sTime.tm_mon + 1, 
+				sTime.tm_mday, 
+				sTime.tm_year > 100 ? sTime.tm_year - 100 : sTime.tm_year);
+			break;
+		case 2 :
+			snprintf (szDt, sizeof(szDt), "%4d-%02d-%02d", 
+				sTime.tm_year + 1900,
+				sTime.tm_mon + 1, 
+				sTime.tm_mday);
+			break;
+		case 3 :  
+			snprintf (szDt, sizeof(szDt), "%s %2d, %4d",
+				month_name[sTime.tm_mon], 
+				sTime.tm_mday, 
+				sTime.tm_year + 1900);
+			break;
+		case 4 :
+			strcpy (szMonth, month_name [sTime.tm_mon]);
+			szMonth[3] = 0; 
+			snprintf (szDt, sizeof(szDt), "%s %2d, %4d", 
+				szMonth,
+				sTime.tm_mday, 
+				sTime.tm_year + 1900);
+			break;
+		case 5 :
+			strcpy (szMonth, month_name [sTime.tm_mon]);
+			szMonth[3] = 0;
+			for (int i = 0; i < 3; i++) szMonth[i] = toupper(szMonth[i]);
+			snprintf (szDt, sizeof(szDt), "%s %d", 
+				szMonth, 
+				sTime.tm_mday);
+			break;
+		case 6 :
+			snprintf (szDt, sizeof(szDt), "%4d%02d%02d", 
+				sTime.tm_year + 1900,
+				sTime.tm_mon + 1, 
+				sTime.tm_mday);
+			break;
+		case 0 :
+		default :
+			snprintf (szDt, sizeof(szDt), "%02d/%02d/%04d",
+				sTime.tm_mon + 1, 
+				sTime.tm_mday,
+				sTime.tm_year + 1900); 
+		break;
+	}
+	return szDt;
+}
 
 cQsoDb		qsodb;
 cAdifIO		adifFile;
@@ -656,15 +779,18 @@ std::string sDate_on = "";
 
 void AddRecord ()
 {
+	char *szt = szTime(2);
+	char *szdt = szDate(0x86);
+
 	inpCall_log->value(txt_sta->value());
 	inpName_log->value (txt_name->value());
-	inpTimeOn_log->value ("");
-	inpTimeOff_log->value ("");
-	inpDate_log->value("");
+	inpTimeOn_log->value (szt);
+	inpTimeOff_log->value (szt);
+	inpDate_log->value(szdt);
 	inpRstR_log->value ("599");
 	inpRstS_log->value ("599");
 	inpFreq_log->value("");
-	inpMode_log->value ("");
+	inpMode_log->value ("CW");
 	inpState_log->value ("");
 	inpVE_Prov_log->value ("");
 	inpCountry_log->value ("");
@@ -688,6 +814,9 @@ void AddRecord ()
 	inpITUZ_log->value("");
 
 	saveRecord();
+
+	txt_sta->value("");
+	txt_name->value("");
 
 }
 

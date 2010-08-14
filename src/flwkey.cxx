@@ -68,16 +68,6 @@ pthread_mutex_t mutex_xmlrpc = PTHREAD_MUTEX_INITIALIZER;
 bool WKEY_DEBUG = 0;
 
 //----------------------------------------------------------------------
-void about()
-{
-	string msg = "\
-%s\n\
-Version %s\n\
-copyright W1HKJ, 2009\n\
-w1hkj@@w1hkj.com";
-	fl_message(msg.c_str(), PACKAGE_TARNAME, PACKAGE_VERSION);
-}
-
 void visit_URL(void* arg)
 {
 	const char* url = reinterpret_cast<const char *>(arg);
@@ -115,6 +105,20 @@ void visit_URL(void* arg)
 	if ((int)ShellExecute(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL) <= 32)
 		fl_alert(_("Could not open url:\n%s\n"), url);
 #endif
+}
+
+void about()
+{
+	string msg = "\
+%s\n\
+Version %s\n\
+copyright W1HKJ, 2009\n\
+w1hkj@@w1hkj.com";
+	fl_message(msg.c_str(), PACKAGE_TARNAME, PACKAGE_VERSION);
+}
+
+void on_line_help()
+{
 }
 
 //----------------------------------------------------------------------

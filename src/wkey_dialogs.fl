@@ -34,8 +34,8 @@ Function {SetupDialog()} {} {
 Function {WKey_window()} {open
 } {
   Fl_Window {} {
-    label Fl_WinKey
-    xywh {558 60 600 279} type Double hide resizable
+    label Fl_WinKey open
+    xywh {636 117 600 279} type Double resizable visible
   } {
     Fl_Menu_Bar {} {open
       xywh {0 0 600 20}
@@ -84,6 +84,11 @@ Function {WKey_window()} {open
           callback {cb_mnuShowLogbook();}
           xywh {0 0 36 21} divider
         }
+        MenuItem mnu_new_log {
+          label New
+          callback {cb_mnuNewLogbook();}
+          xywh {0 0 36 21}
+        }
         MenuItem mnu_open_logbook {
           label Open
           callback {cb_mnuOpenLogbook();}
@@ -125,6 +130,21 @@ Function {WKey_window()} {open
         callback {cb_events();}
         xywh {0 0 36 21}
       }
+      Submenu {} {
+        label Help open
+        xywh {0 0 70 21}
+      } {
+        MenuItem mnu_about {
+          label About
+          callback {about();}
+          xywh {0 0 36 21}
+        }
+        MenuItem mnu_on_line_help {
+          label {On line help}
+          callback {on_line_help();} selected
+          xywh {0 0 36 21}
+        }
+      }
     }
     Fl_Output txt_sent {
       xywh {5 23 590 96} type Multiline resizable
@@ -140,17 +160,17 @@ Function {WKey_window()} {open
     Fl_Light_Button btn_send {
       label Send
       callback {cb_send_button();}
-      xywh {525 221 70 25}
+      xywh {535 221 60 25}
     }
     Fl_Light_Button btn_tune {
       label Tune
       callback {cb_tune();}
-      xywh {525 250 70 25} selection_color 5
+      xywh {535 250 60 25} selection_color 5
     }
     Fl_Button btn_cancel {
       label Cancel
       callback {cb_cancel_transmit();}
-      xywh {446 221 70 25}
+      xywh {469 221 60 25}
     }
     Fl_Box box_busy {
       label Busy
@@ -183,7 +203,7 @@ Function {WKey_window()} {open
     Fl_Check_Button btn_use_pot {
       label Pot
       callback {use_pot_changed();}
-      xywh {247 254 46 15} down_box DOWN_BOX when 1
+      xywh {186 254 20 15} down_box DOWN_BOX align 4 when 1
     }
     Fl_Button btn_msg1 {
       label Msg1
@@ -248,14 +268,19 @@ Edit - Right click} xywh {538 197 56 20}
     Fl_Input txt_sta {
       label {<STA>}
       callback {check_call();}
-      xywh {357 222 82 22} when 1
+      xywh {321 222 82 22} when 1
       code0 {\#include "flinput2.h"}
       class Fl_Input2
     }
     Fl_Input txt_name {
       label {<NAM>}
-      xywh {357 251 82 22}
+      xywh {321 251 82 22}
       class Fl_Input2
+    }
+    Fl_Button btn_log_it {
+      label {Log It}
+      callback {AddRecord();}
+      xywh {407 249 55 25}
     }
   }
 } 
@@ -263,8 +288,8 @@ Edit - Right click} xywh {538 197 56 20}
 Function {make_parameters_dialog()} {open
 } {
   Fl_Window {} {
-    label {WKeyer Parameters} open
-    xywh {555 376 515 232} type Double visible
+    label {WKeyer Parameters}
+    xywh {555 376 515 232} type Double hide
   } {
     Fl_Group {} {
       label ModeReg open
@@ -322,7 +347,7 @@ Function {make_parameters_dialog()} {open
       }
       Fl_Check_Button btn_ptt_on {
         label {PTT ON}
-        callback {change_btn_ptt_on();} selected
+        callback {change_btn_ptt_on();}
         xywh {128 113 87 15} down_box DOWN_BOX
       }
     }
@@ -428,10 +453,11 @@ Function {make_parameters_dialog()} {open
   }
 } 
 
-Function {make_message_editor()} {} {
+Function {make_message_editor()} {open
+} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {558 217 597 325} type Double hide
+    xywh {553 644 597 325} type Double hide
   } {
     Fl_Input label_1 {
       label {1:}
@@ -595,47 +621,47 @@ Function {make_message_editor()} {} {
       }
       Fl_Box {} {
         label {" RR}
-        tooltip {Your call} xywh {529 36 60 20}
+        tooltip {.-..-.} xywh {529 36 60 20}
       }
       Fl_Box {} {
         label {$ SX}
-        tooltip {Your qth} xywh {529 56 60 20}
+        tooltip {...-..-} xywh {529 56 60 20}
       }
       Fl_Box {} {
         label {' WG}
-        tooltip {Your location} xywh {529 75 60 20}
+        tooltip {.----.} xywh {529 75 60 20}
       }
       Fl_Box {} {
         label {( KN}
-        tooltip {Your name} xywh {529 94 60 20}
+        tooltip {-.--.} xywh {529 94 60 20}
       }
       Fl_Box {} {
         label {) KK}
-        tooltip {Other stations callsign} xywh {529 113 60 20}
+        tooltip {-.--.-} xywh {529 113 60 20}
       }
       Fl_Box {} {
         label {+ AR}
-        tooltip {Other stations name} xywh {529 132 60 20}
+        tooltip {.-.-.} xywh {529 132 60 20}
       }
       Fl_Box {} {
         label {< AR}
-        xywh {529 151 60 20}
+        tooltip {.-.-.} xywh {529 151 60 20}
       }
       Fl_Box {} {
         label {> SK}
-        xywh {529 170 60 20}
+        tooltip {...-.-} xywh {529 170 60 20}
       }
       Fl_Box {} {
         label {= BT}
-        xywh {529 189 60 20}
+        tooltip {-...-} xywh {529 189 60 20}
       }
       Fl_Box {} {
         label {- DU}
-        xywh {529 208 60 20}
+        tooltip {-....-} xywh {529 208 60 20}
       }
       Fl_Box {} {
         label {@@ AC}
-        xywh {529 227 60 20}
+        tooltip {.--.-.} xywh {529 227 60 20}
       }
     }
     Fl_Button btn_apply_edit {

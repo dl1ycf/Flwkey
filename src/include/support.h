@@ -109,5 +109,8 @@ extern void cb_mnuExportTEXT_log();
 extern void cb_mnuExportCSV_log();
 extern void cb_Export_Cabrillo();
 extern void cb_mnuShowLogbook();
+extern void AddRecord();
+extern void about();
+extern void on_line_help();
 
 #endif

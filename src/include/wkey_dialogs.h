@@ -45,6 +45,7 @@ extern Fl_Button *btn_msg10;
 #include "flinput2.h"
 extern Fl_Input2 *txt_sta;
 extern Fl_Input2 *txt_name;
+extern Fl_Button *btn_log_it;
 Fl_Double_Window* WKey_window();
 extern Fl_Menu_Item menu_[];
 #define mnu_exit (menu_+1)
@@ -54,14 +55,17 @@ extern Fl_Menu_Item menu_[];
 #define mnu_operator (menu_+7)
 #define mnu_Logbook (menu_+9)
 #define mnu_display_log (menu_+10)
-#define mnu_open_logbook (menu_+11)
-#define mnu_save_logbook (menu_+12)
-#define mnu_merge_logbook (menu_+13)
-#define mnu_export_adif (menu_+14)
-#define mnu_export_logbook_text (menu_+15)
-#define mnu_export_logbook_csv (menu_+16)
-#define mnu_export_cabrillo (menu_+17)
-#define mnu_events (menu_+19)
+#define mnu_new_log (menu_+11)
+#define mnu_open_logbook (menu_+12)
+#define mnu_save_logbook (menu_+13)
+#define mnu_merge_logbook (menu_+14)
+#define mnu_export_adif (menu_+15)
+#define mnu_export_logbook_text (menu_+16)
+#define mnu_export_logbook_csv (menu_+17)
+#define mnu_export_cabrillo (menu_+18)
+#define mnu_events (menu_+20)
+#define mnu_about (menu_+22)
+#define mnu_on_line_help (menu_+23)
 #include <FL/Fl_Group.H>
 extern Fl_Check_Button *btn_swap;
 extern Fl_Check_Button *btn_auto_space;
