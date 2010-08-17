@@ -269,6 +269,8 @@ int main (int argc, char *argv[])
 	mainwindow->resize( progStatus.mainX, progStatus.mainY, mainwindow->w(), mainwindow->h());
 
 	mainwindow->xclass(KNAME);
+	update_msg_labels();
+
 	Fl::add_handler(main_handler);
 
 	start_logbook();

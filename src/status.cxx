@@ -67,16 +67,16 @@ status progStatus = {
 	"",			// string	edit_msg3;
 	"msg 4",	// string	label_4;
 	"",			// string	edit_msg4;
-	"msg 5",	// string	label_5;
-	"",			// string	edit_msg5;
-	"msg 6",	// string	label_6;
-	"",			// string	edit_msg6;
-	"msg 7",	// string	label_7;
-	"",			// string	edit_msg7;
-	"msg 8",	// string	label_8;
-	"",			// string	edit_msg8;
-	"msg 9",	// string	label_9;
-	"",			// string	edit_msg9;
+	"Xout",	// string	label_5;
+	"R <#> AL",			// string	edit_msg5;
+	"Xlog",	// string	label_6;
+	"<LOG><+>",			// string	edit_msg6;
+	"X--",	// string	label_7;
+	"<->",			// string	edit_msg7;
+	"X++",	// string	label_8;
+	"<+>",			// string	edit_msg8;
+	"LOG",	// string	label_9;
+	"<LOG>",			// string	edit_msg9;
 	"msg 10",	// string	label_10;
 	"",			// string	edit_msg10;
 
@@ -85,7 +85,11 @@ status progStatus = {
 	"",			//string	tag_loc;
 	"",			//string	tag_op;
 
-	""			// string	logbookfilename
+	"",			// string	logbookfilename
+
+	1,			// int	serial_nbr;
+	true,		// bool	zeros;
+	false		// bool	dups;
 
 };
 

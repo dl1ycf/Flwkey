@@ -102,6 +102,10 @@ static void cb_mnu_export_cabrillo(Fl_Menu_*, void*) {
   cb_Export_Cabrillo();
 }
 
+static void cb_mnu_contest(Fl_Menu_*, void*) {
+  cb_contest();
+}
+
 static void cb_mnu_events(Fl_Menu_*, void*) {
   cb_events();
 }
@@ -135,6 +139,7 @@ Fl_Menu_Item menu_[] = {
  {_("Export CSV"), 0,  (Fl_Callback*)cb_mnu_export_logbook_csv, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Cabrillo Report"), 0,  (Fl_Callback*)cb_mnu_export_cabrillo, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
+ {_("Contest"), 0,  (Fl_Callback*)cb_mnu_contest, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Events"), 0,  (Fl_Callback*)cb_mnu_events, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Help"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
  {_("About"), 0,  (Fl_Callback*)cb_mnu_about, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -263,6 +268,16 @@ static void cb_btn_log_it(Fl_Button*, void*) {
   AddRecord();
 }
 
+Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
+
+Fl_Button *btn_clear=(Fl_Button *)0;
+
+static void cb_btn_clear(Fl_Button*, void*) {
+  txt_sta->value("");
+txt_name->value("");
+txt_xchg->value("");
+}
+
 Fl_Double_Window* WKey_window() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = new Fl_Double_Window(600, 279, _("Fl_WinKey"));
@@ -302,32 +317,32 @@ Fl_Double_Window* WKey_window() {
       btn_tune->selection_color((Fl_Color)5);
       btn_tune->callback((Fl_Callback*)cb_btn_tune);
     } // Fl_Light_Button* btn_tune
-    { btn_cancel = new Fl_Button(469, 221, 60, 25, _("Cancel"));
+    { btn_cancel = new Fl_Button(472, 221, 60, 25, _("Cancel"));
       btn_cancel->callback((Fl_Callback*)cb_btn_cancel);
     } // Fl_Button* btn_cancel
-    { box_busy = new Fl_Box(12, 241, 16, 16, _("Busy"));
+    { box_busy = new Fl_Box(7, 241, 16, 16, _("Busy"));
       box_busy->box(FL_DIAMOND_DOWN_BOX);
       box_busy->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_busy
-    { box_keydown = new Fl_Box(12, 260, 16, 16, _("KeyDn"));
+    { box_keydown = new Fl_Box(7, 260, 16, 16, _("Key"));
       box_keydown->box(FL_DIAMOND_DOWN_BOX);
       box_keydown->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_keydown
-    { box_break_in = new Fl_Box(78, 222, 16, 16, _("Bk_in"));
+    { box_break_in = new Fl_Box(64, 222, 16, 16, _("Bk"));
       box_break_in->box(FL_DIAMOND_DOWN_BOX);
       box_break_in->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_break_in
-    { box_xoff = new Fl_Box(78, 241, 16, 16, _("Bfr Full"));
+    { box_xoff = new Fl_Box(64, 241, 16, 16, _("Bfr"));
       box_xoff->box(FL_DIAMOND_DOWN_BOX);
       box_xoff->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_xoff
-    { box_wait = new Fl_Box(12, 222, 16, 16, _("Wait"));
+    { box_wait = new Fl_Box(7, 222, 16, 16, _("Wait"));
       box_wait->box(FL_DIAMOND_DOWN_BOX);
       box_wait->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_wait
-    { txt_wpm = new Fl_Output(206, 250, 38, 22);
+    { txt_wpm = new Fl_Output(165, 251, 38, 22);
     } // Fl_Output* txt_wpm
-    { cntr_wpm = new Fl_Counter(193, 223, 64, 22, _("WPM:"));
+    { cntr_wpm = new Fl_Counter(151, 222, 64, 22, _("WPM"));
       cntr_wpm->type(1);
       cntr_wpm->minimum(10);
       cntr_wpm->maximum(35);
@@ -336,7 +351,7 @@ Fl_Double_Window* WKey_window() {
       cntr_wpm->callback((Fl_Callback*)cb_cntr_wpm);
       cntr_wpm->align(FL_ALIGN_LEFT);
     } // Fl_Counter* cntr_wpm
-    { btn_use_pot = new Fl_Check_Button(186, 254, 20, 15, _("Pot"));
+    { btn_use_pot = new Fl_Check_Button(145, 255, 20, 15, _("Pot"));
       btn_use_pot->down_box(FL_DOWN_BOX);
       btn_use_pot->callback((Fl_Callback*)cb_btn_use_pot);
       btn_use_pot->align(FL_ALIGN_LEFT);
@@ -382,7 +397,8 @@ Fl_Double_Window* WKey_window() {
       btn_msg10->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg10->callback((Fl_Callback*)cb_btn_msg10);
     } // Fl_Button* btn_msg10
-    { txt_sta = new Fl_Input2(321, 222, 82, 22, _("<STA>"));
+    { txt_sta = new Fl_Input2(255, 222, 80, 22, _("STA"));
+      txt_sta->tooltip(_("Other station"));
       txt_sta->box(FL_DOWN_BOX);
       txt_sta->color((Fl_Color)FL_BACKGROUND2_COLOR);
       txt_sta->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -394,7 +410,8 @@ Fl_Double_Window* WKey_window() {
       txt_sta->align(FL_ALIGN_LEFT);
       txt_sta->when(FL_WHEN_CHANGED);
     } // Fl_Input2* txt_sta
-    { txt_name = new Fl_Input2(321, 251, 82, 22, _("<NAM>"));
+    { txt_name = new Fl_Input2(382, 222, 80, 22, _("NAM"));
+      txt_name->tooltip(_("Other operator"));
       txt_name->box(FL_DOWN_BOX);
       txt_name->color((Fl_Color)FL_BACKGROUND2_COLOR);
       txt_name->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -405,9 +422,24 @@ Fl_Double_Window* WKey_window() {
       txt_name->align(FL_ALIGN_LEFT);
       txt_name->when(FL_WHEN_RELEASE);
     } // Fl_Input2* txt_name
-    { btn_log_it = new Fl_Button(407, 249, 55, 25, _("Log It"));
+    { btn_log_it = new Fl_Button(413, 250, 50, 25, _("Log"));
       btn_log_it->callback((Fl_Callback*)cb_btn_log_it);
     } // Fl_Button* btn_log_it
+    { txt_xchg = new Fl_Input2(255, 251, 100, 22, _("X_in"));
+      txt_xchg->tooltip(_("Rcvd Contest Exchange"));
+      txt_xchg->box(FL_DOWN_BOX);
+      txt_xchg->color((Fl_Color)FL_BACKGROUND2_COLOR);
+      txt_xchg->selection_color((Fl_Color)FL_SELECTION_COLOR);
+      txt_xchg->labeltype(FL_NORMAL_LABEL);
+      txt_xchg->labelfont(0);
+      txt_xchg->labelsize(14);
+      txt_xchg->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      txt_xchg->align(FL_ALIGN_LEFT);
+      txt_xchg->when(FL_WHEN_CHANGED);
+    } // Fl_Input2* txt_xchg
+    { btn_clear = new Fl_Button(358, 250, 50, 25, _("Clear"));
+      btn_clear->callback((Fl_Callback*)cb_btn_clear);
+    } // Fl_Button* btn_clear
     o->end();
   } // Fl_Double_Window* o
   return w;
@@ -808,7 +840,7 @@ static void cb_btn_apply_edit(Fl_Button*, void*) {
 
 Fl_Double_Window* make_message_editor() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(597, 325, _("Message Editor"));
+  { Fl_Double_Window* o = new Fl_Double_Window(600, 324, _("Message Editor"));
     w = o;
     { label_1 = new Fl_Input2(30, 35, 50, 25, _("1:"));
       label_1->box(FL_DOWN_BOX);
@@ -1030,90 +1062,102 @@ Fl_Double_Window* make_message_editor() {
       edit_msg10->align(FL_ALIGN_LEFT);
       edit_msg10->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg10
-    { btn_done_edit = new Fl_Button(536, 290, 56, 26, _("Done"));
+    { btn_done_edit = new Fl_Button(535, 292, 56, 26, _("Done"));
       btn_done_edit->callback((Fl_Callback*)cb_btn_done_edit);
     } // Fl_Button* btn_done_edit
-    { btn_cancel_edit = new Fl_Button(463, 260, 65, 26, _("Cancel"));
+    { btn_cancel_edit = new Fl_Button(465, 263, 65, 26, _("Cancel"));
       btn_cancel_edit->callback((Fl_Callback*)cb_btn_cancel_edit);
     } // Fl_Button* btn_cancel_edit
+    { btn_apply_edit = new Fl_Button(465, 292, 65, 26, _("Apply"));
+      btn_apply_edit->callback((Fl_Callback*)cb_btn_apply_edit);
+    } // Fl_Button* btn_apply_edit
     { new Fl_Box(201, 9, 223, 19, _("Message Text"));
     } // Fl_Box* o
     { new Fl_Box(12, 8, 84, 23, _("Msg Label"));
     } // Fl_Box* o
-    { Fl_Group* o = new Fl_Group(462, 4, 65, 252);
+    { Fl_Group* o = new Fl_Group(464, 4, 65, 252);
       o->box(FL_ENGRAVED_FRAME);
-      { new Fl_Box(467, 7, 54, 20, _("Tags"));
+      { new Fl_Box(469, 7, 54, 20, _("Tags"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 36, 55, 20, _("<CLL>"));
+      { Fl_Box* o = new Fl_Box(469, 36, 55, 20, _("<CLL>"));
         o->tooltip(_("Your call"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 56, 55, 20, _("<QTH>"));
+      { Fl_Box* o = new Fl_Box(469, 56, 55, 20, _("<QTH>"));
         o->tooltip(_("Your qth"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 76, 55, 20, _("<LOC>"));
+      { Fl_Box* o = new Fl_Box(469, 76, 55, 20, _("<LOC>"));
         o->tooltip(_("Your location"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 96, 55, 20, _("<OPR>"));
+      { Fl_Box* o = new Fl_Box(469, 96, 55, 20, _("<OPR>"));
         o->tooltip(_("Your name"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 115, 55, 20, _("<STA>"));
+      { Fl_Box* o = new Fl_Box(469, 115, 55, 20, _("<STA>"));
         o->tooltip(_("Other stations callsign"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(467, 134, 55, 20, _("<NAM>"));
+      { Fl_Box* o = new Fl_Box(469, 134, 55, 20, _("<NAM>"));
         o->tooltip(_("Other stations name"));
       } // Fl_Box* o
-      { new Fl_Box(467, 208, 55, 20);
+      { new Fl_Box(469, 208, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 154, 55, 20);
+      { new Fl_Box(469, 154, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 155, 55, 20);
+      { new Fl_Box(469, 155, 55, 20);
       } // Fl_Box* o
-      { new Fl_Box(467, 153, 55, 20);
+      { new Fl_Box(469, 153, 55, 20);
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(469, 151, 55, 20, _("<#>"));
+        o->tooltip(_("Serial OUT"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(469, 170, 55, 20, _("<+>"));
+        o->tooltip(_("Increment serial #"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(469, 189, 55, 20, _("<->"));
+        o->tooltip(_("Decrement serial #"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(469, 208, 55, 20, _("<LOG>"));
+        o->tooltip(_("Decrement serial #"));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(527, 4, 65, 252);
+    { Fl_Group* o = new Fl_Group(529, 4, 65, 252);
       o->box(FL_ENGRAVED_FRAME);
-      { new Fl_Box(530, 7, 59, 20, _("ProSign"));
+      { new Fl_Box(532, 7, 59, 20, _("ProSign"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 36, 60, 20, _("\" RR"));
+      { Fl_Box* o = new Fl_Box(531, 36, 60, 20, _("\" RR"));
         o->tooltip(_(".-..-."));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 56, 60, 20, _("$ SX"));
+      { Fl_Box* o = new Fl_Box(531, 56, 60, 20, _("$ SX"));
         o->tooltip(_("...-..-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 75, 60, 20, _("\' WG"));
+      { Fl_Box* o = new Fl_Box(531, 75, 60, 20, _("\' WG"));
         o->tooltip(_(".----."));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 94, 60, 20, _("( KN"));
+      { Fl_Box* o = new Fl_Box(531, 94, 60, 20, _("( KN"));
         o->tooltip(_("-.--."));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 113, 60, 20, _(") KK"));
+      { Fl_Box* o = new Fl_Box(531, 113, 60, 20, _(") KK"));
         o->tooltip(_("-.--.-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 132, 60, 20, _("+ AR"));
+      { Fl_Box* o = new Fl_Box(531, 132, 60, 20, _("+ AR"));
         o->tooltip(_(".-.-."));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 151, 60, 20, _("< AR"));
+      { Fl_Box* o = new Fl_Box(531, 151, 60, 20, _("< AR"));
         o->tooltip(_(".-.-."));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 170, 60, 20, _("> SK"));
+      { Fl_Box* o = new Fl_Box(531, 170, 60, 20, _("> SK"));
         o->tooltip(_("...-.-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 189, 60, 20, _("= BT"));
+      { Fl_Box* o = new Fl_Box(531, 189, 60, 20, _("= BT"));
         o->tooltip(_("-...-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 208, 60, 20, _("- DU"));
+      { Fl_Box* o = new Fl_Box(531, 208, 60, 20, _("- DU"));
         o->tooltip(_("-....-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(529, 227, 60, 20, _("@@ AC"));
+      { Fl_Box* o = new Fl_Box(531, 227, 60, 20, _("@@ AC"));
         o->tooltip(_(".--.-."));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { btn_apply_edit = new Fl_Button(463, 290, 65, 26, _("Apply"));
-      btn_apply_edit->callback((Fl_Callback*)cb_btn_apply_edit);
-    } // Fl_Button* btn_apply_edit
     o->end();
   } // Fl_Double_Window* o
   return w;
@@ -1207,6 +1251,72 @@ Fl_Double_Window* make_operator_dialog() {
     { btn_done_op_dialog = new Fl_Button(204, 133, 70, 20, _("Done"));
       btn_done_op_dialog->callback((Fl_Callback*)cb_btn_done_op_dialog);
     } // Fl_Button* btn_done_op_dialog
+    o->end();
+  } // Fl_Double_Window* o
+  return w;
+}
+
+Fl_Input *txt_serial_nbr=(Fl_Input *)0;
+
+static void cb_txt_serial_nbr(Fl_Input*, void*) {
+  serial_nbr();
+}
+
+Fl_Check_Button *btn_zeros=(Fl_Check_Button *)0;
+
+static void cb_btn_zeros(Fl_Check_Button*, void*) {
+  zeros();
+}
+
+Fl_Input *txt_freq=(Fl_Input *)0;
+
+Fl_Check_Button *btn_dups=(Fl_Check_Button *)0;
+
+static void cb_btn_dups(Fl_Check_Button*, void*) {
+  zeros();
+}
+
+Fl_Input *txt_time_span=(Fl_Input *)0;
+
+Fl_Button *btn_close_contest=(Fl_Button *)0;
+
+static void cb_btn_close_contest(Fl_Button*, void*) {
+  close_contest();
+}
+
+Fl_Double_Window* make_contest_dialog() {
+  Fl_Double_Window* w;
+  { Fl_Double_Window* o = new Fl_Double_Window(600, 65, _("Contest"));
+    w = o;
+    { Fl_Group* o = new Fl_Group(2, 2, 596, 60, _("Contest"));
+      o->box(FL_ENGRAVED_FRAME);
+      o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+      { txt_serial_nbr = new Fl_Input(125, 6, 60, 24, _("Next #"));
+        txt_serial_nbr->tooltip(_("Next serial number to be sent"));
+        txt_serial_nbr->type(2);
+        txt_serial_nbr->callback((Fl_Callback*)cb_txt_serial_nbr);
+      } // Fl_Input* txt_serial_nbr
+      { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(368, 11, 70, 15, _("Leading zeros"));
+        btn_zeros->down_box(FL_DOWN_BOX);
+        btn_zeros->callback((Fl_Callback*)cb_btn_zeros);
+        o->value(progStatus.zeros);
+      } // Fl_Check_Button* btn_zeros
+      { txt_freq = new Fl_Input(237, 6, 120, 24, _("Freq:"));
+      } // Fl_Input* txt_freq
+      { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(498, 11, 70, 15, _("Ck Dups"));
+        btn_dups->down_box(FL_DOWN_BOX);
+        btn_dups->callback((Fl_Callback*)cb_btn_dups);
+        o->value(progStatus.dups);
+      } // Fl_Check_Button* btn_dups
+      { txt_time_span = new Fl_Input(124, 33, 60, 24, _("Time Span"));
+        txt_time_span->tooltip(_("Next serial number to be sent"));
+        txt_time_span->type(2);
+      } // Fl_Input* txt_time_span
+      { btn_close_contest = new Fl_Button(506, 34, 70, 20, _("Close"));
+        btn_close_contest->callback((Fl_Callback*)cb_btn_close_contest);
+      } // Fl_Button* btn_close_contest
+      o->end();
+    } // Fl_Group* o
     o->end();
   } // Fl_Double_Window* o
   return w;

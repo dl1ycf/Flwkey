@@ -545,6 +545,42 @@ void expand_msg(string &msg)
 		msg.replace(ptr, 5, progStatus.tag_loc);
 	while ((ptr = msg.find("<OPR>")) != string::npos)
 		msg.replace(ptr, 5, progStatus.tag_opr);
+	if ((ptr = msg.find("<#>")) != string::npos) {
+		char snbr[8] = "";
+		if (progStatus.zeros && progStatus.serial_nbr < 100)
+			snprintf(snbr, sizeof(snbr), "0%d", progStatus.serial_nbr);
+		else
+			snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+		msg.replace(ptr, 3, snbr);
+	}
+	if ((ptr = msg.find("<+>")) != string::npos) {
+		progStatus.serial_nbr++;
+		msg.replace(ptr, 3, "");
+	}
+	if ((ptr = msg.find("<->")) != string::npos) {
+		progStatus.serial_nbr--;
+		msg.replace(ptr, 3, "");
+	}
+	if (progStatus.serial_nbr < 1) progStatus.serial_nbr = 1;
+	char snbr[8];
+	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+	txt_serial_nbr->value(snbr);
+	txt_serial_nbr->redraw();
+
+	if ((ptr = msg.find("<LOG>")) != string::npos) {
+		AddRecord();
+		msg.replace(ptr, 5, "");
+	}
+}
+
+void serial_nbr()
+{
+	progStatus.serial_nbr = atoi(txt_serial_nbr->value());
+}
+
+void zeros()
+{
+	progStatus.zeros = btn_zeros->value();
 }
 
 void do_config_messages(void *)
@@ -696,6 +732,9 @@ void check_call()
 //		DupCheck();
 //	}
 
-	SearchLastQSO(txt_sta->value());
+	if (btn_dups->value())
+		DupCheck();
+	else
+		SearchLastQSO(txt_sta->value());
 
 }

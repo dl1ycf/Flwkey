@@ -565,7 +565,7 @@ bool cQsoDb::duplicate(
 		const char *xchg1, bool chkxchg1 )
 {
 	int f1, f2 = 0;
-	f1 = (int)(atof(freq)/1000.0);
+	f1 = (int)atof(freq);
 	bool b_freqDUP = true, b_stateDUP = true, b_modeDUP = true,
 		 b_xchg1DUP = true,
 		 b_dtimeDUP = true;
@@ -579,6 +579,10 @@ bool cQsoDb::duplicate(
 				   	   b_xchg1DUP = b_dtimeDUP = false;
 			if (chkfreq) {
 				f2 = (int)atof(qsorec[i].getField(FREQ));
+				while (f1 > 1000) f1 /= 1000;
+				while (f2 > 1000) f2 /= 1000;
+				if (f1 > 100) { f1 /= 10; f2 /= 10; }
+				f1 = (int)(f1); f2 = (int)(f2);
 				b_freqDUP = (f1 == f2);
 			}
 			if (chkstate)

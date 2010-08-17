@@ -77,6 +77,11 @@ struct status {
 // logbook entries
 	string logbookfilename;
 
+// contest data
+	int		serial_nbr;
+	bool	zeros;
+	bool	dups;
+
 	void saveLastState();
 	void loadLastState();
 };

@@ -46,6 +46,8 @@ extern Fl_Button *btn_msg10;
 extern Fl_Input2 *txt_sta;
 extern Fl_Input2 *txt_name;
 extern Fl_Button *btn_log_it;
+extern Fl_Input2 *txt_xchg;
+extern Fl_Button *btn_clear;
 Fl_Double_Window* WKey_window();
 extern Fl_Menu_Item menu_[];
 #define mnu_exit (menu_+1)
@@ -63,9 +65,10 @@ extern Fl_Menu_Item menu_[];
 #define mnu_export_logbook_text (menu_+16)
 #define mnu_export_logbook_csv (menu_+17)
 #define mnu_export_cabrillo (menu_+18)
-#define mnu_events (menu_+20)
-#define mnu_about (menu_+22)
-#define mnu_on_line_help (menu_+23)
+#define mnu_contest (menu_+20)
+#define mnu_events (menu_+21)
+#define mnu_about (menu_+23)
+#define mnu_on_line_help (menu_+24)
 #include <FL/Fl_Group.H>
 extern Fl_Check_Button *btn_swap;
 extern Fl_Check_Button *btn_auto_space;
@@ -124,4 +127,12 @@ extern Fl_Input2 *txt_qth;
 extern Fl_Input2 *txt_loc;
 extern Fl_Button *btn_done_op_dialog;
 Fl_Double_Window* make_operator_dialog();
+#include <FL/Fl_Input.H>
+extern Fl_Input *txt_serial_nbr;
+extern Fl_Check_Button *btn_zeros;
+extern Fl_Input *txt_freq;
+extern Fl_Check_Button *btn_dups;
+extern Fl_Input *txt_time_span;
+extern Fl_Button *btn_close_contest;
+Fl_Double_Window* make_contest_dialog();
 #endif

@@ -28,8 +28,7 @@ using namespace std;
 #  include <glob.h>
 #endif
 
-Fl_Double_Window *dlgSetup = NULL;
-//Font_Browser     *fntbrowser = NULL;
+Fl_Double_Window *dlgSetup = (Fl_Double_Window *)0;
 
 //======================================================================
 // test comm ports
@@ -562,6 +561,9 @@ void config_messages()
 	edit_msg9->value(progStatus.edit_msg9.c_str());
 	label_10->value(progStatus.label_10.c_str());
 	edit_msg10->value(progStatus.edit_msg10.c_str());
+	char snbr[10];
+	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+	txt_serial_nbr->value(snbr);
 	dialog_messages->show();
 }
 
@@ -662,4 +664,19 @@ void open_operator_dialog()
 	txt_loc->value(progStatus.tag_loc.c_str());
 	txt_opr->value(progStatus.tag_opr.c_str());
 	op_dialog->show();
+}
+
+Fl_Double_Window *contest_dialog = (Fl_Double_Window *)0;
+
+void cb_contest()
+{
+	if (!contest_dialog)
+		contest_dialog = make_contest_dialog();
+	if (!contest_dialog->visible())
+		contest_dialog->show();
+}
+
+void close_contest()
+{
+	contest_dialog->hide();
 }

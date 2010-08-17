@@ -500,30 +500,21 @@ void cb_SortByFreq (void) {
 
 void DupCheck()
 {
-/*
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
-	if (qsodb.duplicate(
-			inpCall->value(),
-			zdate(), ztime(), progdefaults.timespan, progdefaults.duptimespan,
-			inpFreq->value(), progdefaults.dupband,
-			inpState->value(), progdefaults.dupstate,
-			mode_info[active_modem->get_mode()].adif_name, progdefaults.dupmode,
-			inpXchgIn->value(), progdefaults.dupxchg1 ) ) {
-		call_clr = fl_rgb_color(
-			progdefaults.dup_color.R,
-			progdefaults.dup_color.G,
-			progdefaults.dup_color.B);
-	}
+	int ispn = atoi(txt_time_span->value());
+	int ifreq = atoi(txt_freq->value());
 
-	inpCall1->color(call_clr);
-	inpCall2->color(call_clr);
-	inpCall3->color(call_clr);
-	inpCall4->color(call_clr);
-	inpCall1->redraw();
-	inpCall2->redraw();
-	inpCall3->redraw();
-	inpCall4->redraw();
-*/
+	if (qsodb.duplicate(
+			txt_sta->value(),
+			szDate(6), szTime(0), ispn, (ispn > 0),
+			txt_freq->value(), ifreq > 0,
+			"", false,
+			"CW", true,
+			"", false ) ) {
+		call_clr = fl_rgb_color( 255, 110, 180);
+	}
+	txt_sta->color(call_clr);
+	txt_sta->redraw();
 }
 
 cQsoRec* SearchLog(const char *callsign)
@@ -781,6 +772,8 @@ void AddRecord ()
 {
 	char *szt = szTime(2);
 	char *szdt = szDate(0x86);
+	string xout = txt_xchg->value();
+	for (size_t n = 0; n < xout.length(); n++) xout[n] = toupper(xout[n]);
 
 	inpCall_log->value(txt_sta->value());
 	inpName_log->value (txt_name->value());
@@ -797,7 +790,7 @@ void AddRecord ()
 
 	inpSerNoIn_log->value("");
 	inpSerNoOut_log->value("");
-	inpXchgIn_log->value("");
+	inpXchgIn_log->value(xout.c_str());
 	inpMyXchg_log->value("");
 
 	inpQth_log->value ("");
@@ -817,6 +810,7 @@ void AddRecord ()
 
 	txt_sta->value("");
 	txt_name->value("");
+	txt_xchg->value("");
 
 }
 

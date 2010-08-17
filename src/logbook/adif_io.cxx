@@ -162,7 +162,7 @@ void cAdifIO::readFile (const char *fname, cQsoDb *db) {
 	filesize = ftell (adiFile);
 
 	if (filesize == 0) {
-	fl_alert2(_("Empty ADIF logbook file"));
+//	fl_alert2(_("Empty ADIF logbook file"));
 	return;
 	}
 
@@ -175,7 +175,7 @@ void cAdifIO::readFile (const char *fname, cQsoDb *db) {
 // relaxed file integrity test to all importing from non conforming log programs
 	if ((strcasestr(buff, "<ADIF_VER:") != 0) &&
 		(strcasestr(buff, "<CALL:") == 0)) {
-		fl_alert2(_("No records in ADIF logbook file"));
+//		fl_alert2(_("No records in ADIF logbook file"));
 		delete [] buff;
 		return;
 	}
