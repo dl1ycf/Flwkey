@@ -264,14 +264,6 @@ LOG_INFO("%s", progStatus.serial_port_name.c_str());
 	dlgSetup->show();
 }
 
-void create_comm_dialog()
-{
-	if (!dlgSetup) {
-		dlgSetup = SetupDialog();
-		init_port_combos();
-	}
-}
-
 void cb_events()
 {
 	debug::show();
@@ -283,42 +275,6 @@ Fl_Double_Window *parameter_dialog = (Fl_Double_Window *)0;
 
 void config_parameters()
 {
-	if (!parameter_dialog) {
-		parameter_dialog = make_parameters_dialog();
-		choice_keyer_mode->add("Iambic B");
-		choice_keyer_mode->add("Iambic A");
-		choice_keyer_mode->add("Ultimatic");
-		choice_keyer_mode->add("Bug Mode");
-		choice_output_pins->add("Key 1");
-		choice_output_pins->add("Key 2");
-		choice_output_pins->add("Key 1 & 2");
-		choice_sidetone->add("4000");
-		choice_sidetone->add("2000");
-		choice_sidetone->add("1333");
-		choice_sidetone->add("1000");
-		choice_sidetone->add("800");
-		choice_sidetone->add("666");
-		choice_sidetone->add("571");
-		choice_sidetone->add("500");
-		choice_sidetone->add("444");
-		choice_sidetone->add("400");
-		choice_hang->add("Wait 1.0");
-		choice_hang->add("Wait 1.33");
-		choice_hang->add("Wait 1.66");
-		choice_hang->add("Wait 2.0");
-		cntr_tail->minimum(0); cntr_tail->maximum(250); cntr_tail->step(10);
-		cntr_leadin->minimum(0); cntr_leadin->maximum(250); cntr_leadin->step(10);
-		cntr_weight->minimum(10); cntr_weight->maximum(90); cntr_weight->step(1);
-		cntr_sample->minimum(10); cntr_sample->maximum(90); cntr_sample->step(1);
-		cntr_first_ext->minimum(0); cntr_first_ext->maximum(250); cntr_first_ext->step(1);
-		cntr_comp->minimum(0); cntr_comp->maximum(250); cntr_comp->step(1);
-		cntr_ratio->minimum(2.0); cntr_ratio->maximum(4.0); cntr_ratio->step(0.1);
-		cntr_cmd_wpm->minimum(10); cntr_cmd_wpm->maximum(30); cntr_cmd_wpm->step(1);
-		cntr_farnsworth->minimum(10); cntr_farnsworth->maximum(99); cntr_farnsworth->step(1);
-		cntr_rng_wpm->minimum(10); cntr_rng_wpm->maximum(40); cntr_rng_wpm->step(1);
-		cntr_min_wpm->minimum(5); cntr_min_wpm->maximum(89); cntr_min_wpm->step(1);
-	}
-
 	cntr_tail->value(progStatus.tail_time);
 	cntr_leadin->value(progStatus.lead_in_time);
 	cntr_weight->value(progStatus.weight);
@@ -539,8 +495,6 @@ Fl_Double_Window *dialog_messages = (Fl_Double_Window *)0;
 
 void config_messages()
 {
-	if (!dialog_messages)
-		dialog_messages = make_message_editor();
 	label_1->value(progStatus.label_1.c_str());
 	edit_msg1->value(progStatus.edit_msg1.c_str());
 	label_2->value(progStatus.label_2.c_str());
@@ -654,8 +608,6 @@ void cb_done_op_dialog()
 
 void open_operator_dialog()
 {
-	if (!op_dialog)
-		op_dialog = make_operator_dialog();
 	txt_cll->value(progStatus.tag_cll.c_str());
 	txt_qth->value(progStatus.tag_qth.c_str());
 	txt_loc->value(progStatus.tag_loc.c_str());
@@ -667,8 +619,6 @@ Fl_Double_Window *contest_dialog = (Fl_Double_Window *)0;
 
 void cb_contest()
 {
-	if (!contest_dialog)
-		contest_dialog = make_contest_dialog();
 	char snbr[10];
 	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
 	txt_serial_nbr->value(snbr);
@@ -683,4 +633,51 @@ void cb_contest()
 void close_contest()
 {
 	contest_dialog->hide();
+}
+
+void create_dialogs()
+{
+// configuration parameter dialog
+	parameter_dialog = make_parameters_dialog();
+	choice_keyer_mode->add("Iambic B");
+	choice_keyer_mode->add("Iambic A");
+	choice_keyer_mode->add("Ultimatic");
+	choice_keyer_mode->add("Bug Mode");
+	choice_output_pins->add("Key 1");
+	choice_output_pins->add("Key 2");
+	choice_output_pins->add("Key 1 & 2");
+	choice_sidetone->add("4000");
+	choice_sidetone->add("2000");
+	choice_sidetone->add("1333");
+	choice_sidetone->add("1000");
+	choice_sidetone->add("800");
+	choice_sidetone->add("666");
+	choice_sidetone->add("571");
+	choice_sidetone->add("500");
+	choice_sidetone->add("444");
+	choice_sidetone->add("400");
+	choice_hang->add("Wait 1.0");
+	choice_hang->add("Wait 1.33");
+	choice_hang->add("Wait 1.66");
+	choice_hang->add("Wait 2.0");
+	cntr_tail->minimum(0); cntr_tail->maximum(250); cntr_tail->step(10);
+	cntr_leadin->minimum(0); cntr_leadin->maximum(250); cntr_leadin->step(10);
+	cntr_weight->minimum(10); cntr_weight->maximum(90); cntr_weight->step(1);
+	cntr_sample->minimum(10); cntr_sample->maximum(90); cntr_sample->step(1);
+	cntr_first_ext->minimum(0); cntr_first_ext->maximum(250); cntr_first_ext->step(1);
+	cntr_comp->minimum(0); cntr_comp->maximum(250); cntr_comp->step(1);
+	cntr_ratio->minimum(2.0); cntr_ratio->maximum(4.0); cntr_ratio->step(0.1);
+	cntr_cmd_wpm->minimum(10); cntr_cmd_wpm->maximum(30); cntr_cmd_wpm->step(1);
+	cntr_farnsworth->minimum(10); cntr_farnsworth->maximum(99); cntr_farnsworth->step(1);
+	cntr_rng_wpm->minimum(10); cntr_rng_wpm->maximum(40); cntr_rng_wpm->step(1);
+	cntr_min_wpm->minimum(5); cntr_min_wpm->maximum(89); cntr_min_wpm->step(1);
+// serial port selection dialog
+	dlgSetup = SetupDialog();
+	init_port_combos();
+// message editor dialog
+	dialog_messages = make_message_editor();
+// operator dialog
+	op_dialog = make_operator_dialog();
+// contest dialog
+	contest_dialog = make_contest_dialog();
 }

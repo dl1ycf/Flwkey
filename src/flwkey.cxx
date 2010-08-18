@@ -236,7 +236,7 @@ int main (int argc, char *argv[])
 
 	mainwindow = WKey_window();
 	mainwindow->callback(exit_main);
-	create_comm_dialog();
+	create_dialogs();
 
 	checkdirectories();
 

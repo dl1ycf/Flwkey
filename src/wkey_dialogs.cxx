@@ -266,6 +266,7 @@ Fl_Button *btn_log_it=(Fl_Button *)0;
 
 static void cb_btn_log_it(Fl_Button*, void*) {
   AddRecord();
+txt_sta->take_focus();
 }
 
 Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
@@ -277,6 +278,7 @@ static void cb_btn_clear(Fl_Button*, void*) {
 txt_name->value("");
 txt_xchg->value("");
 txt_sta->color(FL_BACKGROUND2_COLOR);
+txt_sta->take_focus();
 }
 
 Fl_Double_Window* WKey_window() {
@@ -344,6 +346,7 @@ Fl_Double_Window* WKey_window() {
     { txt_wpm = new Fl_Output(165, 251, 38, 22);
     } // Fl_Output* txt_wpm
     { cntr_wpm = new Fl_Counter(151, 222, 64, 22, _("WPM"));
+      cntr_wpm->tooltip(_("flwkey WPM"));
       cntr_wpm->type(1);
       cntr_wpm->minimum(10);
       cntr_wpm->maximum(35);
@@ -353,6 +356,7 @@ Fl_Double_Window* WKey_window() {
       cntr_wpm->align(FL_ALIGN_LEFT);
     } // Fl_Counter* cntr_wpm
     { btn_use_pot = new Fl_Check_Button(145, 255, 20, 15, _("Pot"));
+      btn_use_pot->tooltip(_("Winkeyer pot controls WPM"));
       btn_use_pot->down_box(FL_DOWN_BOX);
       btn_use_pot->callback((Fl_Callback*)cb_btn_use_pot);
       btn_use_pot->align(FL_ALIGN_LEFT);
@@ -1302,19 +1306,22 @@ Fl_Double_Window* make_contest_dialog() {
         txt_serial_nbr->callback((Fl_Callback*)cb_txt_serial_nbr);
       } // Fl_Input* txt_serial_nbr
       { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(368, 11, 70, 15, _("Leading zeros"));
+        btn_zeros->tooltip(_("Send nbr as 0nn if < 100"));
         btn_zeros->down_box(FL_DOWN_BOX);
         btn_zeros->callback((Fl_Callback*)cb_btn_zeros);
         o->value(progStatus.zeros);
       } // Fl_Check_Button* btn_zeros
       { txt_freq = new Fl_Input(237, 6, 120, 24, _("Freq:"));
+        txt_freq->tooltip(_("Frequency (KHz preferred)\nBlank = don\'t care"));
       } // Fl_Input* txt_freq
       { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(498, 11, 70, 15, _("Ck Dups"));
+        btn_dups->tooltip(_("Check for duplicates"));
         btn_dups->down_box(FL_DOWN_BOX);
         btn_dups->callback((Fl_Callback*)cb_btn_dups);
         o->value(progStatus.dups);
       } // Fl_Check_Button* btn_dups
       { txt_time_span = new Fl_Input(124, 33, 60, 24, _("Time Span"));
-        txt_time_span->tooltip(_("Next serial number to be sent"));
+        txt_time_span->tooltip(_("Min\'s allowed between dups\nZero = disallowed"));
         txt_time_span->type(2);
         txt_time_span->callback((Fl_Callback*)cb_txt_time_span);
       } // Fl_Input* txt_time_span

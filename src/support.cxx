@@ -562,12 +562,12 @@ void expand_msg(string &msg)
 		msg.replace(ptr, 3, "");
 	}
 	if (progStatus.serial_nbr < 1) progStatus.serial_nbr = 1;
-	if (txt_serial_nbr) {
-		char snbr[8];
-		snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
-		txt_serial_nbr->value(snbr);
-		txt_serial_nbr->redraw();
-	}
+
+	char snbr[8];
+	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+	txt_serial_nbr->value(snbr);
+	txt_serial_nbr->redraw();
+
 	if ((ptr = msg.find("<LOG>")) != string::npos) {
 		AddRecord();
 		msg.replace(ptr, 5, "");

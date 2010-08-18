@@ -31,8 +31,7 @@ Function {SetupDialog()} {} {
   }
 } 
 
-Function {WKey_window()} {open
-} {
+Function {WKey_window()} {} {
   Fl_Window {} {
     label Fl_WinKey open
     xywh {588 108 600 279} type Double resizable visible
@@ -203,12 +202,12 @@ Function {WKey_window()} {open
     Fl_Counter cntr_wpm {
       label WPM
       callback {set_wpm();}
-      xywh {151 222 64 22} type Simple align 4 minimum 10 maximum 35 step 1 value 20
+      tooltip {flwkey WPM} xywh {151 222 64 22} type Simple align 4 minimum 10 maximum 35 step 1 value 20
     }
     Fl_Check_Button btn_use_pot {
       label Pot
       callback {use_pot_changed();}
-      xywh {145 255 20 15} down_box DOWN_BOX align 4 when 1
+      tooltip {Winkeyer pot controls WPM} xywh {145 255 20 15} down_box DOWN_BOX align 4 when 1
     }
     Fl_Button btn_msg1 {
       label Msg1
@@ -284,7 +283,8 @@ Edit - Right click} xywh {538 197 56 20}
     }
     Fl_Button btn_log_it {
       label Log
-      callback {AddRecord();}
+      callback {AddRecord();
+txt_sta->take_focus();}
       xywh {413 250 50 25}
     }
     Fl_Input txt_xchg {
@@ -297,7 +297,8 @@ Edit - Right click} xywh {538 197 56 20}
       callback {txt_sta->value("");
 txt_name->value("");
 txt_xchg->value("");
-txt_sta->color(FL_BACKGROUND2_COLOR);}
+txt_sta->color(FL_BACKGROUND2_COLOR);
+txt_sta->take_focus();}
       xywh {358 250 50 25}
     }
   }
@@ -471,8 +472,7 @@ Function {make_parameters_dialog()} {open
   }
 } 
 
-Function {make_message_editor()} {open
-} {
+Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor} open
     xywh {588 491 600 324} type Double hide
@@ -761,23 +761,25 @@ Function {make_contest_dialog()} {open
       Fl_Check_Button btn_zeros {
         label {Leading zeros}
         callback {zeros();}
-        xywh {368 11 70 15} down_box DOWN_BOX
+        tooltip {Send nbr as 0nn if < 100} xywh {368 11 70 15} down_box DOWN_BOX
         code0 {o->value(progStatus.zeros);}
       }
       Fl_Input txt_freq {
         label {Freq:}
-        xywh {237 6 120 24}
+        tooltip {Frequency (KHz preferred)
+Blank = don't care} xywh {237 6 120 24}
       }
       Fl_Check_Button btn_dups {
         label {Ck Dups}
         callback {dups();} selected
-        xywh {498 11 70 15} down_box DOWN_BOX
+        tooltip {Check for duplicates} xywh {498 11 70 15} down_box DOWN_BOX
         code0 {o->value(progStatus.dups);}
       }
       Fl_Input txt_time_span {
         label {Time Span}
         callback {time_span();}
-        tooltip {Next serial number to be sent} xywh {124 33 60 24} type Int
+        tooltip {Min's allowed between dups
+Zero = disallowed} xywh {124 33 60 24} type Int
       }
       Fl_Button btn_close_contest {
         label Close
