@@ -276,6 +276,7 @@ static void cb_btn_clear(Fl_Button*, void*) {
   txt_sta->value("");
 txt_name->value("");
 txt_xchg->value("");
+txt_sta->color(FL_BACKGROUND2_COLOR);
 }
 
 Fl_Double_Window* WKey_window() {
@@ -1273,10 +1274,14 @@ Fl_Input *txt_freq=(Fl_Input *)0;
 Fl_Check_Button *btn_dups=(Fl_Check_Button *)0;
 
 static void cb_btn_dups(Fl_Check_Button*, void*) {
-  zeros();
+  dups();
 }
 
 Fl_Input *txt_time_span=(Fl_Input *)0;
+
+static void cb_txt_time_span(Fl_Input*, void*) {
+  time_span();
+}
 
 Fl_Button *btn_close_contest=(Fl_Button *)0;
 
@@ -1311,6 +1316,7 @@ Fl_Double_Window* make_contest_dialog() {
       { txt_time_span = new Fl_Input(124, 33, 60, 24, _("Time Span"));
         txt_time_span->tooltip(_("Next serial number to be sent"));
         txt_time_span->type(2);
+        txt_time_span->callback((Fl_Callback*)cb_txt_time_span);
       } // Fl_Input* txt_time_span
       { btn_close_contest = new Fl_Button(506, 34, 70, 20, _("Close"));
         btn_close_contest->callback((Fl_Callback*)cb_btn_close_contest);

@@ -79,6 +79,7 @@ struct status {
 
 // contest data
 	int		serial_nbr;
+	int		time_span;
 	bool	zeros;
 	bool	dups;
 

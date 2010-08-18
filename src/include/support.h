@@ -112,6 +112,9 @@ extern void cb_mnuShowLogbook();
 
 extern void serial_nbr();
 extern void zeros();
+extern void dups();
+extern void time_span();
+
 extern void AddRecord();
 extern void about();
 extern void on_line_help();

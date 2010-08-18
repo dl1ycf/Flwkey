@@ -261,9 +261,9 @@ void saveLogbook()
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
 
-	pthread_mutex_lock (&logbook_mutex);
+//	pthread_mutex_lock (&logbook_mutex);
 	adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-	pthread_mutex_unlock (&logbook_mutex);
+//	pthread_mutex_unlock (&logbook_mutex);
 
 	qsodb.isdirty(0);
 	restore_sort();
@@ -309,9 +309,9 @@ void cb_mnuSaveLogbook() {
 		cQsoDb::reverse = false;
 		qsodb.SortByDate();
 
-		pthread_mutex_lock (&logbook_mutex);
+//		pthread_mutex_lock (&logbook_mutex);
 		adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-		pthread_mutex_unlock (&logbook_mutex);
+//		pthread_mutex_unlock (&logbook_mutex);
 
 		qsodb.isdirty(0);
 		restore_sort();
@@ -501,7 +501,7 @@ void cb_SortByFreq (void) {
 void DupCheck()
 {
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
-	int ispn = atoi(txt_time_span->value());
+	int ispn = progStatus.time_span;
 	int ifreq = atoi(txt_freq->value());
 
 	if (qsodb.duplicate(
@@ -652,9 +652,9 @@ void saveRecord() {
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
 
-	pthread_mutex_lock (&logbook_mutex);
+//	pthread_mutex_lock (&logbook_mutex);
 	adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-	pthread_mutex_unlock (&logbook_mutex);
+//	pthread_mutex_unlock (&logbook_mutex);
 
 	qsodb.isdirty(0);
 	restore_sort();
@@ -700,9 +700,9 @@ cQsoRec rec;
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
 
-	pthread_mutex_lock (&logbook_mutex);
+//	pthread_mutex_lock (&logbook_mutex);
 	adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-	pthread_mutex_unlock (&logbook_mutex);
+//	pthread_mutex_unlock (&logbook_mutex);
 
 	qsodb.isdirty(0);
 	restore_sort();
@@ -720,9 +720,9 @@ void deleteRecord () {
 	cQsoDb::reverse = false;
 	qsodb.SortByDate();
 
-	pthread_mutex_lock (&logbook_mutex);
+//	pthread_mutex_lock (&logbook_mutex);
 	adifFile.writeLog (logbook_filename.c_str(), &qsodb);
-	pthread_mutex_unlock (&logbook_mutex);
+//	pthread_mutex_unlock (&logbook_mutex);
 
 	qsodb.isdirty(0);
 	restore_sort();

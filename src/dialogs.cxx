@@ -561,9 +561,6 @@ void config_messages()
 	edit_msg9->value(progStatus.edit_msg9.c_str());
 	label_10->value(progStatus.label_10.c_str());
 	edit_msg10->value(progStatus.edit_msg10.c_str());
-	char snbr[10];
-	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
-	txt_serial_nbr->value(snbr);
 	dialog_messages->show();
 }
 
@@ -672,6 +669,13 @@ void cb_contest()
 {
 	if (!contest_dialog)
 		contest_dialog = make_contest_dialog();
+	char snbr[10];
+	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+	txt_serial_nbr->value(snbr);
+	snprintf(snbr, sizeof(snbr), "%d", progStatus.time_span);
+	txt_time_span->value(snbr);
+	btn_zeros->value(progStatus.zeros);
+	btn_dups->value(progStatus.dups);
 	if (!contest_dialog->visible())
 		contest_dialog->show();
 }

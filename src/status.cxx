@@ -88,6 +88,7 @@ status progStatus = {
 	"",			// string	logbookfilename
 
 	1,			// int	serial_nbr;
+	0,			// int	time_span;
 	true,		// bool	zeros;
 	false		// bool	dups;
 
@@ -153,6 +154,10 @@ void status::saveLastState()
 	spref.set("tag_opr", tag_opr.c_str());
 
 	spref.set("logbook_filename", logbookfilename.c_str());
+	spref.set("logbook_ser_nbr", serial_nbr);
+	spref.set("logbook_time_span", time_span);
+	spref.set("logbook_zeros", zeros);
+	spref.set("logbook_dups", dups);
 
 }
 
@@ -213,7 +218,12 @@ void status::loadLastState()
 		spref.get("tag_qth", defbuffer, "", 199); tag_qth = defbuffer;
 		spref.get("tag_loc", defbuffer, "", 199); tag_loc = defbuffer;
 		spref.get("tag_opr", defbuffer, "", 199); tag_opr = defbuffer;
+
 		spref.get("logbook_filename", defbuffer, "", 199); logbookfilename = defbuffer;
+		spref.get("logbook_ser_nbr", serial_nbr, serial_nbr);
+		spref.get("logbook_time_span", time_span, time_span);
+		spref.get("logbook_zeros", ichar, ichar); zeros = (ichar == 1);
+		spref.get("logbook_dups", ichar, ichar); dups = (ichar == 1);
 
 		update_msg_labels();
 	}

@@ -34,7 +34,7 @@ Function {SetupDialog()} {} {
 Function {WKey_window()} {open
 } {
   Fl_Window {} {
-    label Fl_WinKey
+    label Fl_WinKey open
     xywh {588 108 600 279} type Double resizable visible
   } {
     Fl_Menu_Bar {} {open
@@ -296,7 +296,8 @@ Edit - Right click} xywh {538 197 56 20}
       label Clear
       callback {txt_sta->value("");
 txt_name->value("");
-txt_xchg->value("");}
+txt_xchg->value("");
+txt_sta->color(FL_BACKGROUND2_COLOR);}
       xywh {358 250 50 25}
     }
   }
@@ -769,12 +770,13 @@ Function {make_contest_dialog()} {open
       }
       Fl_Check_Button btn_dups {
         label {Ck Dups}
-        callback {zeros();}
+        callback {dups();} selected
         xywh {498 11 70 15} down_box DOWN_BOX
         code0 {o->value(progStatus.dups);}
       }
       Fl_Input txt_time_span {
-        label {Time Span} selected
+        label {Time Span}
+        callback {time_span();}
         tooltip {Next serial number to be sent} xywh {124 33 60 24} type Int
       }
       Fl_Button btn_close_contest {

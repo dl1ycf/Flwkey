@@ -69,17 +69,17 @@ void start_logbook ()
 	loadBrowser();
 	qsodb.isdirty(0);
 
-	if (pthread_create(&logbook_thread, NULL, logbook_loop, NULL) < 0)
-		LOG_ERROR("%s", "pthread_create failed");
+//	if (pthread_create(&logbook_thread, NULL, logbook_loop, NULL) < 0)
+//		LOG_ERROR("%s", "pthread_create failed");
 }
 
 void close_logbook()
 {
 	saveLogbook();
 // tell the logbook thread to kill it self
-	logbook_exit = true;
+//	logbook_exit = true;
 // and then wait for it to die
-	pthread_join(logbook_thread, NULL);
-	logbook_exit = false;
+//	pthread_join(logbook_thread, NULL);
+//	logbook_exit = false;
 }
 

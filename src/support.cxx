@@ -562,11 +562,12 @@ void expand_msg(string &msg)
 		msg.replace(ptr, 3, "");
 	}
 	if (progStatus.serial_nbr < 1) progStatus.serial_nbr = 1;
-	char snbr[8];
-	snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
-	txt_serial_nbr->value(snbr);
-	txt_serial_nbr->redraw();
-
+	if (txt_serial_nbr) {
+		char snbr[8];
+		snprintf(snbr, sizeof(snbr), "%d", progStatus.serial_nbr);
+		txt_serial_nbr->value(snbr);
+		txt_serial_nbr->redraw();
+	}
 	if ((ptr = msg.find("<LOG>")) != string::npos) {
 		AddRecord();
 		msg.replace(ptr, 5, "");
@@ -578,9 +579,19 @@ void serial_nbr()
 	progStatus.serial_nbr = atoi(txt_serial_nbr->value());
 }
 
+void time_span()
+{
+	progStatus.time_span = atoi(txt_time_span->value());
+}
+
 void zeros()
 {
 	progStatus.zeros = btn_zeros->value();
+}
+
+void dups()
+{
+	progStatus.dups = btn_dups->value();
 }
 
 void do_config_messages(void *)
@@ -725,12 +736,6 @@ void check_call()
 	txt_sta->position(pos);
 
 	if (strlen(txt_sta->value()) < 3) return;
-
-//	sDate_on = zdate();
-
-//	if (progdefaults.EnableDupCheck) {
-//		DupCheck();
-//	}
 
 	if (btn_dups->value())
 		DupCheck();
