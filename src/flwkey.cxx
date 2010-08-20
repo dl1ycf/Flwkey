@@ -112,7 +112,7 @@ void about()
 	string msg = "\
 %s\n\
 Version %s\n\
-copyright W1HKJ, 2009\n\
+copyright W1HKJ, 2010\n\
 w1hkj@@w1hkj.com";
 	fl_message(msg.c_str(), PACKAGE_TARNAME, PACKAGE_VERSION);
 }

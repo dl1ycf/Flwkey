@@ -1120,7 +1120,7 @@ Fl_Double_Window* make_message_editor() {
         o->tooltip(_("Decrement serial #"));
       } // Fl_Box* o
       { Fl_Box* o = new Fl_Box(469, 208, 55, 20, _("<LOG>"));
-        o->tooltip(_("Decrement serial #"));
+        o->tooltip(_("Append entry to logbook"));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o

@@ -254,8 +254,9 @@ void version_(unsigned char byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
-	static char ver[40];
-	snprintf(ver, sizeof(ver), "Version %d\n", byte);
+	static char ver[200];
+	snprintf(ver, sizeof(ver), "Flwkey version: %s\nWkeyer version %d\n", 
+		PACKAGE_VERSION, byte);
 	host_is_up = true;
 	get_version = false;
 	Fl::awake(display_chars, ver);

@@ -50,6 +50,7 @@ static void *logbook_loop(void *args)
 void start_logbook ()
 {
 	create_logbook_dialogs();
+	dlgLogbook->size(580,384);
 
 	if (progStatus.logbookfilename.empty()) {
 		logbook_filename = WKeyHomeDir;
@@ -68,6 +69,7 @@ void start_logbook ()
 
 	loadBrowser();
 	qsodb.isdirty(0);
+	activateButtons();
 
 //	if (pthread_create(&logbook_thread, NULL, logbook_loop, NULL) < 0)
 //		LOG_ERROR("%s", "pthread_create failed");
@@ -82,4 +84,3 @@ void close_logbook()
 //	pthread_join(logbook_thread, NULL);
 //	logbook_exit = false;
 }
-

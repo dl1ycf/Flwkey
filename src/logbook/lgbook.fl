@@ -19,8 +19,8 @@ decl {\#include "flinput2.h"} {public
 Function {create_logbook_dialogs()} {open return_type void
 } {
   Fl_Window wExport {
-    label {Export Setup} open
-    xywh {506 538 655 365} type Double modal visible
+    label {Export Setup}
+    xywh {506 538 655 365} type Double hide modal
   } {
     Fl_Group {} {
       label {Select Records to Export} open
@@ -143,7 +143,7 @@ btnSelectNotes->value(1);}
         xywh {412 122 70 15} down_box DOWN_BOX value 1
       }
       Fl_Check_Button btnSelectTimeON {
-        label {Time ON} selected
+        label {Time ON}
         xywh {412 142 70 15} down_box DOWN_BOX value 1
       }
       Fl_Check_Button btnSelectTimeOFF {
@@ -262,8 +262,8 @@ btnSelectTX_pwr->value(0);}
     }
   }
   Fl_Window dlgLogbook {
-    label Logbook
-    xywh {540 120 570 350} type Double color 47 resizable visible
+    label Logbook selected
+    xywh {585 110 571 349} type Double color 47 resizable visible
   } {
     Fl_Group editGroup {open
       xywh {2 2 565 228} box ENGRAVED_FRAME color 52

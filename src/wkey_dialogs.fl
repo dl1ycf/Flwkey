@@ -475,7 +475,7 @@ Function {make_parameters_dialog()} {open
 Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {588 491 600 324} type Double hide
+    xywh {588 491 600 324} type Double visible
   } {
     Fl_Input label_1 {
       label {1:}
@@ -647,8 +647,8 @@ Function {make_message_editor()} {} {
         tooltip {Decrement serial \#} xywh {469 189 55 20}
       }
       Fl_Box {} {
-        label {<LOG>}
-        tooltip {Decrement serial \#} xywh {469 208 55 20}
+        label {<LOG>} selected
+        tooltip {Append entry to logbook} xywh {469 208 55 20}
       }
     }
     Fl_Group {} {
@@ -743,11 +743,10 @@ Function {make_operator_dialog()} {} {
   }
 } 
 
-Function {make_contest_dialog()} {open
-} {
+Function {make_contest_dialog()} {} {
   Fl_Window {} {
     label Contest open
-    xywh {588 416 600 65} type Double visible
+    xywh {588 416 600 65} type Double hide
   } {
     Fl_Group {} {
       label Contest open
@@ -771,7 +770,7 @@ Blank = don't care} xywh {237 6 120 24}
       }
       Fl_Check_Button btn_dups {
         label {Ck Dups}
-        callback {dups();} selected
+        callback {dups();}
         tooltip {Check for duplicates} xywh {498 11 70 15} down_box DOWN_BOX
         code0 {o->value(progStatus.dups);}
       }
