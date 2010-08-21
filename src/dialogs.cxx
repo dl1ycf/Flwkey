@@ -515,6 +515,10 @@ void config_messages()
 	edit_msg9->value(progStatus.edit_msg9.c_str());
 	label_10->value(progStatus.label_10.c_str());
 	edit_msg10->value(progStatus.edit_msg10.c_str());
+	label_11->value(progStatus.label_11.c_str());
+	edit_msg11->value(progStatus.edit_msg11.c_str());
+	label_12->value(progStatus.label_12.c_str());
+	edit_msg12->value(progStatus.edit_msg12.c_str());
 	dialog_messages->show();
 }
 
@@ -530,6 +534,8 @@ void update_msg_labels()
 	btn_msg8->label(progStatus.label_8.c_str()); btn_msg8->redraw();
 	btn_msg9->label(progStatus.label_9.c_str()); btn_msg9->redraw();
 	btn_msg10->label(progStatus.label_10.c_str()); btn_msg10->redraw();
+	btn_msg11->label(progStatus.label_11.c_str()); btn_msg11->redraw();
+	btn_msg12->label(progStatus.label_12.c_str()); btn_msg12->redraw();
 }
 
 void apply_edit()
@@ -563,6 +569,12 @@ void apply_edit()
 
 	progStatus.label_10 = label_10->value();
 	progStatus.edit_msg10 = edit_msg10->value();
+
+	progStatus.label_11 = label_11->value();
+	progStatus.edit_msg11 = edit_msg11->value();
+
+	progStatus.label_12 = label_12->value();
+	progStatus.edit_msg12 = edit_msg12->value();
 
 	update_msg_labels();
 }

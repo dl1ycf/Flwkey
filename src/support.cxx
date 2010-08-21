@@ -671,6 +671,18 @@ void exec_msg10()
 	Fl::focus(txt_to_send);
 }
 
+void exec_msg11()
+{
+	send_message(progStatus.edit_msg11);
+	Fl::focus(txt_to_send);
+}
+
+void exec_msg12()
+{
+	send_message(progStatus.edit_msg12);
+	Fl::focus(txt_to_send);
+}
+
 int main_handler(int event)
 {
 	if (event != FL_SHORTCUT)
@@ -679,8 +691,20 @@ int main_handler(int event)
 
 	if (w == mainwindow || w->window() == mainwindow) {
 		int key = Fl::event_key();
+		int state = Fl::event_state();
 		if (key == FL_Escape) return 1;
-		if ((key > FL_F) && key <= (FL_F + 10)) {
+		if ((key == 't') && ((state & FL_ALT) == FL_ALT)) {
+			if (btn_tune->value() == 1) btn_tune->value(0);
+			else btn_tune->value(1);
+			cb_tune();
+			return 1;
+		}
+		if ((key == 's') && ((state & FL_ALT) == FL_ALT)) {
+			if (btn_send->value() == 1) btn_send->value(0);
+			else btn_send->value(1);
+			return 1;
+		}
+		if ((key > FL_F) && key <= (FL_F + 12)) {
 			switch (key) {
 				case (FL_F + 1):
 					send_message(progStatus.edit_msg1);
@@ -711,6 +735,12 @@ int main_handler(int event)
 					break;
 				case (FL_F + 10):
 					send_message(progStatus.edit_msg10);
+					break;
+				case (FL_F + 11):
+					send_message(progStatus.edit_msg11);
+					break;
+				case (FL_F + 12):
+					send_message(progStatus.edit_msg12);
 					break;
 				default: break;
 			}

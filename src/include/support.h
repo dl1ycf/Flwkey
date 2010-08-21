@@ -92,6 +92,8 @@ extern void exec_msg7();
 extern void exec_msg8();
 extern void exec_msg9();
 extern void exec_msg10();
+extern void exec_msg11();
+extern void exec_msg12();
 
 extern void open_operator_dialog();
 extern void cb_done_op_dialog();

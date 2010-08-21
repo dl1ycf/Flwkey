@@ -254,6 +254,18 @@ static void cb_btn_msg10(Fl_Button*, void*) {
   exec_msg10();
 }
 
+Fl_Button *btn_msg11=(Fl_Button *)0;
+
+static void cb_btn_msg11(Fl_Button*, void*) {
+  exec_msg11();
+}
+
+Fl_Button *btn_msg12=(Fl_Button *)0;
+
+static void cb_btn_msg12(Fl_Button*, void*) {
+  exec_msg12();
+}
+
 Fl_Input2 *txt_sta=(Fl_Input2 *)0;
 
 static void cb_txt_sta(Fl_Input2*, void*) {
@@ -283,12 +295,12 @@ txt_sta->take_focus();
 
 Fl_Double_Window* WKey_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(600, 279, _("Fl_WinKey"));
+  { Fl_Double_Window* o = new Fl_Double_Window(670, 279, _("Fl_WinKey"));
     w = o;
-    { Fl_Menu_Bar* o = new Fl_Menu_Bar(0, 0, 600, 20);
+    { Fl_Menu_Bar* o = new Fl_Menu_Bar(0, 0, 670, 20);
       o->menu(menu_);
     } // Fl_Menu_Bar* o
-    { txt_sent = new FTextView(5, 23, 590, 96);
+    { txt_sent = new FTextView(5, 23, 660, 96);
       txt_sent->type(12);
       txt_sent->box(FL_DOWN_BOX);
       txt_sent->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -301,7 +313,7 @@ Fl_Double_Window* WKey_window() {
       txt_sent->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(txt_sent);
     } // FTextView* txt_sent
-    { txt_to_send = new FTextTX(5, 121, 590, 68, _("input:"));
+    { txt_to_send = new FTextTX(5, 121, 660, 68, _("input:"));
       txt_to_send->type(4);
       txt_to_send->box(FL_DOWN_BOX);
       txt_to_send->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -313,14 +325,14 @@ Fl_Double_Window* WKey_window() {
       txt_to_send->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       txt_to_send->when(FL_WHEN_CHANGED);
     } // FTextTX* txt_to_send
-    { btn_send = new Fl_Light_Button(535, 221, 60, 25, _("Send"));
+    { btn_send = new Fl_Light_Button(604, 221, 60, 25, _("Send"));
       btn_send->callback((Fl_Callback*)cb_btn_send);
     } // Fl_Light_Button* btn_send
-    { btn_tune = new Fl_Light_Button(535, 250, 60, 25, _("Tune"));
+    { btn_tune = new Fl_Light_Button(604, 250, 60, 25, _("Tune"));
       btn_tune->selection_color((Fl_Color)5);
       btn_tune->callback((Fl_Callback*)cb_btn_tune);
     } // Fl_Light_Button* btn_tune
-    { btn_cancel = new Fl_Button(472, 221, 60, 25, _("Cancel"));
+    { btn_cancel = new Fl_Button(541, 221, 60, 25, _("Cancel"));
       btn_cancel->callback((Fl_Callback*)cb_btn_cancel);
     } // Fl_Button* btn_cancel
     { box_busy = new Fl_Box(7, 241, 16, 16, _("Busy"));
@@ -362,46 +374,54 @@ Fl_Double_Window* WKey_window() {
       btn_use_pot->align(FL_ALIGN_LEFT);
       btn_use_pot->when(FL_WHEN_CHANGED);
     } // Fl_Check_Button* btn_use_pot
-    { btn_msg1 = new Fl_Button(4, 197, 56, 20, _("Msg1"));
+    { btn_msg1 = new Fl_Button(4, 197, 50, 20, _("m 1"));
       btn_msg1->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg1->callback((Fl_Callback*)cb_btn_msg1);
     } // Fl_Button* btn_msg1
-    { btn_msg2 = new Fl_Button(63, 197, 56, 20, _("Msg2"));
+    { btn_msg2 = new Fl_Button(59, 197, 50, 20, _("m 2"));
       btn_msg2->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg2->callback((Fl_Callback*)cb_btn_msg2);
     } // Fl_Button* btn_msg2
-    { btn_msg3 = new Fl_Button(122, 197, 56, 20, _("Msg3"));
+    { btn_msg3 = new Fl_Button(115, 197, 50, 20, _("m 3"));
       btn_msg3->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg3->callback((Fl_Callback*)cb_btn_msg3);
     } // Fl_Button* btn_msg3
-    { btn_msg4 = new Fl_Button(182, 197, 56, 20, _("Msg4"));
+    { btn_msg4 = new Fl_Button(170, 197, 50, 20, _("m 4"));
       btn_msg4->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg4->callback((Fl_Callback*)cb_btn_msg4);
     } // Fl_Button* btn_msg4
-    { btn_msg5 = new Fl_Button(241, 197, 56, 20, _("Msg5"));
+    { btn_msg5 = new Fl_Button(226, 197, 50, 20, _("m 5"));
       btn_msg5->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg5->callback((Fl_Callback*)cb_btn_msg5);
     } // Fl_Button* btn_msg5
-    { btn_msg6 = new Fl_Button(300, 197, 56, 20, _("Msg6"));
+    { btn_msg6 = new Fl_Button(282, 197, 50, 20, _("m 6"));
       btn_msg6->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg6->callback((Fl_Callback*)cb_btn_msg6);
     } // Fl_Button* btn_msg6
-    { btn_msg7 = new Fl_Button(360, 197, 56, 20, _("Msg7"));
+    { btn_msg7 = new Fl_Button(337, 197, 50, 20, _("m 7"));
       btn_msg7->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg7->callback((Fl_Callback*)cb_btn_msg7);
     } // Fl_Button* btn_msg7
-    { btn_msg8 = new Fl_Button(419, 197, 56, 20, _("Msg8"));
+    { btn_msg8 = new Fl_Button(393, 197, 50, 20, _("m 8"));
       btn_msg8->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg8->callback((Fl_Callback*)cb_btn_msg8);
     } // Fl_Button* btn_msg8
-    { btn_msg9 = new Fl_Button(478, 197, 56, 20, _("Msg9"));
+    { btn_msg9 = new Fl_Button(449, 197, 50, 20, _("m 9"));
       btn_msg9->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg9->callback((Fl_Callback*)cb_btn_msg9);
     } // Fl_Button* btn_msg9
-    { btn_msg10 = new Fl_Button(538, 197, 56, 20, _("Msg10"));
+    { btn_msg10 = new Fl_Button(504, 197, 50, 20, _("m 10"));
       btn_msg10->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg10->callback((Fl_Callback*)cb_btn_msg10);
     } // Fl_Button* btn_msg10
+    { btn_msg11 = new Fl_Button(560, 197, 50, 20, _("m 11"));
+      btn_msg11->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
+      btn_msg11->callback((Fl_Callback*)cb_btn_msg11);
+    } // Fl_Button* btn_msg11
+    { btn_msg12 = new Fl_Button(616, 197, 50, 20, _("m 12"));
+      btn_msg12->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
+      btn_msg12->callback((Fl_Callback*)cb_btn_msg12);
+    } // Fl_Button* btn_msg12
     { txt_sta = new Fl_Input2(255, 222, 80, 22, _("STA"));
       txt_sta->tooltip(_("Other station"));
       txt_sta->box(FL_DOWN_BOX);
@@ -427,10 +447,10 @@ Fl_Double_Window* WKey_window() {
       txt_name->align(FL_ALIGN_LEFT);
       txt_name->when(FL_WHEN_RELEASE);
     } // Fl_Input2* txt_name
-    { btn_log_it = new Fl_Button(413, 250, 50, 25, _("Log"));
+    { btn_log_it = new Fl_Button(474, 250, 50, 25, _("Log"));
       btn_log_it->callback((Fl_Callback*)cb_btn_log_it);
     } // Fl_Button* btn_log_it
-    { txt_xchg = new Fl_Input2(255, 251, 100, 22, _("X_in"));
+    { txt_xchg = new Fl_Input2(255, 251, 209, 22, _("X_in"));
       txt_xchg->tooltip(_("Rcvd Contest Exchange"));
       txt_xchg->box(FL_DOWN_BOX);
       txt_xchg->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -442,7 +462,7 @@ Fl_Double_Window* WKey_window() {
       txt_xchg->align(FL_ALIGN_LEFT);
       txt_xchg->when(FL_WHEN_CHANGED);
     } // Fl_Input2* txt_xchg
-    { btn_clear = new Fl_Button(358, 250, 50, 25, _("Clear"));
+    { btn_clear = new Fl_Button(474, 221, 50, 25, _("Clear"));
       btn_clear->callback((Fl_Callback*)cb_btn_clear);
     } // Fl_Button* btn_clear
     o->end();
@@ -843,11 +863,19 @@ static void cb_btn_apply_edit(Fl_Button*, void*) {
   apply_edit();
 }
 
+Fl_Input2 *label_11=(Fl_Input2 *)0;
+
+Fl_Input2 *edit_msg11=(Fl_Input2 *)0;
+
+Fl_Input2 *label_12=(Fl_Input2 *)0;
+
+Fl_Input2 *edit_msg12=(Fl_Input2 *)0;
+
 Fl_Double_Window* make_message_editor() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(600, 324, _("Message Editor"));
+  { Fl_Double_Window* o = new Fl_Double_Window(600, 350, _("Message Editor"));
     w = o;
-    { label_1 = new Fl_Input2(30, 35, 50, 25, _("1:"));
+    { label_1 = new Fl_Input2(30, 31, 50, 22, _("1:"));
       label_1->box(FL_DOWN_BOX);
       label_1->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_1->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -858,7 +886,7 @@ Fl_Double_Window* make_message_editor() {
       label_1->align(FL_ALIGN_LEFT);
       label_1->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_1
-    { edit_msg1 = new Fl_Input2(85, 35, 375, 25);
+    { edit_msg1 = new Fl_Input2(85, 31, 375, 22);
       edit_msg1->box(FL_DOWN_BOX);
       edit_msg1->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg1->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -869,7 +897,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg1->align(FL_ALIGN_LEFT);
       edit_msg1->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg1
-    { label_2 = new Fl_Input2(30, 63, 50, 25, _("2:"));
+    { label_2 = new Fl_Input2(30, 57, 50, 22, _("2:"));
       label_2->box(FL_DOWN_BOX);
       label_2->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_2->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -880,7 +908,7 @@ Fl_Double_Window* make_message_editor() {
       label_2->align(FL_ALIGN_LEFT);
       label_2->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_2
-    { edit_msg2 = new Fl_Input2(85, 63, 375, 25);
+    { edit_msg2 = new Fl_Input2(85, 57, 375, 22);
       edit_msg2->box(FL_DOWN_BOX);
       edit_msg2->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg2->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -891,7 +919,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg2->align(FL_ALIGN_LEFT);
       edit_msg2->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg2
-    { label_3 = new Fl_Input2(30, 92, 50, 25, _("3:"));
+    { label_3 = new Fl_Input2(30, 83, 50, 22, _("3:"));
       label_3->box(FL_DOWN_BOX);
       label_3->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_3->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -902,7 +930,7 @@ Fl_Double_Window* make_message_editor() {
       label_3->align(FL_ALIGN_LEFT);
       label_3->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_3
-    { edit_msg3 = new Fl_Input2(85, 92, 375, 25);
+    { edit_msg3 = new Fl_Input2(85, 83, 375, 22);
       edit_msg3->box(FL_DOWN_BOX);
       edit_msg3->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg3->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -913,7 +941,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg3->align(FL_ALIGN_LEFT);
       edit_msg3->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg3
-    { label_4 = new Fl_Input2(30, 121, 50, 25, _("4:"));
+    { label_4 = new Fl_Input2(30, 110, 50, 22, _("4:"));
       label_4->box(FL_DOWN_BOX);
       label_4->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_4->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -924,7 +952,7 @@ Fl_Double_Window* make_message_editor() {
       label_4->align(FL_ALIGN_LEFT);
       label_4->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_4
-    { edit_msg4 = new Fl_Input2(85, 121, 375, 25);
+    { edit_msg4 = new Fl_Input2(85, 110, 375, 22);
       edit_msg4->box(FL_DOWN_BOX);
       edit_msg4->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg4->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -935,7 +963,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg4->align(FL_ALIGN_LEFT);
       edit_msg4->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg4
-    { label_5 = new Fl_Input2(30, 149, 50, 25, _("5:"));
+    { label_5 = new Fl_Input2(30, 136, 50, 22, _("5:"));
       label_5->box(FL_DOWN_BOX);
       label_5->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_5->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -946,7 +974,7 @@ Fl_Double_Window* make_message_editor() {
       label_5->align(FL_ALIGN_LEFT);
       label_5->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_5
-    { edit_msg5 = new Fl_Input2(85, 149, 375, 25);
+    { edit_msg5 = new Fl_Input2(85, 136, 375, 22);
       edit_msg5->box(FL_DOWN_BOX);
       edit_msg5->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg5->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -957,7 +985,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg5->align(FL_ALIGN_LEFT);
       edit_msg5->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg5
-    { label_6 = new Fl_Input2(30, 178, 50, 25, _("6:"));
+    { label_6 = new Fl_Input2(30, 162, 50, 22, _("6:"));
       label_6->box(FL_DOWN_BOX);
       label_6->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_6->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -968,7 +996,7 @@ Fl_Double_Window* make_message_editor() {
       label_6->align(FL_ALIGN_LEFT);
       label_6->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_6
-    { edit_msg6 = new Fl_Input2(85, 178, 375, 25);
+    { edit_msg6 = new Fl_Input2(85, 162, 375, 22);
       edit_msg6->box(FL_DOWN_BOX);
       edit_msg6->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg6->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -979,7 +1007,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg6->align(FL_ALIGN_LEFT);
       edit_msg6->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg6
-    { label_7 = new Fl_Input2(30, 207, 50, 25, _("7:"));
+    { label_7 = new Fl_Input2(30, 189, 50, 22, _("7:"));
       label_7->box(FL_DOWN_BOX);
       label_7->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_7->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -990,7 +1018,7 @@ Fl_Double_Window* make_message_editor() {
       label_7->align(FL_ALIGN_LEFT);
       label_7->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_7
-    { edit_msg7 = new Fl_Input2(85, 207, 375, 25);
+    { edit_msg7 = new Fl_Input2(85, 189, 375, 22);
       edit_msg7->box(FL_DOWN_BOX);
       edit_msg7->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg7->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1001,7 +1029,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg7->align(FL_ALIGN_LEFT);
       edit_msg7->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg7
-    { label_8 = new Fl_Input2(30, 235, 50, 25, _("8:"));
+    { label_8 = new Fl_Input2(30, 215, 50, 22, _("8:"));
       label_8->box(FL_DOWN_BOX);
       label_8->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_8->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1012,7 +1040,7 @@ Fl_Double_Window* make_message_editor() {
       label_8->align(FL_ALIGN_LEFT);
       label_8->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_8
-    { edit_msg8 = new Fl_Input2(85, 235, 375, 25);
+    { edit_msg8 = new Fl_Input2(85, 215, 375, 22);
       edit_msg8->box(FL_DOWN_BOX);
       edit_msg8->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg8->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1023,7 +1051,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg8->align(FL_ALIGN_LEFT);
       edit_msg8->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg8
-    { label_9 = new Fl_Input2(30, 264, 50, 25, _("9:"));
+    { label_9 = new Fl_Input2(30, 241, 50, 22, _("9:"));
       label_9->box(FL_DOWN_BOX);
       label_9->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_9->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1034,7 +1062,7 @@ Fl_Double_Window* make_message_editor() {
       label_9->align(FL_ALIGN_LEFT);
       label_9->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_9
-    { edit_msg9 = new Fl_Input2(85, 264, 375, 25);
+    { edit_msg9 = new Fl_Input2(85, 241, 375, 22);
       edit_msg9->box(FL_DOWN_BOX);
       edit_msg9->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg9->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1045,7 +1073,7 @@ Fl_Double_Window* make_message_editor() {
       edit_msg9->align(FL_ALIGN_LEFT);
       edit_msg9->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg9
-    { label_10 = new Fl_Input2(30, 293, 50, 25, _("10:"));
+    { label_10 = new Fl_Input2(30, 268, 50, 22, _("10:"));
       label_10->box(FL_DOWN_BOX);
       label_10->color((Fl_Color)FL_BACKGROUND2_COLOR);
       label_10->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1056,7 +1084,7 @@ Fl_Double_Window* make_message_editor() {
       label_10->align(FL_ALIGN_LEFT);
       label_10->when(FL_WHEN_RELEASE);
     } // Fl_Input2* label_10
-    { edit_msg10 = new Fl_Input2(85, 293, 375, 25);
+    { edit_msg10 = new Fl_Input2(85, 268, 375, 22);
       edit_msg10->box(FL_DOWN_BOX);
       edit_msg10->color((Fl_Color)FL_BACKGROUND2_COLOR);
       edit_msg10->selection_color((Fl_Color)FL_SELECTION_COLOR);
@@ -1067,13 +1095,13 @@ Fl_Double_Window* make_message_editor() {
       edit_msg10->align(FL_ALIGN_LEFT);
       edit_msg10->when(FL_WHEN_RELEASE);
     } // Fl_Input2* edit_msg10
-    { btn_done_edit = new Fl_Button(535, 292, 56, 26, _("Done"));
+    { btn_done_edit = new Fl_Button(535, 305, 56, 26, _("Done"));
       btn_done_edit->callback((Fl_Callback*)cb_btn_done_edit);
     } // Fl_Button* btn_done_edit
-    { btn_cancel_edit = new Fl_Button(465, 263, 65, 26, _("Cancel"));
+    { btn_cancel_edit = new Fl_Button(465, 276, 65, 26, _("Cancel"));
       btn_cancel_edit->callback((Fl_Callback*)cb_btn_cancel_edit);
     } // Fl_Button* btn_cancel_edit
-    { btn_apply_edit = new Fl_Button(465, 292, 65, 26, _("Apply"));
+    { btn_apply_edit = new Fl_Button(465, 305, 65, 26, _("Apply"));
       btn_apply_edit->callback((Fl_Callback*)cb_btn_apply_edit);
     } // Fl_Button* btn_apply_edit
     { new Fl_Box(201, 9, 223, 19, _("Message Text"));
@@ -1163,6 +1191,50 @@ Fl_Double_Window* make_message_editor() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
+    { label_11 = new Fl_Input2(29, 294, 50, 22, _("11:"));
+      label_11->box(FL_DOWN_BOX);
+      label_11->color((Fl_Color)FL_BACKGROUND2_COLOR);
+      label_11->selection_color((Fl_Color)FL_SELECTION_COLOR);
+      label_11->labeltype(FL_NORMAL_LABEL);
+      label_11->labelfont(0);
+      label_11->labelsize(14);
+      label_11->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      label_11->align(FL_ALIGN_LEFT);
+      label_11->when(FL_WHEN_RELEASE);
+    } // Fl_Input2* label_11
+    { edit_msg11 = new Fl_Input2(84, 294, 375, 22);
+      edit_msg11->box(FL_DOWN_BOX);
+      edit_msg11->color((Fl_Color)FL_BACKGROUND2_COLOR);
+      edit_msg11->selection_color((Fl_Color)FL_SELECTION_COLOR);
+      edit_msg11->labeltype(FL_NORMAL_LABEL);
+      edit_msg11->labelfont(0);
+      edit_msg11->labelsize(14);
+      edit_msg11->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      edit_msg11->align(FL_ALIGN_LEFT);
+      edit_msg11->when(FL_WHEN_RELEASE);
+    } // Fl_Input2* edit_msg11
+    { label_12 = new Fl_Input2(30, 321, 50, 22, _("12:"));
+      label_12->box(FL_DOWN_BOX);
+      label_12->color((Fl_Color)FL_BACKGROUND2_COLOR);
+      label_12->selection_color((Fl_Color)FL_SELECTION_COLOR);
+      label_12->labeltype(FL_NORMAL_LABEL);
+      label_12->labelfont(0);
+      label_12->labelsize(14);
+      label_12->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      label_12->align(FL_ALIGN_LEFT);
+      label_12->when(FL_WHEN_RELEASE);
+    } // Fl_Input2* label_12
+    { edit_msg12 = new Fl_Input2(85, 321, 375, 22);
+      edit_msg12->box(FL_DOWN_BOX);
+      edit_msg12->color((Fl_Color)FL_BACKGROUND2_COLOR);
+      edit_msg12->selection_color((Fl_Color)FL_SELECTION_COLOR);
+      edit_msg12->labeltype(FL_NORMAL_LABEL);
+      edit_msg12->labelfont(0);
+      edit_msg12->labelsize(14);
+      edit_msg12->labelcolor((Fl_Color)FL_FOREGROUND_COLOR);
+      edit_msg12->align(FL_ALIGN_LEFT);
+      edit_msg12->when(FL_WHEN_RELEASE);
+    } // Fl_Input2* edit_msg12
     o->end();
   } // Fl_Double_Window* o
   return w;

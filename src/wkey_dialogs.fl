@@ -31,13 +31,14 @@ Function {SetupDialog()} {} {
   }
 } 
 
-Function {WKey_window()} {} {
+Function {WKey_window()} {open
+} {
   Fl_Window {} {
     label Fl_WinKey open
-    xywh {588 108 600 279} type Double resizable visible
+    xywh {578 64 670 279} type Double resizable visible
   } {
     Fl_Menu_Bar {} {open
-      xywh {0 0 600 20}
+      xywh {0 0 670 20}
     } {
       Submenu {} {
         label {&File} open
@@ -151,30 +152,30 @@ Function {WKey_window()} {} {
       }
     }
     Fl_Output txt_sent {
-      xywh {5 23 590 96} type Multiline resizable
+      xywh {5 23 660 96} type Multiline resizable
       code0 {\#include "FTextView.h"}
       class FTextView
     }
     Fl_Input txt_to_send {
       label {input:}
-      xywh {5 121 590 68} type Multiline align 16 when 1
+      xywh {5 121 660 68} type Multiline align 16 when 1
       code0 {\#include "FTextRXTX.h"}
       class FTextTX
     }
     Fl_Light_Button btn_send {
       label Send
       callback {cb_send_button();}
-      xywh {535 221 60 25}
+      xywh {604 221 60 25}
     }
     Fl_Light_Button btn_tune {
       label Tune
       callback {cb_tune();}
-      xywh {535 250 60 25} selection_color 5
+      xywh {604 250 60 25} selection_color 5
     }
     Fl_Button btn_cancel {
       label Cancel
       callback {cb_cancel_transmit();}
-      xywh {472 221 60 25}
+      xywh {541 221 60 25}
     }
     Fl_Box box_busy {
       label Busy
@@ -210,64 +211,76 @@ Function {WKey_window()} {} {
       tooltip {Winkeyer pot controls WPM} xywh {145 255 20 15} down_box DOWN_BOX align 4 when 1
     }
     Fl_Button btn_msg1 {
-      label Msg1
+      label {m 1}
       callback {exec_msg1();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {4 197 56 20}
+Edit - Right click} xywh {4 197 50 20}
     }
     Fl_Button btn_msg2 {
-      label Msg2
+      label {m 2}
       callback {exec_msg2();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {63 197 56 20}
+Edit - Right click} xywh {59 197 50 20}
     }
     Fl_Button btn_msg3 {
-      label Msg3
+      label {m 3}
       callback {exec_msg3();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {122 197 56 20}
+Edit - Right click} xywh {115 197 50 20}
     }
     Fl_Button btn_msg4 {
-      label Msg4
+      label {m 4}
       callback {exec_msg4();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {182 197 56 20}
+Edit - Right click} xywh {170 197 50 20}
     }
     Fl_Button btn_msg5 {
-      label Msg5
+      label {m 5}
       callback {exec_msg5();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {241 197 56 20}
+Edit - Right click} xywh {226 197 50 20}
     }
     Fl_Button btn_msg6 {
-      label Msg6
+      label {m 6}
       callback {exec_msg6();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {300 197 56 20}
+Edit - Right click} xywh {282 197 50 20}
     }
     Fl_Button btn_msg7 {
-      label Msg7
+      label {m 7}
       callback {exec_msg7();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {360 197 56 20}
+Edit - Right click} xywh {337 197 50 20}
     }
     Fl_Button btn_msg8 {
-      label Msg8
+      label {m 8}
       callback {exec_msg8();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {419 197 56 20}
+Edit - Right click} xywh {393 197 50 20}
     }
     Fl_Button btn_msg9 {
-      label Msg9
+      label {m 9}
       callback {exec_msg9();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {478 197 56 20}
+Edit - Right click} xywh {449 197 50 20}
     }
     Fl_Button btn_msg10 {
-      label Msg10
+      label {m 10}
       callback {exec_msg10();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {538 197 56 20}
+Edit - Right click} xywh {504 197 50 20}
+    }
+    Fl_Button btn_msg11 {
+      label {m 11}
+      callback {exec_msg11();} selected
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {560 197 50 20}
+    }
+    Fl_Button btn_msg12 {
+      label {m 12}
+      callback {exec_msg12();} selected
+      tooltip {Action - Fkey/Left click
+Edit - Right click} xywh {616 197 50 20}
     }
     Fl_Input txt_sta {
       label STA
@@ -285,11 +298,11 @@ Edit - Right click} xywh {538 197 56 20}
       label Log
       callback {AddRecord();
 txt_sta->take_focus();}
-      xywh {413 250 50 25}
+      xywh {474 250 50 25}
     }
     Fl_Input txt_xchg {
       label X_in
-      tooltip {Rcvd Contest Exchange} xywh {255 251 100 22} when 1
+      tooltip {Rcvd Contest Exchange} xywh {255 251 209 22} when 1
       class Fl_Input2
     }
     Fl_Button btn_clear {
@@ -299,7 +312,7 @@ txt_name->value("");
 txt_xchg->value("");
 txt_sta->color(FL_BACKGROUND2_COLOR);
 txt_sta->take_focus();}
-      xywh {358 250 50 25}
+      xywh {474 221 50 25}
     }
   }
 } 
@@ -472,116 +485,117 @@ Function {make_parameters_dialog()} {open
   }
 } 
 
-Function {make_message_editor()} {} {
+Function {make_message_editor()} {open
+} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {588 491 600 324} type Double visible
+    xywh {588 491 600 350} type Double visible
   } {
     Fl_Input label_1 {
       label {1:}
-      xywh {30 35 50 25}
+      xywh {30 31 50 22}
       code0 {\#include "flinput2.h"}
       class Fl_Input2
     }
     Fl_Input edit_msg1 {
-      xywh {85 35 375 25}
+      xywh {85 31 375 22}
       class Fl_Input2
     }
     Fl_Input label_2 {
       label {2:}
-      xywh {30 63 50 25}
+      xywh {30 57 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg2 {
-      xywh {85 63 375 25}
+      xywh {85 57 375 22}
       class Fl_Input2
     }
     Fl_Input label_3 {
       label {3:}
-      xywh {30 92 50 25}
+      xywh {30 83 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg3 {
-      xywh {85 92 375 25}
+      xywh {85 83 375 22}
       class Fl_Input2
     }
     Fl_Input label_4 {
       label {4:}
-      xywh {30 121 50 25}
+      xywh {30 110 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg4 {
-      xywh {85 121 375 25}
+      xywh {85 110 375 22}
       class Fl_Input2
     }
     Fl_Input label_5 {
       label {5:}
-      xywh {30 149 50 25}
+      xywh {30 136 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg5 {
-      xywh {85 149 375 25}
+      xywh {85 136 375 22}
       class Fl_Input2
     }
     Fl_Input label_6 {
       label {6:}
-      xywh {30 178 50 25}
+      xywh {30 162 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg6 {
-      xywh {85 178 375 25}
+      xywh {85 162 375 22}
       class Fl_Input2
     }
     Fl_Input label_7 {
       label {7:}
-      xywh {30 207 50 25}
+      xywh {30 189 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg7 {
-      xywh {85 207 375 25}
+      xywh {85 189 375 22}
       class Fl_Input2
     }
     Fl_Input label_8 {
       label {8:}
-      xywh {30 235 50 25}
+      xywh {30 215 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg8 {
-      xywh {85 235 375 25}
+      xywh {85 215 375 22}
       class Fl_Input2
     }
     Fl_Input label_9 {
       label {9:}
-      xywh {30 264 50 25}
+      xywh {30 241 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg9 {
-      xywh {85 264 375 25}
+      xywh {85 241 375 22}
       class Fl_Input2
     }
     Fl_Input label_10 {
       label {10:}
-      xywh {30 293 50 25}
+      xywh {30 268 50 22}
       class Fl_Input2
     }
     Fl_Input edit_msg10 {
-      xywh {85 293 375 25}
+      xywh {85 268 375 22}
       class Fl_Input2
     }
     Fl_Button btn_done_edit {
       label Done
       callback {done_edit();}
-      xywh {535 292 56 26}
+      xywh {535 305 56 26}
     }
     Fl_Button btn_cancel_edit {
       label Cancel
       callback {cancel_edit();}
-      xywh {465 263 65 26}
+      xywh {465 276 65 26}
     }
     Fl_Button btn_apply_edit {
       label Apply
       callback {apply_edit();}
-      xywh {465 292 65 26}
+      xywh {465 305 65 26}
     }
     Fl_Box {} {
       label {Message Text}
@@ -647,7 +661,7 @@ Function {make_message_editor()} {} {
         tooltip {Decrement serial \#} xywh {469 189 55 20}
       }
       Fl_Box {} {
-        label {<LOG>} selected
+        label {<LOG>}
         tooltip {Append entry to logbook} xywh {469 208 55 20}
       }
     }
@@ -702,6 +716,24 @@ Function {make_message_editor()} {} {
         label {@@ AC}
         tooltip {.--.-.} xywh {531 227 60 20}
       }
+    }
+    Fl_Input label_11 {
+      label {11:}
+      xywh {29 294 50 22}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg11 {
+      xywh {84 294 375 22}
+      class Fl_Input2
+    }
+    Fl_Input label_12 {
+      label {12:}
+      xywh {30 321 50 22}
+      class Fl_Input2
+    }
+    Fl_Input edit_msg12 {
+      xywh {85 321 375 22}
+      class Fl_Input2
     }
   }
 } 

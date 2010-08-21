@@ -63,9 +63,9 @@ status progStatus = {
 	"CQ CQ CQ DE <CLL> <CLL> K ",	// string	edit_msg1;
 	"call",	// string	label_2;
 	"<STA> DE <CLL> <CLL> K",			// string	edit_msg2;
-	"msg 3",	// string	label_3;
+	"m 3",	// string	label_3;
 	"",			// string	edit_msg3;
-	"msg 4",	// string	label_4;
+	"m 4",	// string	label_4;
 	"",			// string	edit_msg4;
 	"Xout",	// string	label_5;
 	"R <#> AL",			// string	edit_msg5;
@@ -77,8 +77,12 @@ status progStatus = {
 	"<+>",			// string	edit_msg8;
 	"LOG",	// string	label_9;
 	"<LOG>",			// string	edit_msg9;
-	"msg 10",	// string	label_10;
+	"m 10",	// string	label_10;
 	"",			// string	edit_msg10;
+	"m 11",	// string	label_11;
+	"",			// string	edit_msg11;
+	"m 12",	// string	label_12;
+	"",			// string	edit_msg12;
 
 	"",			//string	tag_call;
 	"",			//string	tag_qth;
@@ -131,6 +135,10 @@ void status::saveLastState()
 	spref.set("msg9", edit_msg9.c_str());
 	spref.set("label10", label_10.c_str()); 
 	spref.set("msg10", edit_msg10.c_str());
+	spref.set("label11", label_11.c_str()); 
+	spref.set("msg11", edit_msg11.c_str());
+	spref.set("label12", label_12.c_str()); 
+	spref.set("msg12", edit_msg12.c_str());
 
 	spref.set("mode_register", mode_register);
 	spref.set("speed_wpm", speed_wpm);
@@ -196,6 +204,10 @@ void status::loadLastState()
 		spref.get("msg9", defbuffer, "", 199); edit_msg9 = defbuffer;
 		spref.get("label10", defbuffer, "msg10", 199); label_10 = defbuffer;
 		spref.get("msg10", defbuffer, "", 199); edit_msg10 = defbuffer;
+		spref.get("label11", defbuffer, "msg11", 199); label_11 = defbuffer;
+		spref.get("msg11", defbuffer, "", 199); edit_msg11 = defbuffer;
+		spref.get("label12", defbuffer, "msg11", 199); label_12 = defbuffer;
+		spref.get("msg12", defbuffer, "", 199); edit_msg12 = defbuffer;
 
 		int ichar;
 		spref.get("mode_register", ichar, mode_register); mode_register = ichar & 0xFF;

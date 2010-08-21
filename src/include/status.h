@@ -67,6 +67,10 @@ struct status {
 	string	edit_msg9;
 	string	label_10;
 	string	edit_msg10;
+	string	label_11;
+	string	edit_msg11;
+	string	label_12;
+	string	edit_msg12;
 
 // message tags
 	string	tag_cll;

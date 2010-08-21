@@ -1,10 +1,15 @@
+2010-08-20  David Freese  <w1hkj@w1hkj.com>
+
+	3ac915d: Logbook Field Sizes
+	840fa6d: Dialog Init
+	ec5c78b: Logbook Thread
+	7764737: Contest
+	5abb16c: Logging
 
 
 =Version 0.9.99=
 
-2010-08-12  David Freese  <w1hkj@w1hkj.com>
-
-	6cb42b9: Echo testing
+	6351e40: Echo timing
 
 
 =Version 0.9.98=
@@ -34,4 +39,3 @@
 
 =Version 0.9.93=
 
-	a59cfa8: Prosigns
