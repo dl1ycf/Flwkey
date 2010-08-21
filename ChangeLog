@@ -1,5 +1,6 @@
-2010-08-20  David Freese  <w1hkj@w1hkj.com>
+2010-08-21  David Freese  <w1hkj@w1hkj.com>
 
+	4e68b36: LOG add restored
 	3ac915d: Logbook Field Sizes
 	840fa6d: Dialog Init
 	ec5c78b: Logbook Thread
@@ -33,9 +34,4 @@
 
 
 =Version 0.9.94=
-
-	11f2cf3: Logbook-Save
-
-
-=Version 0.9.93=
 
