@@ -777,7 +777,6 @@ std::string sDate_on = "";
 
 void AddRecord ()
 {
-/*
 	char *szt = szTime(2);
 	char *szdt = szDate(0x86);
 	string xout = txt_xchg->value();
@@ -819,7 +818,6 @@ void AddRecord ()
 	txt_sta->value("");
 	txt_name->value("");
 	txt_xchg->value("");
-*/
 }
 
 void cb_browser (Fl_Widget *w, void *data )
