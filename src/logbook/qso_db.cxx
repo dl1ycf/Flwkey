@@ -439,8 +439,9 @@ bool cQsoDb::duplicate(
 {
 	if (nbrrecs == 0) return false;
 
-	int f1, f2 = 0;
-	f1 = (int)(atof(freq)/1000.0);
+	int f1 = (int)(atof(freq));
+	int f2 = 0;
+	if (f1 > 1000) f1 /= 1000;
 	bool b_freqDUP = true, b_stateDUP = true, b_modeDUP = true,
 		 b_xchg1DUP = true,
 		 b_dtimeDUP = true;

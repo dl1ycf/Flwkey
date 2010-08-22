@@ -47,8 +47,10 @@ extern Fl_Button *btn_msg12;
 #include "flinput2.h"
 extern Fl_Input2 *txt_sta;
 extern Fl_Input2 *txt_name;
-extern Fl_Button *btn_log_it;
+#include <FL/Fl_Input.H>
+extern Fl_Input *txt_freq;
 extern Fl_Input2 *txt_xchg;
+extern Fl_Button *btn_log_it;
 extern Fl_Button *btn_clear;
 Fl_Double_Window* WKey_window();
 extern Fl_Menu_Item menu_[];
@@ -133,12 +135,12 @@ extern Fl_Input2 *txt_qth;
 extern Fl_Input2 *txt_loc;
 extern Fl_Button *btn_done_op_dialog;
 Fl_Double_Window* make_operator_dialog();
-#include <FL/Fl_Input.H>
 extern Fl_Input *txt_serial_nbr;
-extern Fl_Check_Button *btn_zeros;
-extern Fl_Input *txt_freq;
-extern Fl_Check_Button *btn_dups;
 extern Fl_Input *txt_time_span;
+extern Fl_Check_Button *btn_zeros;
+extern Fl_Check_Button *btn_ck_band;
+extern Fl_Check_Button *btn_ck_time_span;
+extern Fl_Check_Button *btn_dups;
 extern Fl_Button *btn_close_contest;
 Fl_Double_Window* make_contest_dialog();
 #endif

@@ -588,11 +588,19 @@ void time_span()
 void zeros()
 {
 	progStatus.zeros = btn_zeros->value();
+	check_call();
 }
 
 void dups()
 {
 	progStatus.dups = btn_dups->value();
+	check_call();
+}
+
+void ck_band()
+{
+	progStatus.band = btn_ck_band->value();
+	check_call();
 }
 
 void do_config_messages(void *)
@@ -754,9 +762,10 @@ int main_handler(int event)
 void check_call()
 {
 	string chkcall = txt_sta->value();
+	txt_sta->color(FL_BACKGROUND2_COLOR);
+	txt_sta->redraw();
+
 	if (chkcall.empty()) {
-		txt_sta->color(FL_BACKGROUND2_COLOR);
-		txt_sta->redraw();
 		txt_name->value("");
 		return;
 	}
@@ -772,5 +781,4 @@ void check_call()
 		DupCheck();
 	else
 		SearchLastQSO(txt_sta->value());
-
 }

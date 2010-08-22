@@ -514,13 +514,12 @@ void DupCheck()
 {
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
 	int ispn = atoi(txt_time_span->value());
-	int ifreq = atoi(txt_freq->value());
 
 	if (qsodb.nbrRecs() > 0) 
 		if (qsodb.duplicate(
 				txt_sta->value(),
-				szDate(6), szTime(0), ispn, (ispn > 0),
-				txt_freq->value(), ifreq > 0,
+				szDate(6), szTime(0), ispn, progStatus.time_span,
+				txt_freq->value(), progStatus.band,
 				"", false,
 				"CW", true,
 				"", false ) ) {
@@ -789,7 +788,7 @@ void AddRecord ()
 	inpDate_log->value(szdt);
 	inpRstR_log->value ("599");
 	inpRstS_log->value ("599");
-	inpFreq_log->value("");
+	inpFreq_log->value(txt_freq->value());
 	inpMode_log->value ("CW");
 	inpState_log->value ("");
 	inpVE_Prov_log->value ("");

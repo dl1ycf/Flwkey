@@ -638,6 +638,7 @@ void cb_contest()
 	txt_time_span->value(snbr);
 	btn_zeros->value(progStatus.zeros);
 	btn_dups->value(progStatus.dups);
+	btn_ck_band->value(progStatus.band);
 	if (!contest_dialog->visible())
 		contest_dialog->show();
 }

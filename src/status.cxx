@@ -93,6 +93,7 @@ status progStatus = {
 
 	1,			// int	serial_nbr;
 	0,			// int	time_span;
+	1,			// bool	band;
 	true,		// bool	zeros;
 	false		// bool	dups;
 
@@ -166,6 +167,7 @@ void status::saveLastState()
 	spref.set("logbook_time_span", time_span);
 	spref.set("logbook_zeros", zeros);
 	spref.set("logbook_dups", dups);
+	spref.set("logbook_band", band);
 
 }
 
@@ -236,6 +238,7 @@ void status::loadLastState()
 		spref.get("logbook_time_span", time_span, time_span);
 		spref.get("logbook_zeros", ichar, ichar); zeros = (ichar == 1);
 		spref.get("logbook_dups", ichar, ichar); dups = (ichar == 1);
+		spref.get("logbook_band", ichar, ichar); band = (ichar == 1);
 
 		update_msg_labels();
 	}

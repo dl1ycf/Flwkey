@@ -274,14 +274,20 @@ static void cb_txt_sta(Fl_Input2*, void*) {
 
 Fl_Input2 *txt_name=(Fl_Input2 *)0;
 
+Fl_Input *txt_freq=(Fl_Input *)0;
+
+static void cb_txt_freq(Fl_Input*, void*) {
+  check_call();
+}
+
+Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
+
 Fl_Button *btn_log_it=(Fl_Button *)0;
 
 static void cb_btn_log_it(Fl_Button*, void*) {
   AddRecord();
 txt_sta->take_focus();
 }
-
-Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
 
 Fl_Button *btn_clear=(Fl_Button *)0;
 
@@ -325,14 +331,14 @@ Fl_Double_Window* WKey_window() {
       txt_to_send->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
       txt_to_send->when(FL_WHEN_CHANGED);
     } // FTextTX* txt_to_send
-    { btn_send = new Fl_Light_Button(604, 221, 60, 25, _("Send"));
+    { btn_send = new Fl_Light_Button(607, 221, 60, 25, _("Send"));
       btn_send->callback((Fl_Callback*)cb_btn_send);
     } // Fl_Light_Button* btn_send
-    { btn_tune = new Fl_Light_Button(604, 250, 60, 25, _("Tune"));
+    { btn_tune = new Fl_Light_Button(607, 250, 60, 25, _("Tune"));
       btn_tune->selection_color((Fl_Color)5);
       btn_tune->callback((Fl_Callback*)cb_btn_tune);
     } // Fl_Light_Button* btn_tune
-    { btn_cancel = new Fl_Button(541, 221, 60, 25, _("Cancel"));
+    { btn_cancel = new Fl_Button(544, 221, 60, 25, _("Cancel"));
       btn_cancel->callback((Fl_Callback*)cb_btn_cancel);
     } // Fl_Button* btn_cancel
     { box_busy = new Fl_Box(7, 241, 16, 16, _("Busy"));
@@ -355,9 +361,9 @@ Fl_Double_Window* WKey_window() {
       box_wait->box(FL_DIAMOND_DOWN_BOX);
       box_wait->align(FL_ALIGN_RIGHT);
     } // Fl_Box* box_wait
-    { txt_wpm = new Fl_Output(165, 251, 38, 22);
+    { txt_wpm = new Fl_Output(160, 251, 38, 22);
     } // Fl_Output* txt_wpm
-    { cntr_wpm = new Fl_Counter(151, 222, 64, 22, _("WPM"));
+    { cntr_wpm = new Fl_Counter(146, 222, 64, 22, _("WPM"));
       cntr_wpm->tooltip(_("flwkey WPM"));
       cntr_wpm->type(1);
       cntr_wpm->minimum(10);
@@ -367,7 +373,7 @@ Fl_Double_Window* WKey_window() {
       cntr_wpm->callback((Fl_Callback*)cb_cntr_wpm);
       cntr_wpm->align(FL_ALIGN_LEFT);
     } // Fl_Counter* cntr_wpm
-    { btn_use_pot = new Fl_Check_Button(145, 255, 20, 15, _("Pot"));
+    { btn_use_pot = new Fl_Check_Button(140, 255, 20, 15, _("Pot"));
       btn_use_pot->tooltip(_("Winkeyer pot controls WPM"));
       btn_use_pot->down_box(FL_DOWN_BOX);
       btn_use_pot->callback((Fl_Callback*)cb_btn_use_pot);
@@ -422,7 +428,7 @@ Fl_Double_Window* WKey_window() {
       btn_msg12->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg12->callback((Fl_Callback*)cb_btn_msg12);
     } // Fl_Button* btn_msg12
-    { txt_sta = new Fl_Input2(255, 222, 80, 22, _("STA"));
+    { txt_sta = new Fl_Input2(246, 222, 100, 22, _("STA"));
       txt_sta->tooltip(_("Other station"));
       txt_sta->box(FL_DOWN_BOX);
       txt_sta->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -435,7 +441,7 @@ Fl_Double_Window* WKey_window() {
       txt_sta->align(FL_ALIGN_LEFT);
       txt_sta->when(FL_WHEN_CHANGED);
     } // Fl_Input2* txt_sta
-    { txt_name = new Fl_Input2(382, 222, 80, 22, _("NAM"));
+    { txt_name = new Fl_Input2(383, 222, 100, 22, _("NAM"));
       txt_name->tooltip(_("Other operator"));
       txt_name->box(FL_DOWN_BOX);
       txt_name->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -447,10 +453,12 @@ Fl_Double_Window* WKey_window() {
       txt_name->align(FL_ALIGN_LEFT);
       txt_name->when(FL_WHEN_RELEASE);
     } // Fl_Input2* txt_name
-    { btn_log_it = new Fl_Button(474, 250, 50, 25, _("Log"));
-      btn_log_it->callback((Fl_Callback*)cb_btn_log_it);
-    } // Fl_Button* btn_log_it
-    { txt_xchg = new Fl_Input2(255, 251, 209, 22, _("X_in"));
+    { txt_freq = new Fl_Input(246, 251, 100, 22, _("Freq:"));
+      txt_freq->tooltip(_("Frequency (MHz preferred)"));
+      txt_freq->callback((Fl_Callback*)cb_txt_freq);
+      txt_freq->when(FL_WHEN_CHANGED);
+    } // Fl_Input* txt_freq
+    { txt_xchg = new Fl_Input2(381, 251, 100, 22, _("X_in"));
       txt_xchg->tooltip(_("Rcvd Contest Exchange"));
       txt_xchg->box(FL_DOWN_BOX);
       txt_xchg->color((Fl_Color)FL_BACKGROUND2_COLOR);
@@ -462,7 +470,10 @@ Fl_Double_Window* WKey_window() {
       txt_xchg->align(FL_ALIGN_LEFT);
       txt_xchg->when(FL_WHEN_CHANGED);
     } // Fl_Input2* txt_xchg
-    { btn_clear = new Fl_Button(474, 221, 50, 25, _("Clear"));
+    { btn_log_it = new Fl_Button(487, 250, 52, 25, _("Log"));
+      btn_log_it->callback((Fl_Callback*)cb_btn_log_it);
+    } // Fl_Button* btn_log_it
+    { btn_clear = new Fl_Button(487, 221, 52, 25, _("Clear"));
       btn_clear->callback((Fl_Callback*)cb_btn_clear);
     } // Fl_Button* btn_clear
     o->end();
@@ -1339,24 +1350,34 @@ static void cb_txt_serial_nbr(Fl_Input*, void*) {
   serial_nbr();
 }
 
+Fl_Input *txt_time_span=(Fl_Input *)0;
+
+static void cb_txt_time_span(Fl_Input*, void*) {
+  time_span();
+}
+
 Fl_Check_Button *btn_zeros=(Fl_Check_Button *)0;
 
 static void cb_btn_zeros(Fl_Check_Button*, void*) {
   zeros();
 }
 
-Fl_Input *txt_freq=(Fl_Input *)0;
+Fl_Check_Button *btn_ck_band=(Fl_Check_Button *)0;
+
+static void cb_btn_ck_band(Fl_Check_Button*, void*) {
+  ck_band();
+}
+
+Fl_Check_Button *btn_ck_time_span=(Fl_Check_Button *)0;
+
+static void cb_btn_ck_time_span(Fl_Check_Button*, void*) {
+  time_span();
+}
 
 Fl_Check_Button *btn_dups=(Fl_Check_Button *)0;
 
 static void cb_btn_dups(Fl_Check_Button*, void*) {
   dups();
-}
-
-Fl_Input *txt_time_span=(Fl_Input *)0;
-
-static void cb_txt_time_span(Fl_Input*, void*) {
-  time_span();
 }
 
 Fl_Button *btn_close_contest=(Fl_Button *)0;
@@ -1367,41 +1388,45 @@ static void cb_btn_close_contest(Fl_Button*, void*) {
 
 Fl_Double_Window* make_contest_dialog() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(600, 65, _("Contest"));
+  { Fl_Double_Window* o = new Fl_Double_Window(512, 65, _("Contest"));
     w = o;
-    { Fl_Group* o = new Fl_Group(2, 2, 596, 60, _("Contest"));
-      o->box(FL_ENGRAVED_FRAME);
-      o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-      { txt_serial_nbr = new Fl_Input(125, 6, 60, 24, _("Next #"));
-        txt_serial_nbr->tooltip(_("Next serial number to be sent"));
-        txt_serial_nbr->type(2);
-        txt_serial_nbr->callback((Fl_Callback*)cb_txt_serial_nbr);
-      } // Fl_Input* txt_serial_nbr
-      { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(368, 11, 70, 15, _("Leading zeros"));
-        btn_zeros->tooltip(_("Send nbr as 0nn if < 100"));
-        btn_zeros->down_box(FL_DOWN_BOX);
-        btn_zeros->callback((Fl_Callback*)cb_btn_zeros);
-        o->value(progStatus.zeros);
-      } // Fl_Check_Button* btn_zeros
-      { txt_freq = new Fl_Input(237, 6, 120, 24, _("Freq:"));
-        txt_freq->tooltip(_("Frequency (KHz preferred)\nBlank = don\'t care"));
-      } // Fl_Input* txt_freq
-      { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(498, 11, 70, 15, _("Ck Dups"));
-        btn_dups->tooltip(_("Check for duplicates"));
-        btn_dups->down_box(FL_DOWN_BOX);
-        btn_dups->callback((Fl_Callback*)cb_btn_dups);
-        o->value(progStatus.dups);
-      } // Fl_Check_Button* btn_dups
-      { txt_time_span = new Fl_Input(124, 33, 60, 24, _("Time Span"));
-        txt_time_span->tooltip(_("Min\'s allowed between dups\nZero = disallowed"));
-        txt_time_span->type(2);
-        txt_time_span->callback((Fl_Callback*)cb_txt_time_span);
-      } // Fl_Input* txt_time_span
-      { btn_close_contest = new Fl_Button(506, 34, 70, 20, _("Close"));
-        btn_close_contest->callback((Fl_Callback*)cb_btn_close_contest);
-      } // Fl_Button* btn_close_contest
-      o->end();
-    } // Fl_Group* o
+    { txt_serial_nbr = new Fl_Input(57, 4, 60, 24, _("Next #"));
+      txt_serial_nbr->tooltip(_("Next serial number to be sent"));
+      txt_serial_nbr->type(2);
+      txt_serial_nbr->callback((Fl_Callback*)cb_txt_serial_nbr);
+    } // Fl_Input* txt_serial_nbr
+    { txt_time_span = new Fl_Input(203, 4, 60, 24, _("Time Span"));
+      txt_time_span->tooltip(_("Min\'s allowed between dups"));
+      txt_time_span->type(2);
+      txt_time_span->callback((Fl_Callback*)cb_txt_time_span);
+    } // Fl_Input* txt_time_span
+    { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(57, 37, 70, 15, _("Leading zeros"));
+      btn_zeros->tooltip(_("Send nbr as 0nn if < 100"));
+      btn_zeros->down_box(FL_DOWN_BOX);
+      btn_zeros->callback((Fl_Callback*)cb_btn_zeros);
+      o->value(progStatus.zeros);
+    } // Fl_Check_Button* btn_zeros
+    { Fl_Check_Button* o = btn_ck_band = new Fl_Check_Button(279, 8, 70, 15, _("Ck Band"));
+      btn_ck_band->tooltip(_("Include band for dup check"));
+      btn_ck_band->down_box(FL_DOWN_BOX);
+      btn_ck_band->callback((Fl_Callback*)cb_btn_ck_band);
+      o->value(progStatus.band);
+    } // Fl_Check_Button* btn_ck_band
+    { Fl_Check_Button* o = btn_ck_time_span = new Fl_Check_Button(279, 37, 70, 15, _("Ck Time Span"));
+      btn_ck_time_span->tooltip(_("Include time span for dup check"));
+      btn_ck_time_span->down_box(FL_DOWN_BOX);
+      btn_ck_time_span->callback((Fl_Callback*)cb_btn_ck_time_span);
+      o->value(progStatus.time_span);
+    } // Fl_Check_Button* btn_ck_time_span
+    { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(423, 8, 70, 15, _("Ck Dups"));
+      btn_dups->tooltip(_("Check for duplicates"));
+      btn_dups->down_box(FL_DOWN_BOX);
+      btn_dups->callback((Fl_Callback*)cb_btn_dups);
+      o->value(progStatus.dups);
+    } // Fl_Check_Button* btn_dups
+    { btn_close_contest = new Fl_Button(424, 34, 70, 20, _("Close"));
+      btn_close_contest->callback((Fl_Callback*)cb_btn_close_contest);
+    } // Fl_Button* btn_close_contest
     o->end();
   } // Fl_Double_Window* o
   return w;

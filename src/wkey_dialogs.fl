@@ -165,17 +165,17 @@ Function {WKey_window()} {open
     Fl_Light_Button btn_send {
       label Send
       callback {cb_send_button();}
-      xywh {604 221 60 25}
+      xywh {607 221 60 25}
     }
     Fl_Light_Button btn_tune {
       label Tune
       callback {cb_tune();}
-      xywh {604 250 60 25} selection_color 5
+      xywh {607 250 60 25} selection_color 5
     }
     Fl_Button btn_cancel {
       label Cancel
       callback {cb_cancel_transmit();}
-      xywh {541 221 60 25}
+      xywh {544 221 60 25}
     }
     Fl_Box box_busy {
       label Busy
@@ -198,17 +198,17 @@ Function {WKey_window()} {open
       xywh {7 222 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Output txt_wpm {
-      xywh {165 251 38 22}
+      xywh {160 251 38 22}
     }
     Fl_Counter cntr_wpm {
       label WPM
       callback {set_wpm();}
-      tooltip {flwkey WPM} xywh {151 222 64 22} type Simple align 4 minimum 10 maximum 35 step 1 value 20
+      tooltip {flwkey WPM} xywh {146 222 64 22} type Simple align 4 minimum 10 maximum 35 step 1 value 20
     }
     Fl_Check_Button btn_use_pot {
       label Pot
       callback {use_pot_changed();}
-      tooltip {Winkeyer pot controls WPM} xywh {145 255 20 15} down_box DOWN_BOX align 4 when 1
+      tooltip {Winkeyer pot controls WPM} xywh {140 255 20 15} down_box DOWN_BOX align 4 when 1
     }
     Fl_Button btn_msg1 {
       label {m 1}
@@ -272,38 +272,43 @@ Edit - Right click} xywh {504 197 50 20}
     }
     Fl_Button btn_msg11 {
       label {m 11}
-      callback {exec_msg11();} selected
+      callback {exec_msg11();}
       tooltip {Action - Fkey/Left click
 Edit - Right click} xywh {560 197 50 20}
     }
     Fl_Button btn_msg12 {
       label {m 12}
-      callback {exec_msg12();} selected
+      callback {exec_msg12();}
       tooltip {Action - Fkey/Left click
 Edit - Right click} xywh {616 197 50 20}
     }
     Fl_Input txt_sta {
       label STA
       callback {check_call();}
-      tooltip {Other station} xywh {255 222 80 22} when 1
+      tooltip {Other station} xywh {246 222 100 22} when 1
       code0 {\#include "flinput2.h"}
       class Fl_Input2
     }
     Fl_Input txt_name {
       label NAM
-      tooltip {Other operator} xywh {382 222 80 22}
+      tooltip {Other operator} xywh {383 222 100 22}
+      class Fl_Input2
+    }
+    Fl_Input txt_freq {
+      label {Freq:}
+      callback {check_call();} selected
+      tooltip {Frequency (MHz preferred)} xywh {246 251 100 22} when 1
+    }
+    Fl_Input txt_xchg {
+      label X_in
+      tooltip {Rcvd Contest Exchange} xywh {381 251 100 22} when 1
       class Fl_Input2
     }
     Fl_Button btn_log_it {
       label Log
       callback {AddRecord();
 txt_sta->take_focus();}
-      xywh {474 250 50 25}
-    }
-    Fl_Input txt_xchg {
-      label X_in
-      tooltip {Rcvd Contest Exchange} xywh {255 251 209 22} when 1
-      class Fl_Input2
+      xywh {487 250 52 25}
     }
     Fl_Button btn_clear {
       label Clear
@@ -312,7 +317,7 @@ txt_name->value("");
 txt_xchg->value("");
 txt_sta->color(FL_BACKGROUND2_COLOR);
 txt_sta->take_focus();}
-      xywh {474 221 50 25}
+      xywh {487 221 52 25}
     }
   }
 } 
@@ -485,11 +490,10 @@ Function {make_parameters_dialog()} {open
   }
 } 
 
-Function {make_message_editor()} {open
-} {
+Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {588 491 600 350} type Double visible
+    xywh {588 491 600 350} type Double hide
   } {
     Fl_Input label_1 {
       label {1:}
@@ -775,48 +779,50 @@ Function {make_operator_dialog()} {} {
   }
 } 
 
-Function {make_contest_dialog()} {} {
+Function {make_contest_dialog()} {open
+} {
   Fl_Window {} {
     label Contest open
-    xywh {588 416 600 65} type Double hide
+    xywh {582 376 512 65} type Double hide
   } {
-    Fl_Group {} {
-      label Contest open
-      xywh {2 2 596 60} box ENGRAVED_FRAME align 21
-    } {
-      Fl_Input txt_serial_nbr {
-        label {Next \#}
-        callback {serial_nbr();}
-        tooltip {Next serial number to be sent} xywh {125 6 60 24} type Int
-      }
-      Fl_Check_Button btn_zeros {
-        label {Leading zeros}
-        callback {zeros();}
-        tooltip {Send nbr as 0nn if < 100} xywh {368 11 70 15} down_box DOWN_BOX
-        code0 {o->value(progStatus.zeros);}
-      }
-      Fl_Input txt_freq {
-        label {Freq:}
-        tooltip {Frequency (KHz preferred)
-Blank = don't care} xywh {237 6 120 24}
-      }
-      Fl_Check_Button btn_dups {
-        label {Ck Dups}
-        callback {dups();}
-        tooltip {Check for duplicates} xywh {498 11 70 15} down_box DOWN_BOX
-        code0 {o->value(progStatus.dups);}
-      }
-      Fl_Input txt_time_span {
-        label {Time Span}
-        callback {time_span();}
-        tooltip {Min's allowed between dups
-Zero = disallowed} xywh {124 33 60 24} type Int
-      }
-      Fl_Button btn_close_contest {
-        label Close
-        callback {close_contest();}
-        xywh {506 34 70 20}
-      }
+    Fl_Input txt_serial_nbr {
+      label {Next \#}
+      callback {serial_nbr();}
+      tooltip {Next serial number to be sent} xywh {57 4 60 24} type Int
+    }
+    Fl_Input txt_time_span {
+      label {Time Span}
+      callback {time_span();}
+      tooltip {Min's allowed between dups} xywh {203 4 60 24} type Int
+    }
+    Fl_Check_Button btn_zeros {
+      label {Leading zeros}
+      callback {zeros();}
+      tooltip {Send nbr as 0nn if < 100} xywh {57 37 70 15} down_box DOWN_BOX
+      code0 {o->value(progStatus.zeros);}
+    }
+    Fl_Check_Button btn_ck_band {
+      label {Ck Band}
+      callback {ck_band();}
+      tooltip {Include band for dup check} xywh {279 8 70 15} down_box DOWN_BOX
+      code0 {o->value(progStatus.band);}
+    }
+    Fl_Check_Button btn_ck_time_span {
+      label {Ck Time Span}
+      callback {time_span();}
+      tooltip {Include time span for dup check} xywh {279 37 70 15} down_box DOWN_BOX
+      code0 {o->value(progStatus.time_span);}
+    }
+    Fl_Check_Button btn_dups {
+      label {Ck Dups}
+      callback {dups();}
+      tooltip {Check for duplicates} xywh {423 8 70 15} down_box DOWN_BOX
+      code0 {o->value(progStatus.dups);}
+    }
+    Fl_Button btn_close_contest {
+      label Close
+      callback {close_contest();}
+      xywh {424 34 70 20}
     }
   }
 } 
