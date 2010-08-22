@@ -1,5 +1,6 @@
-2010-08-21  David Freese  <w1hkj@w1hkj.com>
+2010-08-22  David Freese  <w1hkj@w1hkj.com>
 
+	31535c6: Duplicate Checking
 	4e68b36: LOG add restored
 	3ac915d: Logbook Field Sizes
 	840fa6d: Dialog Init
@@ -29,9 +30,4 @@
 
 
 =Version 0.9.95=
-
-	22b8013: WK1.0 mods
-
-
-=Version 0.9.94=
 
