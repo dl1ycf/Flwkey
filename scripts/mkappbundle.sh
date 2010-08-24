@@ -107,8 +107,8 @@ name=$(echo "$PACKAGE_TARNAME" | upcase1)
 signature="$(echo $PACKAGE_TARNAME | sed 's/[aeiouAEIOU]//g; s/\(^....\).*/\1/')"
 binary="$PACKAGE_TARNAME"
 icon="$flwkey_icon"
-version="${FLRIG_VERSION_MAJOR}.${FLRIG_VERSION_MINOR}"
-appversion="$FLRIG_VERSION"
+version="${FLWKEY_VERSION_MAJOR}.${FLWKEY_VERSION_MINOR}"
+appversion="$FLWKEY_VERSION"
 
 bundle
 
