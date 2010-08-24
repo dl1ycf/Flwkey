@@ -712,6 +712,10 @@ int main_handler(int event)
 			else btn_send->value(1);
 			return 1;
 		}
+		if ((key == 'l') && ((state & FL_ALT) == FL_ALT)) {
+			AddRecord();
+			return 1;
+		}
 		if ((key > FL_F) && key <= (FL_F + 12)) {
 			switch (key) {
 				case (FL_F + 1):
