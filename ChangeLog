@@ -1,5 +1,6 @@
-2010-08-22  David Freese  <w1hkj@w1hkj.com>
+2010-08-23  David Freese  <w1hkj@w1hkj.com>
 
+	ab356f6: Alt-L
 	31535c6: Duplicate Checking
 	4e68b36: LOG add restored
 	3ac915d: Logbook Field Sizes
@@ -25,9 +26,4 @@
 
 
 =Version 0.9.96=
-
-	e92e25a: Key Port
-
-
-=Version 0.9.95=
 
