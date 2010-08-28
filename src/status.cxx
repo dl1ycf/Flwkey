@@ -68,7 +68,7 @@ status progStatus = {
 	"m 4",	// string	label_4;
 	"",			// string	edit_msg4;
 	"Xout",	// string	label_5;
-	"R <#> AL",			// string	edit_msg5;
+	"R <#> <X>",			// string	edit_msg5;
 	"Xlog",	// string	label_6;
 	"<LOG><+>",			// string	edit_msg6;
 	"X--",	// string	label_7;
@@ -95,7 +95,8 @@ status progStatus = {
 	0,			// int	time_span;
 	1,			// bool	band;
 	true,		// bool	zeros;
-	false		// bool	dups;
+	false,		// bool	dups;
+	""			// string xout
 
 };
 
@@ -168,6 +169,7 @@ void status::saveLastState()
 	spref.set("logbook_zeros", zeros);
 	spref.set("logbook_dups", dups);
 	spref.set("logbook_band", band);
+	spref.set("logbook_xout", xout.c_str());
 
 }
 
@@ -239,6 +241,7 @@ void status::loadLastState()
 		spref.get("logbook_zeros", ichar, ichar); zeros = (ichar == 1);
 		spref.get("logbook_dups", ichar, ichar); dups = (ichar == 1);
 		spref.get("logbook_band", ichar, ichar); band = (ichar == 1);
+		spref.get("logbook_xout", defbuffer, "", 199); xout = defbuffer;
 
 		update_msg_labels();
 	}

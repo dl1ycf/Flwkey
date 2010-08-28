@@ -639,6 +639,7 @@ void cb_contest()
 	btn_zeros->value(progStatus.zeros);
 	btn_dups->value(progStatus.dups);
 	btn_ck_band->value(progStatus.band);
+	txt_xout->value(progStatus.xout.c_str());
 	if (!contest_dialog->visible())
 		contest_dialog->show();
 }
@@ -694,3 +695,4 @@ void create_dialogs()
 // contest dialog
 	contest_dialog = make_contest_dialog();
 }
+

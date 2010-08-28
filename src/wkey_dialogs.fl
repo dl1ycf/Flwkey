@@ -37,7 +37,7 @@ Function {WKey_window()} {open
     label Fl_WinKey open
     xywh {578 64 670 279} type Double resizable visible
   } {
-    Fl_Menu_Bar {} {open
+    Fl_Menu_Bar {} {open selected
       xywh {0 0 670 20}
     } {
       Submenu {} {
@@ -76,7 +76,8 @@ Function {WKey_window()} {open
         }
       }
       Submenu mnu_Logbook {
-        label Logbook open
+        label Logbook
+        callback {connect_to_server();} open
         xywh {0 0 70 21}
       } {
         MenuItem mnu_display_log {
@@ -122,7 +123,12 @@ Function {WKey_window()} {open
         MenuItem mnu_export_cabrillo {
           label {Cabrillo Report}
           callback {cb_Export_Cabrillo();}
-          xywh {0 0 36 21}
+          xywh {0 0 36 21} divider
+        }
+        MenuItem mnu_log_client {
+          label {Connect to Server}
+          callback {connect_to_server();}
+          xywh {0 0 36 21} type Toggle divider
         }
       }
       MenuItem mnu_contest {
@@ -294,11 +300,6 @@ Edit - Right click} xywh {616 197 50 20}
       tooltip {Other operator} xywh {383 222 100 22}
       class Fl_Input2
     }
-    Fl_Input txt_freq {
-      label {Freq:}
-      callback {check_call();} selected
-      tooltip {Frequency (MHz preferred)} xywh {246 251 100 22} when 1
-    }
     Fl_Input txt_xchg {
       label X_in
       tooltip {Rcvd Contest Exchange} xywh {381 251 100 22} when 1
@@ -306,7 +307,10 @@ Edit - Right click} xywh {616 197 50 20}
     }
     Fl_Button btn_log_it {
       label Log
-      callback {AddRecord();
+      callback {if (mnu_log_client->value())
+  xml_add_record();
+else
+  AddRecord();
 txt_sta->take_focus();}
       xywh {487 250 52 25}
     }
@@ -319,11 +323,15 @@ txt_sta->color(FL_BACKGROUND2_COLOR);
 txt_sta->take_focus();}
       xywh {487 221 52 25}
     }
+    Fl_Input txt_freq {
+      label {Freq:}
+      callback {check_call();}
+      tooltip {Frequency (MHz preferred)} xywh {246 251 100 22} when 1
+    }
   }
 } 
 
-Function {make_parameters_dialog()} {open
-} {
+Function {make_parameters_dialog()} {} {
   Fl_Window {} {
     label {WKeyer Parameters}
     xywh {588 491 515 232} type Double hide
@@ -493,7 +501,7 @@ Function {make_parameters_dialog()} {open
 Function {make_message_editor()} {} {
   Fl_Window {} {
     label {Message Editor} open
-    xywh {588 491 600 350} type Double hide
+    xywh {571 437 600 350} type Double hide
   } {
     Fl_Input label_1 {
       label {1:}
@@ -641,18 +649,6 @@ Function {make_message_editor()} {} {
         tooltip {Other stations name} xywh {469 134 55 20}
       }
       Fl_Box {} {
-        xywh {469 208 55 20}
-      }
-      Fl_Box {} {
-        xywh {469 154 55 20}
-      }
-      Fl_Box {} {
-        xywh {469 155 55 20}
-      }
-      Fl_Box {} {
-        xywh {469 153 55 20}
-      }
-      Fl_Box {} {
         label {<\#>}
         tooltip {Serial OUT} xywh {469 151 55 20}
       }
@@ -667,6 +663,10 @@ Function {make_message_editor()} {} {
       Fl_Box {} {
         label {<LOG>}
         tooltip {Append entry to logbook} xywh {469 208 55 20}
+      }
+      Fl_Box {} {
+        label {<X>}
+        tooltip {Xout text} xywh {469 229 55 20}
       }
     }
     Fl_Group {} {
@@ -718,7 +718,7 @@ Function {make_message_editor()} {} {
       }
       Fl_Box {} {
         label {@@ AC}
-        tooltip {.--.-.} xywh {531 227 60 20}
+        tooltip {.--.-.} xywh {531 229 60 20}
       }
     }
     Fl_Input label_11 {
@@ -779,50 +779,55 @@ Function {make_operator_dialog()} {} {
   }
 } 
 
-Function {make_contest_dialog()} {open
-} {
+Function {make_contest_dialog()} {} {
   Fl_Window {} {
     label Contest open
-    xywh {582 376 512 65} type Double hide
+    xywh {581 456 455 65} type Double visible
   } {
     Fl_Input txt_serial_nbr {
       label {Next \#}
       callback {serial_nbr();}
-      tooltip {Next serial number to be sent} xywh {57 4 60 24} type Int
+      tooltip {Next serial number to be sent} xywh {59 4 60 24} type Int
     }
     Fl_Input txt_time_span {
       label {Time Span}
       callback {time_span();}
-      tooltip {Min's allowed between dups} xywh {203 4 60 24} type Int
+      tooltip {Min's allowed between dups} xywh {205 4 60 24} type Int
     }
     Fl_Check_Button btn_zeros {
-      label {Leading zeros}
+      label {Zeros ?}
       callback {zeros();}
-      tooltip {Send nbr as 0nn if < 100} xywh {57 37 70 15} down_box DOWN_BOX
+      tooltip {Send nbr as 0nn if < 100} xywh {8 37 20 15} down_box DOWN_BOX
       code0 {o->value(progStatus.zeros);}
     }
     Fl_Check_Button btn_ck_band {
       label {Ck Band}
       callback {ck_band();}
-      tooltip {Include band for dup check} xywh {279 8 70 15} down_box DOWN_BOX
+      tooltip {Include band for dup check} xywh {93 37 20 15} down_box DOWN_BOX
       code0 {o->value(progStatus.band);}
     }
     Fl_Check_Button btn_ck_time_span {
-      label {Ck Time Span}
+      label {Ck span}
       callback {time_span();}
-      tooltip {Include time span for dup check} xywh {279 37 70 15} down_box DOWN_BOX
+      tooltip {Include time span for dup check} xywh {178 37 20 15} down_box DOWN_BOX
       code0 {o->value(progStatus.time_span);}
     }
     Fl_Check_Button btn_dups {
       label {Ck Dups}
       callback {dups();}
-      tooltip {Check for duplicates} xywh {423 8 70 15} down_box DOWN_BOX
+      tooltip {Check for duplicates} xywh {263 37 20 15} down_box DOWN_BOX
       code0 {o->value(progStatus.dups);}
     }
     Fl_Button btn_close_contest {
       label Close
       callback {close_contest();}
-      xywh {424 34 70 20}
+      xywh {374 34 70 20}
+    }
+    Fl_Input txt_xout {
+      label Xout
+      callback {progStatus.xout=o->value();}
+      tooltip {Exchange out (not serial \#)} xywh {308 4 140 24}
+      code0 {o->value(progStatus.xout.c_str());}
     }
   }
 } 

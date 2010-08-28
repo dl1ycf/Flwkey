@@ -87,6 +87,7 @@ struct status {
 	bool	band;
 	bool	zeros;
 	bool	dups;
+	string	xout;
 
 	void saveLastState();
 	void loadLastState();

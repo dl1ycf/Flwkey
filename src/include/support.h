@@ -124,5 +124,12 @@ extern void on_line_help();
 
 extern void cb_contest();
 extern void close_contest();
+extern void connect_to_server();
+extern void xml_get_record(const char *callsign);
+extern void xml_add_record();
+extern void xml_check_dup();
+
+extern char *szTime(int);
+extern char *szDate(int);
 
 #endif

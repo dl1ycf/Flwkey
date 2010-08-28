@@ -776,10 +776,14 @@ std::string sDate_on = "";
 
 void AddRecord ()
 {
+	if (txt_sta->value()[0] == 0) return;
 	char *szt = szTime(2);
 	char *szdt = szDate(0x86);
-	string xout = txt_xchg->value();
-	for (size_t n = 0; n < xout.length(); n++) xout[n] = toupper(xout[n]);
+	char sznbr[6];
+	snprintf(sznbr, sizeof(sznbr), "%d", progStatus.serial_nbr);
+
+	string xin = txt_xchg->value();
+	for (size_t n = 0; n < xin.length(); n++) xin[n] = toupper(xin[n]);
 
 	inpCall_log->value(txt_sta->value());
 	inpName_log->value (txt_name->value());
@@ -795,9 +799,9 @@ void AddRecord ()
 	inpCountry_log->value ("");
 
 	inpSerNoIn_log->value("");
-	inpSerNoOut_log->value("");
-	inpXchgIn_log->value(xout.c_str());
-	inpMyXchg_log->value("");
+	inpSerNoOut_log->value(sznbr);
+	inpXchgIn_log->value(xin.c_str());
+	inpMyXchg_log->value(progStatus.xout.c_str());
 
 	inpQth_log->value ("");
 	inpLoc_log->value ("");

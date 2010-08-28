@@ -66,6 +66,10 @@ static void cb_mnu_operator(Fl_Menu_*, void*) {
   open_operator_dialog();
 }
 
+static void cb_mnu_Logbook(Fl_Menu_*, void*) {
+  connect_to_server();
+}
+
 static void cb_mnu_display_log(Fl_Menu_*, void*) {
   cb_mnuShowLogbook();
 }
@@ -102,6 +106,10 @@ static void cb_mnu_export_cabrillo(Fl_Menu_*, void*) {
   cb_Export_Cabrillo();
 }
 
+static void cb_mnu_log_client(Fl_Menu_*, void*) {
+  connect_to_server();
+}
+
 static void cb_mnu_contest(Fl_Menu_*, void*) {
   cb_contest();
 }
@@ -128,7 +136,7 @@ Fl_Menu_Item menu_[] = {
  {_("Messages"), 0,  (Fl_Callback*)cb_mnu_messages, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Operator"), 0,  (Fl_Callback*)cb_mnu_operator, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
- {_("Logbook"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Logbook"), 0,  (Fl_Callback*)cb_mnu_Logbook, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Display Log"), 0,  (Fl_Callback*)cb_mnu_display_log, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
  {_("New"), 0,  (Fl_Callback*)cb_mnu_new_log, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Open"), 0,  (Fl_Callback*)cb_mnu_open_logbook, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -137,7 +145,8 @@ Fl_Menu_Item menu_[] = {
  {_("Export Log"), 0,  (Fl_Callback*)cb_mnu_export_adif, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Export text"), 0,  (Fl_Callback*)cb_mnu_export_logbook_text, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Export CSV"), 0,  (Fl_Callback*)cb_mnu_export_logbook_csv, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {_("Cabrillo Report"), 0,  (Fl_Callback*)cb_mnu_export_cabrillo, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Cabrillo Report"), 0,  (Fl_Callback*)cb_mnu_export_cabrillo, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
+ {_("Connect to Server"), 0,  (Fl_Callback*)cb_mnu_log_client, 0, 130, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
  {_("Contest"), 0,  (Fl_Callback*)cb_mnu_contest, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {_("Events"), 0,  (Fl_Callback*)cb_mnu_events, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -274,17 +283,14 @@ static void cb_txt_sta(Fl_Input2*, void*) {
 
 Fl_Input2 *txt_name=(Fl_Input2 *)0;
 
-Fl_Input *txt_freq=(Fl_Input *)0;
-
-static void cb_txt_freq(Fl_Input*, void*) {
-  check_call();
-}
-
 Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
 
 Fl_Button *btn_log_it=(Fl_Button *)0;
 
 static void cb_btn_log_it(Fl_Button*, void*) {
+  if (mnu_log_client->value())
+  xml_add_record();
+else
   AddRecord();
 txt_sta->take_focus();
 }
@@ -297,6 +303,12 @@ txt_name->value("");
 txt_xchg->value("");
 txt_sta->color(FL_BACKGROUND2_COLOR);
 txt_sta->take_focus();
+}
+
+Fl_Input *txt_freq=(Fl_Input *)0;
+
+static void cb_txt_freq(Fl_Input*, void*) {
+  check_call();
 }
 
 Fl_Double_Window* WKey_window() {
@@ -453,11 +465,6 @@ Fl_Double_Window* WKey_window() {
       txt_name->align(FL_ALIGN_LEFT);
       txt_name->when(FL_WHEN_RELEASE);
     } // Fl_Input2* txt_name
-    { txt_freq = new Fl_Input(246, 251, 100, 22, _("Freq:"));
-      txt_freq->tooltip(_("Frequency (MHz preferred)"));
-      txt_freq->callback((Fl_Callback*)cb_txt_freq);
-      txt_freq->when(FL_WHEN_CHANGED);
-    } // Fl_Input* txt_freq
     { txt_xchg = new Fl_Input2(381, 251, 100, 22, _("X_in"));
       txt_xchg->tooltip(_("Rcvd Contest Exchange"));
       txt_xchg->box(FL_DOWN_BOX);
@@ -476,6 +483,11 @@ Fl_Double_Window* WKey_window() {
     { btn_clear = new Fl_Button(487, 221, 52, 25, _("Clear"));
       btn_clear->callback((Fl_Callback*)cb_btn_clear);
     } // Fl_Button* btn_clear
+    { txt_freq = new Fl_Input(246, 251, 100, 22, _("Freq:"));
+      txt_freq->tooltip(_("Frequency (MHz preferred)"));
+      txt_freq->callback((Fl_Callback*)cb_txt_freq);
+      txt_freq->when(FL_WHEN_CHANGED);
+    } // Fl_Input* txt_freq
     o->end();
   } // Fl_Double_Window* o
   return w;
@@ -1141,14 +1153,6 @@ Fl_Double_Window* make_message_editor() {
       { Fl_Box* o = new Fl_Box(469, 134, 55, 20, _("<NAM>"));
         o->tooltip(_("Other stations name"));
       } // Fl_Box* o
-      { new Fl_Box(469, 208, 55, 20);
-      } // Fl_Box* o
-      { new Fl_Box(469, 154, 55, 20);
-      } // Fl_Box* o
-      { new Fl_Box(469, 155, 55, 20);
-      } // Fl_Box* o
-      { new Fl_Box(469, 153, 55, 20);
-      } // Fl_Box* o
       { Fl_Box* o = new Fl_Box(469, 151, 55, 20, _("<#>"));
         o->tooltip(_("Serial OUT"));
       } // Fl_Box* o
@@ -1160,6 +1164,9 @@ Fl_Double_Window* make_message_editor() {
       } // Fl_Box* o
       { Fl_Box* o = new Fl_Box(469, 208, 55, 20, _("<LOG>"));
         o->tooltip(_("Append entry to logbook"));
+      } // Fl_Box* o
+      { Fl_Box* o = new Fl_Box(469, 229, 55, 20, _("<X>"));
+        o->tooltip(_("Xout text"));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
@@ -1197,7 +1204,7 @@ Fl_Double_Window* make_message_editor() {
       { Fl_Box* o = new Fl_Box(531, 208, 60, 20, _("- DU"));
         o->tooltip(_("-....-"));
       } // Fl_Box* o
-      { Fl_Box* o = new Fl_Box(531, 227, 60, 20, _("@@ AC"));
+      { Fl_Box* o = new Fl_Box(531, 229, 60, 20, _("@@ AC"));
         o->tooltip(_(".--.-."));
       } // Fl_Box* o
       o->end();
@@ -1386,47 +1393,58 @@ static void cb_btn_close_contest(Fl_Button*, void*) {
   close_contest();
 }
 
+Fl_Input *txt_xout=(Fl_Input *)0;
+
+static void cb_txt_xout(Fl_Input* o, void*) {
+  progStatus.xout=o->value();
+}
+
 Fl_Double_Window* make_contest_dialog() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(512, 65, _("Contest"));
+  { Fl_Double_Window* o = new Fl_Double_Window(455, 65, _("Contest"));
     w = o;
-    { txt_serial_nbr = new Fl_Input(57, 4, 60, 24, _("Next #"));
+    { txt_serial_nbr = new Fl_Input(59, 4, 60, 24, _("Next #"));
       txt_serial_nbr->tooltip(_("Next serial number to be sent"));
       txt_serial_nbr->type(2);
       txt_serial_nbr->callback((Fl_Callback*)cb_txt_serial_nbr);
     } // Fl_Input* txt_serial_nbr
-    { txt_time_span = new Fl_Input(203, 4, 60, 24, _("Time Span"));
+    { txt_time_span = new Fl_Input(205, 4, 60, 24, _("Time Span"));
       txt_time_span->tooltip(_("Min\'s allowed between dups"));
       txt_time_span->type(2);
       txt_time_span->callback((Fl_Callback*)cb_txt_time_span);
     } // Fl_Input* txt_time_span
-    { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(57, 37, 70, 15, _("Leading zeros"));
+    { Fl_Check_Button* o = btn_zeros = new Fl_Check_Button(8, 37, 20, 15, _("Zeros ?"));
       btn_zeros->tooltip(_("Send nbr as 0nn if < 100"));
       btn_zeros->down_box(FL_DOWN_BOX);
       btn_zeros->callback((Fl_Callback*)cb_btn_zeros);
       o->value(progStatus.zeros);
     } // Fl_Check_Button* btn_zeros
-    { Fl_Check_Button* o = btn_ck_band = new Fl_Check_Button(279, 8, 70, 15, _("Ck Band"));
+    { Fl_Check_Button* o = btn_ck_band = new Fl_Check_Button(93, 37, 20, 15, _("Ck Band"));
       btn_ck_band->tooltip(_("Include band for dup check"));
       btn_ck_band->down_box(FL_DOWN_BOX);
       btn_ck_band->callback((Fl_Callback*)cb_btn_ck_band);
       o->value(progStatus.band);
     } // Fl_Check_Button* btn_ck_band
-    { Fl_Check_Button* o = btn_ck_time_span = new Fl_Check_Button(279, 37, 70, 15, _("Ck Time Span"));
+    { Fl_Check_Button* o = btn_ck_time_span = new Fl_Check_Button(178, 37, 20, 15, _("Ck span"));
       btn_ck_time_span->tooltip(_("Include time span for dup check"));
       btn_ck_time_span->down_box(FL_DOWN_BOX);
       btn_ck_time_span->callback((Fl_Callback*)cb_btn_ck_time_span);
       o->value(progStatus.time_span);
     } // Fl_Check_Button* btn_ck_time_span
-    { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(423, 8, 70, 15, _("Ck Dups"));
+    { Fl_Check_Button* o = btn_dups = new Fl_Check_Button(263, 37, 20, 15, _("Ck Dups"));
       btn_dups->tooltip(_("Check for duplicates"));
       btn_dups->down_box(FL_DOWN_BOX);
       btn_dups->callback((Fl_Callback*)cb_btn_dups);
       o->value(progStatus.dups);
     } // Fl_Check_Button* btn_dups
-    { btn_close_contest = new Fl_Button(424, 34, 70, 20, _("Close"));
+    { btn_close_contest = new Fl_Button(374, 34, 70, 20, _("Close"));
       btn_close_contest->callback((Fl_Callback*)cb_btn_close_contest);
     } // Fl_Button* btn_close_contest
+    { Fl_Input* o = txt_xout = new Fl_Input(308, 4, 140, 24, _("Xout"));
+      txt_xout->tooltip(_("Exchange out (not serial #)"));
+      txt_xout->callback((Fl_Callback*)cb_txt_xout);
+      o->value(progStatus.xout.c_str());
+    } // Fl_Input* txt_xout
     o->end();
   } // Fl_Double_Window* o
   return w;

@@ -122,6 +122,7 @@ flwkey_SOURCES += \
 	flslider2.cxx \
 	flwkey.cxx \
 	wkey_io.cxx \
+	xmlrpc_io.cxx \
 	serial.cxx \
 	status.cxx \
 	support.cxx \
@@ -146,7 +147,18 @@ flwkey_SOURCES += \
 	logbook/qso_db.cxx \
 	logbook/textio.cxx \
 	re.cxx \
-	wkey_dialogs.cxx
+	wkey_dialogs.cxx \
+	xmlrpccpp/XmlRpcClient.cpp \
+	xmlrpccpp/XmlRpcMutex.cpp \
+	xmlrpccpp/XmlRpcServerMethod.cpp \
+	xmlrpccpp/XmlRpcThread.cpp \
+	xmlrpccpp/XmlRpcValue.cpp \
+	xmlrpccpp/XmlRpcDispatch.cpp \
+	xmlrpccpp/XmlRpcServerConnection.cpp \
+	xmlrpccpp/XmlRpcSocket.cpp \
+	xmlrpccpp/XmlRpcServer.cpp \
+	xmlrpccpp/XmlRpcSource.cpp \
+	xmlrpccpp/XmlRpcUtil.cpp
 
 # Additional source files that are distributed
 EXTRA_DIST = \
@@ -203,7 +215,23 @@ EXTRA_DIST = \
 	include/FL/Fl_Native_File_Chooser.H \
 	include/FL/Fl_Native_File_Chooser_FLTK.H \
 	include/FL/Fl_Native_File_Chooser_MAC.H \
-	include/FL/Fl_Native_File_Chooser_WIN32.H
+	include/FL/Fl_Native_File_Chooser_WIN32.H \
+	include/base64.h \
+	include/XmlRpc.h \
+	include/XmlRpcServer.h \
+	include/XmlRpcSource.h \
+	include/XmlRpcUtil.h
+	include/XmlRpcClient.h \
+	include/XmlRpcMutex.h \
+	include/XmlRpcServerMethod.h \
+	include/XmlRpcValue.h \
+	include/XmlRpcThreadedServer.h \
+	include/XmlRpcDispatch.h \
+	include/XmlRpcServerConnection.h \
+	include/XmlRpcSocket.h \
+	include/XmlRpcThread.h \
+	include/XmlRpcException.h
+
 
 # Additional non-source files that are distributed
 # Additional source files that support non-Linux cross compilation
