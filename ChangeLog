@@ -1,8 +1,9 @@
+2010-08-28  David Freese  <w1hkj@w1hkj.com>
+
+	4db4973: Remote Logbook / Contesting
 
 
 =Version 1.0.0=
-
-2010-08-23  David Freese  <w1hkj@w1hkj.com>
 
 	ab356f6: Alt-L
 	31535c6: Duplicate Checking
@@ -26,3 +27,41 @@
 =Version 0.9.97=
 
 	a92cb82: Logbook
+	bd998a7: Serial timing
+
+
+=Version 0.9.96=
+
+	e92e25a: Key Port
+
+
+=Version 0.9.95=
+
+	22b8013: WK1.0 mods
+
+
+=Version 0.9.94=
+
+	11f2cf3: Logbook-Save
+
+
+=Version 0.9.93=
+
+	a59cfa8: Prosigns
+	eb3404c: Transmit Text
+
+
+=Version 0.9.92=
+
+	16db6ee: Logbook
+	2c7f002: OK removed
+	b8161e8: Sidetone - cut-0-9
+
+
+=Version 0.9.91=
+
+	81505a9: flwkey initialization
+
+
+=Version 0.9.9=
+
