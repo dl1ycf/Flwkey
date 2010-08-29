@@ -32,6 +32,132 @@
 
 using namespace std;
 
+// =====================================================================
+// support for band / frequency translations
+// =====================================================================
+
+enum band_t {
+	BAND_160M, BAND_80M, BAND_75M, BAND_60M, BAND_40M, BAND_30M, BAND_20M,
+	BAND_17M, BAND_15M, BAND_12M, BAND_10M, BAND_6M, BAND_4M, BAND_2M, BAND_125CM,
+	BAND_70CM, BAND_33CM, BAND_23CM, BAND_13CM, BAND_9CM, BAND_6CM, BAND_3CM, BAND_125MM,
+	BAND_6MM, BAND_4MM, BAND_2P5MM, BAND_2MM, BAND_1MM, BAND_OTHER, NUM_BANDS
+};
+
+band_t band(long long freq_hz);
+band_t band(const char* freq_mhz);
+const char* band_name(band_t b);
+const char* band_name(const char* freq_mhz);
+const char* band_freq(band_t b);
+const char* band_freq(const char* band_name);
+
+band_t band(long long freq_hz)
+{
+	switch (freq_hz / 1000000LL) {
+		case 0: case 1: return BAND_160M;
+		case 3: return BAND_80M;
+		case 4: return BAND_75M;
+		case 5: return BAND_60M;
+		case 7: return BAND_40M;
+		case 10: return BAND_30M;
+		case 14: return BAND_20M;
+		case 18: return BAND_17M;
+		case 21: return BAND_15M;
+		case 24: return BAND_12M;
+		case 28 ... 29: return BAND_10M;
+		case 50 ... 54: return BAND_6M;
+		case 70 ... 71: return BAND_4M;
+		case 144 ... 148: return BAND_2M;
+		case 222 ... 225: return BAND_125CM;
+		case 420 ... 450: return BAND_70CM;
+		case 902 ... 928: return BAND_33CM;
+		case 1240 ... 1325: return BAND_23CM;
+		case 2300 ... 2450: return BAND_13CM;
+		case 3300 ... 3500: return BAND_9CM;
+		case 5650 ... 5925: return BAND_6CM;
+		case 10000 ... 10500: return BAND_3CM;
+		case 24000 ... 24250: return BAND_125MM;
+		case 47000 ... 47200: return BAND_6MM;
+		case 75500 ... 81000: return BAND_4MM;
+		case 119980 ... 120020: return BAND_2P5MM;
+		case 142000 ... 149000: return BAND_2MM;
+		case 241000 ... 250000: return BAND_1MM;
+	}
+
+	return BAND_OTHER;
+}
+
+band_t band(const char* freq_mhz)
+{
+	double d = strtod(freq_mhz, NULL);
+	if (d != 0.0)
+		return band((long long)(d * 1e6));
+	else
+		return BAND_OTHER;
+}
+
+struct band_freq_t {
+	const char* band;
+	const char* freq;
+};
+
+static struct band_freq_t band_names[NUM_BANDS] = {
+	{ "160m", "1.8" },
+	{ "80m", "3.4" },
+	{ "75m", "4.0" },
+	{ "60m", "5.3" },
+	{ "40m", "7.0" },
+	{ "30m", "10.0" },
+	{ "20m", "14.0" },
+	{ "17m", "18.0" },
+	{ "15m", "21.0" },
+	{ "12m", "24.0" },
+	{ "10m", "28.0" },
+	{ "6m", "50.0" },
+	{ "4m", "70.0" },
+	{ "2m", "144.0" },
+	{ "1.25m", "222.0" },
+	{ "70cm", "420.0" },
+	{ "33cm", "902.0" },
+	{ "23cm", "1240.0" },
+	{ "13cm", "2300.0" },
+	{ "9cm", "3300.0" },
+	{ "6cm", "5650.0" },
+	{ "3cm", "10000.0" },
+	{ "1.25cm", "24000.0" },
+	{ "6mm", "47000.0" },
+	{ "4mm", "75500.0" },
+	{ "2.5mm", "119980.0" },
+	{ "2mm", "142000.0" },
+	{ "1mm", "241000.0" },
+	{ "other", "" }
+};
+
+const char* band_name(band_t b)
+{
+	return band_names[CLAMP(b, 0, NUM_BANDS-1)].band;
+}
+
+const char* band_name(const char* freq_mhz)
+{
+	return band_name(band(freq_mhz));
+}
+
+const char* band_freq(band_t b)
+{
+	return band_names[CLAMP(b, 0, NUM_BANDS-1)].freq;
+}
+
+const char* band_freq(const char* band_name)
+{
+	for (size_t i = 0; i < BAND_OTHER; i++)
+		if (!strcmp(band_names[i].band, band_name))
+			return band_names[i].freq;
+
+	return "";
+}
+
+//======================================================================
+
 // class cQsoRec
 
 static int compby = COMPDATE;
@@ -44,6 +170,8 @@ cQsoRec::cQsoRec() {
 }
 
 cQsoRec::~cQsoRec () {
+//  for (int i = 0; i < NUMFIELDS; i++)
+//    delete [] qsofield[i];
 }
 
 void cQsoRec::clearRec () {
@@ -59,9 +187,9 @@ void cQsoRec::checkBand() {
 	size_t flen = qsofield[FREQ].length(),
 		   blen = qsofield[BAND].length();
 	if (flen == 0 && blen != 0)
-		qsofield[FREQ] = qsofield[BAND];
+		qsofield[FREQ] = band_freq(qsofield[BAND].c_str());
 	else if (blen == 0 && flen != 0)
-		qsofield[BAND] = qsofield[FREQ];
+		qsofield[BAND] = band_name(qsofield[FREQ].c_str());
 }
 
 void cQsoRec::putField (int n, const char *s){
@@ -70,7 +198,7 @@ void cQsoRec::putField (int n, const char *s){
 }
 
 void cQsoRec::putField (int n, const char *s, int len) {
-	if (n < 0 || n >= NUMFIELDS) return;
+    if (n < 0 || n >= NUMFIELDS) return;
 	qsofield[n].clear();
 	qsofield[n].append(s, len);
 }
@@ -136,29 +264,29 @@ int compareDates (const cQsoRec &r1, const cQsoRec &r2) {
 }
 
 int compareCalls (const cQsoRec &r1, const cQsoRec &r2) {
-	int cmp = 0;
-	char *s1 = new char[r1.qsofield[CALL].length() + 1];
-	char *s2 = new char[r2.qsofield[CALL].length() + 1];
-	char *p1, *p2;
-	strcpy(s1, r1.qsofield[CALL].c_str());
-	strcpy(s2, r2.qsofield[CALL].c_str());
-	p1 = strpbrk (&s1[1], "0123456789");
-	p2 = strpbrk (&s2[1], "0123456789");
-	if (p1 && p2) {
-		cmp = (*p1 < *p2) ? -1 :(*p1 > *p2) ? 1 : 0;
-		if (cmp == 0) {
-			*p1 = 0; *p2 = 0;
-			cmp = strcmp (s1, s2);
-			if (cmp == 0)
-				cmp = strcmp(p1+1, p2+1);
-		}
-	} else
-		cmp = (r1.qsofield[CALL] == r2.qsofield[CALL]);
-	delete [] s1;
-	delete [] s2;
-	if (cmp == 0)
-		return compareDates (r1,r2);
-	return cmp;
+  int cmp = 0;
+  char *s1 = new char[r1.qsofield[CALL].length() + 1];
+  char *s2 = new char[r2.qsofield[CALL].length() + 1];
+  char *p1, *p2;
+  strcpy(s1, r1.qsofield[CALL].c_str());
+  strcpy(s2, r2.qsofield[CALL].c_str());
+  p1 = strpbrk (&s1[1], "0123456789");
+  p2 = strpbrk (&s2[1], "0123456789");
+  if (p1 && p2) {
+    cmp = (*p1 < *p2) ? -1 :(*p1 > *p2) ? 1 : 0;
+    if (cmp == 0) {
+      *p1 = 0; *p2 = 0;
+      cmp = strcmp (s1, s2);
+      if (cmp == 0)
+        cmp = strcmp(p1+1, p2+1);
+    }
+  } else
+    cmp = (r1.qsofield[CALL] == r2.qsofield[CALL]);
+  delete [] s1;
+  delete [] s2;
+  if (cmp == 0)
+    return compareDates (r1,r2);
+  return cmp;
 }
 
 int compareModes (const cQsoRec &r1, const cQsoRec &r2) {
@@ -204,19 +332,19 @@ int compareqsos (const void *p1, const void *p2) {
 }
 
 bool cQsoRec::operator==(const cQsoRec &right) const {
-	if (compareDates (*this, right) != 0) return false;
-	if (compareTimes (*this, right) != 0) return false;
-	if (compareCalls (*this, right) != 0) return false;
-	if (compareFreqs (*this, right) != 0) return false;
-	return true;
+  if (compareDates (*this, right) != 0) return false;
+  if (compareTimes (*this, right) != 0) return false;
+  if (compareCalls (*this, right) != 0) return false;
+  if (compareFreqs (*this, right) != 0) return false;
+  return true;
 }
 
 bool cQsoRec::operator<(const cQsoRec &right) const {
-	if (compareDates (*this, right) > -1) return false;
-	if (compareTimes (*this, right) > -1) return false;
-	if (compareCalls (*this, right) > -1) return false;
-	if (compareFreqs (*this, right) > -1) return false;
-	return true;
+  if (compareDates (*this, right) > -1) return false;
+  if (compareTimes (*this, right) > -1) return false;
+  if (compareCalls (*this, right) > -1) return false;
+  if (compareFreqs (*this, right) > -1) return false;
+  return true;
 }
 
 static char delim_in = '\t';
@@ -224,23 +352,23 @@ static char delim_out = '\t';
 static bool isVer3 = false;
 
 ostream &operator<< (ostream &output, const cQsoRec &rec) {
-	for (int i = 0; i < EXPORT; i++)
-		output << rec.qsofield[i].c_str() << delim_out;
-	return output;
+  for (int i = 0; i < EXPORT; i++)
+    output << rec.qsofield[i].c_str() << delim_out;
+  return output;
 }
 
 istream &operator>> (istream &input, cQsoRec &rec ) {
-	char c;
-	int i;
-	for (i = 0; i < NUMFIELDS; i++) {
-		rec.qsofield[i].clear();
-		c = input.get();
-		while (c != delim_in && c != EOF) {
-			rec.qsofield[i] += c;
-			c = input.get();
-		}
-	}
-	return input;
+char c;
+int i;
+  for (i = 0; i < NUMFIELDS; i++) {
+	rec.qsofield[i].clear();
+    c = input.get();
+    while (c != delim_in && c != EOF) {
+      rec.qsofield[i] += c;
+      c = input.get();
+    }
+  }
+  return input;
 }
 
 //======================================================================
@@ -437,11 +565,8 @@ bool cQsoDb::duplicate(
 		const char *mode, bool chkmode,
 		const char *xchg1, bool chkxchg1 )
 {
-	if (nbrrecs == 0) return false;
-
-	int f1 = (int)(atof(freq));
-	int f2 = 0;
-	if (f1 > 1000) f1 /= 1000;
+	int f1, f2 = 0;
+	f1 = (int)atof(freq);
 	bool b_freqDUP = true, b_stateDUP = true, b_modeDUP = true,
 		 b_xchg1DUP = true,
 		 b_dtimeDUP = true;
@@ -455,6 +580,10 @@ bool cQsoDb::duplicate(
 				   	   b_xchg1DUP = b_dtimeDUP = false;
 			if (chkfreq) {
 				f2 = (int)atof(qsorec[i].getField(FREQ));
+				while (f1 > 1000) f1 /= 1000;
+				while (f2 > 1000) f2 /= 1000;
+				if (f1 > 100) { f1 /= 10; f2 /= 10; }
+				f1 = (int)(f1); f2 = (int)(f2);
 				b_freqDUP = (f1 == f2);
 			}
 			if (chkstate)
