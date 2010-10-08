@@ -90,6 +90,7 @@ status progStatus = {
 	"",			//string	tag_op;
 
 	"",			// string	logbookfilename
+	false,		// bool		xml_logbook
 
 	1,			// int	serial_nbr;
 	0,			// int	time_span;
@@ -164,6 +165,9 @@ void status::saveLastState()
 	spref.set("tag_opr", tag_opr.c_str());
 
 	spref.set("logbook_filename", logbookfilename.c_str());
+	xml_logbook = mnu_log_client->value();
+	spref.set("xml_logbook", xml_logbook);
+
 	spref.set("logbook_ser_nbr", serial_nbr);
 	spref.set("logbook_time_span", time_span);
 	spref.set("logbook_zeros", zeros);
@@ -236,6 +240,8 @@ void status::loadLastState()
 		spref.get("tag_opr", defbuffer, "", 199); tag_opr = defbuffer;
 
 		spref.get("logbook_filename", defbuffer, "", 199); logbookfilename = defbuffer;
+		spref.get("xml_logbook", ichar, ichar); xml_logbook = (ichar == 1);
+
 		spref.get("logbook_ser_nbr", serial_nbr, serial_nbr);
 		spref.get("logbook_time_span", time_span, time_span);
 		spref.get("logbook_zeros", ichar, ichar); zeros = (ichar == 1);
@@ -244,6 +250,10 @@ void status::loadLastState()
 		spref.get("logbook_xout", defbuffer, "", 199); xout = defbuffer;
 
 		update_msg_labels();
+		if (xml_logbook) {
+			mnu_log_client->set();
+			connect_to_server();
+		}
 	}
 }
 

@@ -8,6 +8,11 @@
 
 #define ADIF_VERS "2.2.3"
 
+/* STATION_CALLSIGN & CREDIT_SUBMITTED are the longest field names 
+ * in ADIF v2.2.6 spec 
+ */
+const int FieldLabelMaxLen = 16; 
+
 class cAdifIO {
 private:
 	bool write_all;
@@ -21,6 +26,7 @@ public:
 	~cAdifIO () {};
 	int readAdifRec () {return 0;};
 	int writeAdifRec () {return 0;};
+	void add_record (const char *, cQsoDb &);
 	void readFile (const char *, cQsoDb *);
 	int writeFile (const char *, cQsoDb *);
 	int writeLog (const char *, cQsoDb *);

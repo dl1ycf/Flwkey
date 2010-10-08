@@ -10,11 +10,23 @@
 #include <cmath>
 #include <cstring>
 #include <stdlib.h>
+
+#include <FL/Fl.H>
+#include <FL/filename.H>
+#include <FL/fl_ask.H>
+
 #include "XmlRpc.h"
 
 #include "support.h"
 #include "wkey_dialogs.h"
+#include "config.h"
 #include "lgbook.h"
+#include "icons.h"
+#include "gettext.h"
+#include "debug.h"
+#include "util.h"
+#include "date.h"
+#include "logbook.h"
 
 using namespace XmlRpc;
 
@@ -31,6 +43,21 @@ bool test_connection()
 void xml_get_record(const char *callsign)
 {
 	XmlRpcValue oneArg, result;
+	if (!test_connection()) {
+		fl_alert2(_("Logbook server down!\nUsing internal logbook"));
+		txt_name->value("");
+		mnu_log_client->clear();
+		mnu_display_log->activate();
+		mnu_new_log->activate();
+		mnu_open_logbook->activate();
+		mnu_save_logbook->activate();
+		mnu_merge_logbook->activate();
+		mnu_export_adif->activate();
+		mnu_export_logbook_text->activate();
+		mnu_export_logbook_csv->activate();
+		mnu_export_cabrillo->activate();
+		start_logbook();
+	}
 	oneArg[0] = callsign;
 	if (log_client.execute("log.get_record", oneArg, result)) {
 		string adifline = std::string(result);
@@ -53,6 +80,22 @@ void xml_get_record(const char *callsign)
 void xml_add_record()
 {
 	if (txt_sta->value()[0] == 0) return;
+
+	if (!test_connection()) {
+		fl_alert2(_("Logbook server down!\nUsing internal logbook"));
+		mnu_log_client->clear();
+		mnu_display_log->activate();
+		mnu_new_log->activate();
+		mnu_open_logbook->activate();
+		mnu_save_logbook->activate();
+		mnu_merge_logbook->activate();
+		mnu_export_adif->activate();
+		mnu_export_logbook_text->activate();
+		mnu_export_logbook_csv->activate();
+		mnu_export_cabrillo->activate();
+		start_logbook();
+	}
+
 	char *szt = szTime(2);
 	char *szdt = szDate(0x86);
 	char sznbr[6];
@@ -109,6 +152,7 @@ void connect_to_server()
 {
 	if (mnu_log_client->value())
 		if (test_connection()) {
+			close_logbook();
 			if (dlgLogbook) dlgLogbook->hide();
 			mnu_display_log->deactivate();
 			mnu_new_log->deactivate();
@@ -120,6 +164,7 @@ void connect_to_server()
 			mnu_export_logbook_csv->deactivate();
 			mnu_export_cabrillo->deactivate();
 		} else {
+			progStatus.xml_logbook = false;
 			mnu_log_client->clear();
 			mnu_display_log->activate();
 			mnu_new_log->activate();
@@ -130,6 +175,7 @@ void connect_to_server()
 			mnu_export_logbook_text->activate();
 			mnu_export_logbook_csv->activate();
 			mnu_export_cabrillo->activate();
+			start_logbook();
 	} else {
 		mnu_display_log->activate();
 		mnu_new_log->activate();
@@ -140,5 +186,6 @@ void connect_to_server()
 		mnu_export_logbook_text->activate();
 		mnu_export_logbook_csv->activate();
 		mnu_export_cabrillo->activate();
+		start_logbook();
 	}
 }

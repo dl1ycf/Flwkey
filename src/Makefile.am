@@ -66,10 +66,10 @@ uninstall-local:
 	rm -f $(DESTDIR)/$(datadir)/pixmaps/flwkey.xpm
 	rm -f $(DESTDIR)/$(datadir)/applications/flwkey.desktop
 
-FLWKEY_FL_SRC = wkey_dialogs.fl
+FLWKEY_FL_SRC = wkey_dialogs.fl logbook/lgbook.fl
 
 if HAVE_FLUID
-flgen: $(FLWKEY_FL_SRC)
+flgen: $(FLWKEY_FL_SRC) $(FLWKEY_FL_LOG)
 	(cd $(srcdir)/include; \
 	for f in $(FLWKEY_FL_SRC); do \
 	    c=$${f%.fl}.cxx; \
@@ -122,7 +122,7 @@ flwkey_SOURCES += \
 	flslider2.cxx \
 	flwkey.cxx \
 	wkey_io.cxx \
-	xmlrpc_io.cxx \
+	xmlrpc_log.cxx \
 	serial.cxx \
 	status.cxx \
 	support.cxx \

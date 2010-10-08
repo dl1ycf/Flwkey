@@ -80,6 +80,7 @@ struct status {
 
 // logbook entries
 	string logbookfilename;
+	bool	xml_logbook;
 
 // contest data
 	int		serial_nbr;
