@@ -281,7 +281,7 @@ void config_parameters()
 	cntr_sample->value(progStatus.paddle_setpoint);
 	cntr_first_ext->value(progStatus.first_extension);
 	cntr_comp->value(progStatus.key_compensation);
-	cntr_ratio->value(progStatus.dit_dah_ratio);
+	cntr_ratio->value(progStatus.dit_dah_ratio * 3 / 50.0);
 	cntr_cmd_wpm->value(progStatus.cmd_wpm);
 	cntr_farnsworth->value(progStatus.farnsworth_wpm);
 	cntr_rng_wpm->value(progStatus.rng_wpm);
@@ -393,7 +393,7 @@ void change_cntr_comp()
 
 void change_cntr_ratio()
 {
-	progStatus.dit_dah_ratio = cntr_ratio->value();
+	progStatus.dit_dah_ratio = (unsigned char)(cntr_ratio->value() * 50 / 3);
 	load_defaults();
 }
 
