@@ -1,5 +1,14 @@
-2010-08-28  David Freese  <w1hkj@w1hkj.com>
+2010-11-11  David Freese  <w1hkj@w1hkj.com>
 
+	b26455e: Weight correction
+
+2010-10-08  Fernando M. Maresca  <fmaresca@gmail.com>
+
+	1008508:     QSO_DATE_OFF addition
+
+2010-08-29  David Freese  <w1hkj@w1hkj.com>
+
+	5d5b881: ADIF Band check
 	4db4973: Remote Logbook / Contesting
 
 
