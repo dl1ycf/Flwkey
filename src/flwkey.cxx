@@ -308,17 +308,17 @@ int parse_args(int argc, char **argv, int& idx)
   --debug\n");
 		exit(0);
 	} 
-	if (strcasecmp("--version", argv[1]) == 0) {
+	if (strcasecmp("--version", argv[idx]) == 0) {
 		printf("Version: "VERSION"\n");
 		exit (0);
 	}
-	if (strcasecmp("--debug", argv[1]) == 0) {
+	if (strcasecmp("--debug", argv[idx]) == 0) {
 		WKEY_DEBUG = 1;
 		idx++;
 		return 1;
 	}
-	if (strcasecmp("--config-dir", argv[1]) == 0) {
-		WKeyHomeDir = argv[2];
+	if (strcasecmp("--config-dir", argv[idx]) == 0) {
+		WKeyHomeDir = argv[idx + 1];
 		if (WKeyHomeDir[WKeyHomeDir.length() -1] != '/')
 			WKeyHomeDir += '/';
 		idx += 2;
