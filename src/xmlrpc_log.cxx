@@ -132,18 +132,18 @@ void xml_add_record()
 void xml_check_dup()
 {
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
-	XmlRpcValue fourargs, result;
-	fourargs[0] = txt_sta->value();
-	fourargs[1] = "CW";
-	fourargs[2] = "0";
-	fourargs[3] = "0";
-	if (log_client.execute("log.check_dup", fourargs, result)) {
+	XmlRpcValue sixargs, result;
+	sixargs[0] = txt_sta->value();
+	sixargs[1] = "CW";
+	sixargs[2] = "0";
+	sixargs[3] = "0";
+	sixargs[4] = "0";
+	sixargs[5] = "0";
+	if (log_client.execute("log.check_dup", sixargs, result)) {
 		string res = std::string(result);
 		if (res == "true")
 			call_clr = fl_rgb_color( 255, 110, 180);
 	}
-//	else
-//		std::cout << "Error calling 'log.check_dup'\n";
 	txt_sta->color(call_clr);
 	txt_sta->redraw();
 }
