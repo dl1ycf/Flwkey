@@ -1,5 +1,10 @@
-2010-11-11  David Freese  <w1hkj@w1hkj.com>
 
+
+=Version 1.1.1=
+
+2011-08-20  David Freese  <w1hkj@w1hkj.com>
+
+	6beb452: Log server
 	27af029: Parse ARGS
 	b26455e: Weight correction
 
