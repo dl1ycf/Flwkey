@@ -30,14 +30,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "flstring.h"
 #include <ctype.h>
-
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "Fl_Text_Editor_mod.H"
 #include <FL/fl_ask.H>
-
 
 
 Fl_Text_Editor_mod::Fl_Text_Editor_mod(int X, int Y, int W, int H,  const char* l)

@@ -131,7 +131,11 @@ int FTextRX::handle(int event)
 		}
 	case FL_MOVE: {
 		int p = xy_to_position(Fl::event_x(), Fl::event_y(), Fl_Text_Display_mod::CURSOR_POS);
+#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+		if (sbuf->char_at(p) >= CLICK_START + FTEXT_DEF) {
+#else
 		if (sbuf->character(p) >= CLICK_START + FTEXT_DEF) {
+#endif
 			if (cursor != FL_CURSOR_HAND)
 				window()->cursor(cursor = FL_CURSOR_HAND);
 			return 1;
@@ -221,17 +225,29 @@ void FTextRX::handle_clickable(int x, int y)
 
 	pos = xy_to_position(x + this->x(), y + this->y(), CURSOR_POS);
 	// return unless clickable style
+#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+	if ((style = sbuf->char_at(pos)) < CLICK_START + FTEXT_DEF)
+#else
 	if ((style = sbuf->character(pos)) < CLICK_START + FTEXT_DEF)
+#endif
 		return;
 
 	int start, end;
 	for (start = pos-1; start >= 0; start--)
+#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+		if (sbuf->char_at(start) != style)
+#else
 		if (sbuf->character(start) != style)
+#endif
 			break;
 	start++;
 	int len = sbuf->length();
 	for (end = pos+1; end < len; end++)
+#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+		if (sbuf->char_at(end) != style)
+#else
 		if (sbuf->character(end) != style)
+#endif
 			break;
 }
 
@@ -374,7 +390,11 @@ int FTextTX::nextChar(void)
 	if (insert_position() <= txpos) // empty buffer or cursor inside transmitted text
 		c = -1;
 	else {
+#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+		if ((c = static_cast<unsigned char>(tbuf->char_at(txpos)))) {
+#else
 		if ((c = static_cast<unsigned char>(tbuf->character(txpos)))) {
+#endif
 			++txpos;
 			changed_cb(txpos, 0, 0,-1, static_cast<const char *>(0), this);
 		}

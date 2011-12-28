@@ -30,11 +30,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "flstring.h"
 #include <limits.h>
 #include <ctype.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Text_Buffer.H>
 #include "Fl_Text_Display_mod.H"
 #include <FL/Fl_Window.H>
 
@@ -95,7 +93,8 @@ Fl_Text_Display_mod::Fl_Text_Display_mod(int X, int Y, int W, int H,  const char
   display_insert_position_hint = 0;
 
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
-  box(FL_DOWN_FRAME);
+//  box(FL_DOWN_FRAME);
+  box(FL_DOWN_BOX);  // DO NOT USE FRAME OR TILED GROUP WILL NOT CORRECTLY DRAW THE BORDERS !!
   textsize((uchar)FL_NORMAL_SIZE);
   textcolor(FL_FOREGROUND_COLOR);
   textfont(FL_HELVETICA);
@@ -177,7 +176,7 @@ Fl_Text_Display_mod::~Fl_Text_Display_mod() {
 /*
 ** Attach a text buffer to display, replacing the current buffer (if any)
 */
-void Fl_Text_Display_mod::buffer( Fl_Text_Buffer *buf ) {
+void Fl_Text_Display_mod::buffer( Fl_Text_Buffer_mod*buf ) {
   /* If the text display is already displaying a buffer, clear it off
      of the display and remove our callback from it */
   if ( buf == mBuffer) return;
@@ -217,7 +216,7 @@ void Fl_Text_Display_mod::buffer( Fl_Text_Buffer *buf ) {
 ** Style buffers, tables and their associated memory are managed by the caller.
 */
 void
-Fl_Text_Display_mod::highlight_data(Fl_Text_Buffer *styleBuffer,
+Fl_Text_Display_mod::highlight_data(Fl_Text_Buffer_mod*styleBuffer,
                                 const Style_Table_Entry *styleTable,
                                 int nStyles, char unfinishedStyle,
                                 Unfinished_Style_Cb unfinishedHighlightCB,
@@ -716,7 +715,7 @@ void Fl_Text_Display_mod::insert(const char* text) {
 */
 void Fl_Text_Display_mod::overstrike(const char* text) {
   int startPos = mCursorPos;
-  Fl_Text_Buffer *buf = mBuffer;
+  Fl_Text_Buffer_mod*buf = mBuffer;
   int lineStart = buf->line_start( startPos );
   int textLen = strlen( text );
   int i, p, endPos, indent, startIndent, endIndent;
@@ -727,7 +726,7 @@ void Fl_Text_Display_mod::overstrike(const char* text) {
   startIndent = mBuffer->count_displayed_characters( lineStart, startPos );
   indent = startIndent;
   for ( c = text; *c != '\0'; c++ )
-    indent += Fl_Text_Buffer::character_width( *c, indent, buf->tab_distance(), buf->null_substitution_character() );
+    indent += Fl_Text_Buffer_mod::character_width( *c, indent, buf->tab_distance(), buf->null_substitution_character() );
   endIndent = indent;
 
   /* find which characters to remove, and if necessary generate additional
@@ -739,7 +738,7 @@ void Fl_Text_Display_mod::overstrike(const char* text) {
     ch = buf->character( p );
     if ( ch == '\n' )
       break;
-    indent += Fl_Text_Buffer::character_width( ch, indent, buf->tab_distance(), buf->null_substitution_character() );
+    indent += Fl_Text_Buffer_mod::character_width( ch, indent, buf->tab_distance(), buf->null_substitution_character() );
     if ( indent == endIndent ) {
       p++;
       break;
@@ -821,7 +820,7 @@ int Fl_Text_Display_mod::position_to_xy( int pos, int* X, int* Y ) {
   xStep = text_area.x - mHorizOffset;
   outIndex = 0;
   for ( charIndex = 0; charIndex < lineLen && charIndex < pos - lineStartPos; charIndex++ ) {
-    charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+    charLen = Fl_Text_Buffer_mod::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
               mBuffer->tab_distance(), mBuffer->null_substitution_character() );
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex );
@@ -871,7 +870,7 @@ int Fl_Text_Display_mod::position_to_linecol( int pos, int* lineNum, int* column
 */
 int Fl_Text_Display_mod::in_selection( int X, int Y ) {
   int row, column, pos = xy_to_position( X, Y, CHARACTER_POS );
-  Fl_Text_Buffer *buf = mBuffer;
+  Fl_Text_Buffer_mod*buf = mBuffer;
 
   xy_to_rowcol( X, Y, &row, &column, CHARACTER_POS );
   if (range_touches_selection(buf->primary_selection(), mFirstChar, mLastChar))
@@ -1151,7 +1150,7 @@ int Fl_Text_Display_mod::line_start(int pos) {
 ** wrapping is turned on.
 */
 int Fl_Text_Display_mod::rewind_lines(int startPos, int nLines) {
-    Fl_Text_Buffer *buf = buffer();
+    Fl_Text_Buffer_mod*buf = buffer();
     int pos, lineStart, retLines, retPos, retLineStart, retLineEnd;
     
     /* If we're not wrapping, use the more efficient BufCountBackwardNLines */
@@ -1233,7 +1232,7 @@ void Fl_Text_Display_mod::buffer_modified_cb( int pos, int nInserted, int nDelet
     int nRestyled, const char *deletedText, void *cbArg ) {
   int linesInserted, linesDeleted, startDispPos, endDispPos;
   Fl_Text_Display_mod *textD = ( Fl_Text_Display_mod * ) cbArg;
-  Fl_Text_Buffer *buf = textD->mBuffer;
+  Fl_Text_Buffer_mod*buf = textD->mBuffer;
   int oldFirstChar = textD->mFirstChar;
   int scrolled, origCursorPos = textD->mCursorPos;
   int wrapModStart, wrapModEnd;
@@ -1408,16 +1407,19 @@ void Fl_Text_Display_mod::reset_absolute_top_line_number() {
 ** Find the line number of position "pos" relative to the first line of
 ** displayed text. Returns 0 if the line is not displayed.
 */
-int Fl_Text_Display_mod::position_to_line( int pos, int *lineNum ) {
+//int Fl_Text_Display_mod::position_to_line( int pos, int *lineNum ) {
+int Fl_Text_Display_mod::position_to_line( size_t pos, int *lineNum ) {
   int i;
 
   *lineNum = 0;
-  if ( pos < mFirstChar ) return 0;
-  if ( pos > mLastChar ) {
+  if ( pos < (unsigned int)mFirstChar ) return 0;
+  if ( pos > (unsigned int)mLastChar ) {
     if ( empty_vlines() ) {
       if ( mLastChar < mBuffer->length() ) {
         if ( !position_to_line( mLastChar, lineNum ) ) {
+#ifdef DEBUG
           Fl::error("Fl_Text_Display_mod::position_to_line(): Consistency check ptvl failed");
+#endif
           return 0;
         }
         return ++( *lineNum ) <= mNVisibleLines - 1;
@@ -1430,7 +1432,7 @@ int Fl_Text_Display_mod::position_to_line( int pos, int *lineNum ) {
   }
 
   for ( i = mNVisibleLines - 1; i >= 0; i-- ) {
-    if ( mLineStarts[ i ] != -1 && pos >= mLineStarts[ i ] ) {
+    if ( mLineStarts[ i ] != -1 && pos >= (unsigned int)mLineStarts[ i ] ) {
       *lineNum = i;
       return 1;
     }
@@ -1447,7 +1449,7 @@ int Fl_Text_Display_mod::position_to_line( int pos, int *lineNum ) {
 */
 void Fl_Text_Display_mod::draw_vline(int visLineNum, int leftClip, int rightClip,
                                  int leftCharIndex, int rightCharIndex) {
-  Fl_Text_Buffer * buf = mBuffer;
+  Fl_Text_Buffer_mod* buf = mBuffer;
   int i, X, Y, startX, charIndex, lineStartPos, lineLen, fontHeight;
   int stdCharWidth, charWidth, startIndex, charStyle, style;
   int charLen, outStartIndex, outIndex;
@@ -1518,7 +1520,7 @@ void Fl_Text_Display_mod::draw_vline(int visLineNum, int leftClip, int rightClip
   outIndex = 0;
   for ( charIndex = 0; ; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex,
+              Fl_Text_Buffer_mod::expand_character( lineStr[ charIndex ], outIndex,
                                                 expandedChar, buf->tab_distance(), buf->null_substitution_character() );
     style = position_style( lineStartPos, lineLen, charIndex,
                             outIndex + dispIndexOffset );
@@ -1546,7 +1548,7 @@ void Fl_Text_Display_mod::draw_vline(int visLineNum, int leftClip, int rightClip
   X = startX;
   for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+              Fl_Text_Buffer_mod::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
                                                 buf->tab_distance(), buf->null_substitution_character() );
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
@@ -1580,7 +1582,7 @@ void Fl_Text_Display_mod::draw_vline(int visLineNum, int leftClip, int rightClip
   X = startX;
   for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+              Fl_Text_Buffer_mod::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
                                                 buf->tab_distance(), buf->null_substitution_character() );
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
@@ -1675,11 +1677,10 @@ void Fl_Text_Display_mod::draw_string( int style, int X, int Y, int toX,
 
     if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
       if (Fl::focus() == this) background = selection_color();
-      else background = fl_color_average(color(), selection_color(), 0.5f);
-    } else background = color();
-
-    // foreground = fl_contrast(styleRec->color, background);
-    foreground = styleRec->color;
+      else background = fl_color_average(color(), selection_color(), 0.8f);
+    } else
+      background = color();
+    foreground = fl_contrast(styleRec->color, background);
   } else if (style & (HIGHLIGHT_MASK | PRIMARY_MASK)) {
     if (Fl::focus() == this) background = selection_color();
     else background = fl_color_average(color(), selection_color(), 0.5f);
@@ -1835,8 +1836,8 @@ void Fl_Text_Display_mod::draw_cursor( int X, int Y ) {
 */
 int Fl_Text_Display_mod::position_style( int lineStartPos,
                                      int lineLen, int lineIndex, int dispIndex ) {
-  Fl_Text_Buffer * buf = mBuffer;
-  Fl_Text_Buffer *styleBuf = mStyleBuffer;
+  Fl_Text_Buffer_mod* buf = mBuffer;
+  Fl_Text_Buffer_mod*styleBuf = mStyleBuffer;
   int pos, style = 0;
 
   if ( lineStartPos == -1 || buf == NULL )
@@ -1923,7 +1924,7 @@ int Fl_Text_Display_mod::xy_to_position( int X, int Y, int posType ) {
   xStep = text_area.x - mHorizOffset;
   outIndex = 0;
   for ( charIndex = 0; charIndex < lineLen; charIndex++ ) {
-    charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+    charLen = Fl_Text_Buffer_mod::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
               mBuffer->tab_distance(), mBuffer->null_substitution_character() );
     charStyle = position_style( lineStart, lineLen, charIndex, outIndex );
     charWidth = string_width( expandedChar, charLen, charStyle );
@@ -1977,7 +1978,7 @@ void Fl_Text_Display_mod::offset_line_starts( int newTopLineNum ) {
   int nVisLines = mNVisibleLines;
   int *lineStarts = mLineStarts;
   int i, lastLineNum;
-  Fl_Text_Buffer *buf = mBuffer;
+  Fl_Text_Buffer_mod*buf = mBuffer;
 
   /* If there was no offset, nothing needs to be changed */
   if ( lineDelta == 0 )
@@ -2428,7 +2429,7 @@ void Fl_Text_Display_mod::find_wrap_range(const char *deletedText, int pos,
     	int nInserted, int nDeleted, int *modRangeStart, int *modRangeEnd,
     	int *linesInserted, int *linesDeleted) {
     int length, retPos, retLines, retLineStart, retLineEnd;
-    Fl_Text_Buffer *deletedTextBuf, *buf = buffer();
+    Fl_Text_Buffer_mod*deletedTextBuf, *buf = buffer();
     int nVisLines = mNVisibleLines;
     int *lineStarts = mLineStarts;
     int countFrom, countTo, lineStart, adjLineStart, i;
@@ -2550,7 +2551,7 @@ void Fl_Text_Display_mod::find_wrap_range(const char *deletedText, int pos,
     }
 
     length = (pos-countFrom) + nDeleted +(countTo-(pos+nInserted));
-    deletedTextBuf = new Fl_Text_Buffer(length);
+    deletedTextBuf = new Fl_Text_Buffer_mod(length);
     deletedTextBuf->copy(buffer(), countFrom, pos, 0);
     if (nDeleted != 0)
     	deletedTextBuf->insert(pos-countFrom, deletedText);
@@ -2579,7 +2580,7 @@ void Fl_Text_Display_mod::find_wrap_range(const char *deletedText, int pos,
 */
 void Fl_Text_Display_mod::measure_deleted_lines(int pos, int nDeleted) {
     int retPos, retLines, retLineStart, retLineEnd;
-    Fl_Text_Buffer *buf = buffer();
+    Fl_Text_Buffer_mod*buf = buffer();
     int nVisLines = mNVisibleLines;
     int *lineStarts = mLineStarts;
     int countFrom, lineStart;
@@ -2655,7 +2656,7 @@ void Fl_Text_Display_mod::measure_deleted_lines(int pos, int nDeleted) {
 **   retLineStart:  Start of the line where counting ended
 **   retLineEnd:    End position of the last line traversed
 */
-void Fl_Text_Display_mod::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
+void Fl_Text_Display_mod::wrapped_line_counter(Fl_Text_Buffer_mod*buf, int startPos,
 	int maxPos, int maxLines, bool startPosIsLineStart, int styleBufOffset,
 	int *retPos, int *retLines, int *retLineStart, int *retLineEnd,
 	bool countLastLineMissingNewLine) {
@@ -2719,7 +2720,7 @@ void Fl_Text_Display_mod::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos
     	    colNum = 0;
     	    width = 0;
     	} else {
-    	    colNum += Fl_Text_Buffer::character_width(c, colNum, tabDist, nullSubsChar);
+    	    colNum += Fl_Text_Buffer_mod::character_width(c, colNum, tabDist, nullSubsChar);
     	    if (countPixels)
     	    	width += measure_proportional_character(c, colNum, p+styleBufOffset);
     	}
@@ -2749,7 +2750,7 @@ void Fl_Text_Display_mod::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos
     	    }
     	    if (!foundBreak) { /* no whitespace, just break at margin */
     	    	newLineStart = max(p, lineStart+1);
-    	    	colNum = Fl_Text_Buffer::character_width(c, colNum, tabDist, nullSubsChar);
+    	    	colNum = Fl_Text_Buffer_mod::character_width(c, colNum, tabDist, nullSubsChar);
     	    	if (countPixels)
    	    	    width = measure_proportional_character(c, colNum, p+styleBufOffset);
     	    }
@@ -2799,9 +2800,9 @@ void Fl_Text_Display_mod::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos
 int Fl_Text_Display_mod::measure_proportional_character(char c, int colNum, int pos) {
     int charLen, style;
     char expChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
-    Fl_Text_Buffer *styleBuf = mStyleBuffer;
+    Fl_Text_Buffer_mod*styleBuf = mStyleBuffer;
     
-    charLen = Fl_Text_Buffer::expand_character(c, colNum, expChar, 
+    charLen = Fl_Text_Buffer_mod::expand_character(c, colNum, expChar, 
 	    buffer()->tab_distance(), buffer()->null_substitution_character());
     if (styleBuf == 0) {
 	style = 0;

@@ -128,15 +128,15 @@ flwkey_SOURCES += \
 	support.cxx \
 	util.cxx \
 	ValueSlider.cxx \
-	FTextView.cxx \
-	Fl_Text_Display_mod.cxx \
-	Fl_Text_Editor_mod.cxx \
+	widgets/FTextRXTX.cxx \
+	widgets/FTextView.cxx \
+	widgets/Fl_Text_Display_mod.cxx \
+	widgets/Fl_Text_Editor_mod.cxx \
 	Fl_Native_File_Chooser.cxx \
 	flinput2.cxx \
 	pixmaps.cxx \
 	icons.cxx \
 	fileselect.cxx \
-	FTextRXTX.cxx \
 	logbook/adif_io.cxx \
 	logbook/date.cxx \
 	logbook/logsupport.cxx \
@@ -169,6 +169,10 @@ EXTRA_DIST = \
 	Fl_Native_File_Chooser_FLTK.cxx \
 	Fl_Native_File_Chooser_MAC.cxx \
 	Fl_Native_File_Chooser_WIN32.cxx \
+	widgets/Fl_Text_Display_mod_1_1.cxx \
+	widgets/Fl_Text_Display_mod_1_3.cxx \
+	widgets/Fl_Text_Editor_mod_1_1.cxx \
+	widgets/Fl_Text_Editor_mod_1_3.cxx \
 	flwkey_icon.cxx \
 	wkey_dialogs.fl \
 	logbook/lgbook.fl \
@@ -205,8 +209,12 @@ EXTRA_DIST = \
 	include/ValueSlider.h \
 	include/FTextView.h \
 	include/FTextRXTX.h \
- 	include/Fl_Text_Display_mod.H \
+	include/Fl_Text_Display_mod.H \
+	include/Fl_Text_Display_mod_1_1.H \
+	include/Fl_Text_Display_mod_1_3.H \
 	include/Fl_Text_Editor_mod.H \
+	include/Fl_Text_Editor_mod_1_1.H \
+	include/Fl_Text_Editor_mod_1_3.H \
 	include/flinput2.h \
 	include/pixmaps.h \
 	include/icons.h \
