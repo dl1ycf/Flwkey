@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------------
 //      debug.cxx
 //
-// Copyright (C) 2008
-//              Stelios Bounanos, M0GLD
+// Copyright (C) 2008, 2012
+//              Stelios Bounanos, M0GLD, Dave Freese, W1HKJ
 //
-// This file is part of fldigi.
+// This file is part of flmsg.
 //
 // fldigi is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #include <cstring>
 #include <cstdarg>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -37,8 +39,7 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
 
-#include <FL/Fl_Text_Display.H>
-#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Browser.H>
 
 #include "debug.h"
 //#include "icons.h"
@@ -51,14 +52,12 @@ using namespace std;
 
 static FILE* wfile;
 static FILE* rfile;
-//static size_t nlines = 0;
 static int rfd;
 static bool tty;
-//static bool want_popup = false;
 
-static Fl_Double_Window* window;
-static Fl_Text_Display* text;
-static Fl_Text_Buffer* buffer;
+static Fl_Double_Window*	window;
+static Fl_Browser*			btext;
+static string dbg_buffer;
 
 debug* debug::inst = 0;
 debug::level_e debug::level = debug::WARN_LEVEL;
@@ -100,22 +99,18 @@ void debug::start(const char* filename)
 	slider->step(1.0);
 	slider->value(level);
 	slider->callback(slider_cb);
-	
+
 	Fl_Button* savebtn  = new Fl_Button(window->w() - 124, pad, 60, 20, "save");
 	savebtn->callback(save_cb);
-	
+
 	Fl_Button* clearbtn = new Fl_Button(window->w() - 60, pad, 60, 20, "clear");
 	clearbtn->callback(clear_cb);
 
-	text = new Fl_Text_Display(pad, slider->h()+pad, window->w()-2*pad, window->h()-slider->h()-2*pad, 0);
-	text->textfont(FL_COURIER);
-	text->textsize(FL_NORMAL_SIZE);
-    text->wrap_mode(true, 60);
-	window->resizable(text);
-	
-	buffer = new Fl_Text_Buffer();
-	text->buffer(buffer);
-	
+	btext = new Fl_Browser(pad,  slider->h()+pad, window->w()-2*pad, window->h()-slider->h()-2*pad, 0);
+	window->resizable(btext);
+
+	dbg_buffer.clear();
+
 	window->end();
 }
 
@@ -167,6 +162,27 @@ void debug::log(level_e level, const char* func, const char* srcf, int line, con
 //	Fl::add_timeout(0.0, sync_text, (void*)nw);
 }
 
+void debug::slog(level_e level, const char* func, const char* srcf, int line, const char* format, ...)
+{
+	if (!inst)
+		return;
+
+	snprintf(fmt, sizeof(fmt), "%c:%s\n", *prefix[level], format);
+
+    while(debug_in_use) MilliSleep(1);
+    
+	va_list args;
+	va_start(args, format);
+
+	vsnprintf(sztemp, sizeof(sztemp), fmt, args);
+	estr.append(sztemp);
+
+	va_end(args);
+	fflush(wfile);
+
+    Fl::awake(sync_text, 0);
+}
+
 void debug::elog(const char* func, const char* srcf, int line, const char* text)
 {
 	log(ERROR_LEVEL, func, srcf, line, "%s: %s", text, strerror(errno));
@@ -197,7 +213,13 @@ void debug::sync_text(void* arg)
 	text->insert(tempbuf.c_str());
 */
     debug_in_use = true;
-    text->insert(estr.c_str());
+	size_t p0 = 0, p1 = estr.find('\n');
+	while (p1 != string::npos) {
+		btext->insert(1, estr.substr(p0,p1-p0).c_str());
+		dbg_buffer.append(estr.substr(p0, p1 - p0)).append("\n");
+		p0 = p1 + 1;
+		p1 = estr.find('\n', p0);
+	}
     estr = "";
     debug_in_use = false;
 }
@@ -241,12 +263,18 @@ static void src_menu_cb(Fl_Widget* w, void*)
 
 static void clear_cb(Fl_Widget* w, void*)
 {
-	buffer->text("");
+	btext->clear();
+	dbg_buffer.clear();
 }
 
 static void save_cb(Fl_Widget* w, void*)
 {
+	if (!btext->size()) return;
 	string filename = WKeyHomeDir;
 	filename.append("debug_log.txt");
-	buffer->savefile(filename.c_str());
+	ofstream fout;
+	fout.open(filename.c_str(), ios::app);
+	fout << dbg_buffer;
+	fout.close();
+//	fl_alert2("Saved in %s", filename.c_str());
 }
