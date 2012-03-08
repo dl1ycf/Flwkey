@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Flwkey
-GenericName=Amateur Radio Data Encapsulation
+GenericName=Winkey interface program
 Comment=Amateur Radio Communications
 Exec=flwkey
 Icon=flwkey
