@@ -29,6 +29,14 @@ $PTW32_CFLAGS"
   if test "x$target_mingw32" = "xyes"; then
       FLWKEY_BUILD_LDFLAGS="-mthreads $FLWKEY_BUILD_LDFLAGS"
   fi
+  if test "x$target_mingw32" = "xyes"; then
+      FLWKEY_BUILD_LDFLAGS="-mthreads $FLWKEY_BUILD_LDFLAGS"
+  else if test "x$target_darwin" = "xyes"; then
+      FLWKEY_BUILD_LDFLAGS="$FLWKEY_BUILD_LDFLAGS"
+    else
+        FLWKEY_BUILD_LDFLAGS="$FLWKEY_BUILD_LDFLAGS -lm -lX11"
+    fi
+  fi
 
   AC_SUBST([FLWKEY_BUILD_CPPFLAGS])
   AC_SUBST([FLWKEY_BUILD_CXXFLAGS])
