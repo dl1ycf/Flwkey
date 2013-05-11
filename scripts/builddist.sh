@@ -3,7 +3,7 @@
 make clean
 ./configure --prefix=/tmp/flwkey-build --enable-static
 make install-strip
-tar czf flwkey-$1.bin.tgz -C /tmp/flwkey-build/bin flwkey
+tar czf flwkey-$1.bin.tgz -C /tmp/flwkey-build .
 
 make clean
 
