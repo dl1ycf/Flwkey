@@ -11,7 +11,7 @@ flwkey_LDADD = @FLWKEY_BUILD_LDADD@
 MINGW32_SRC = \
 	flwkey-rc.rc \
 	include/flwkeyrc.h \
-	mingw.c \
+	misc/mingw.c \
 	compat/regex.c \
 	include/compat.h
 
@@ -116,27 +116,10 @@ clean-local:
 
 # Sources that we build. It is OK to have headers here.
 flwkey_SOURCES += \
-	combo.cxx \
-	debug.cxx \
 	dialogs.cxx \
-	flslider2.cxx \
 	flwkey.cxx \
+	wkey_dialogs.cxx \
 	wkey_io.cxx \
-	xmlrpc_log.cxx \
-	serial.cxx \
-	status.cxx \
-	support.cxx \
-	util.cxx \
-	ValueSlider.cxx \
-	widgets/FTextRXTX.cxx \
-	widgets/FTextView.cxx \
-	widgets/Fl_Text_Display_mod.cxx \
-	widgets/Fl_Text_Editor_mod.cxx \
-	Fl_Native_File_Chooser.cxx \
-	flinput2.cxx \
-	pixmaps.cxx \
-	icons.cxx \
-	fileselect.cxx \
 	logbook/adif_io.cxx \
 	logbook/date.cxx \
 	logbook/logsupport.cxx \
@@ -146,8 +129,26 @@ flwkey_SOURCES += \
 	logbook/logbook.cxx \
 	logbook/qso_db.cxx \
 	logbook/textio.cxx \
-	re.cxx \
-	wkey_dialogs.cxx \
+	misc/debug.cxx \
+	misc/pixmaps.cxx \
+	misc/icons.cxx \
+	misc/re.cxx \
+	misc/xmlrpc_log.cxx \
+	misc/serial.cxx \
+	misc/status.cxx \
+	misc/support.cxx \
+	misc/timeops.cxx \
+	misc/util.cxx \
+	widgets/combo.cxx \
+	widgets/flslider2.cxx \
+	widgets/ValueSlider.cxx \
+	widgets/FTextRXTX.cxx \
+	widgets/FTextView.cxx \
+	widgets/Fl_Text_Display_mod.cxx \
+	widgets/Fl_Text_Editor_mod.cxx \
+	widgets/Fl_Native_File_Chooser.cxx \
+	widgets/flinput2.cxx \
+	widgets/fileselect.cxx \
 	xmlrpccpp/XmlRpcClient.cpp \
 	xmlrpccpp/XmlRpcMutex.cpp \
 	xmlrpccpp/XmlRpcServerMethod.cpp \
@@ -163,12 +164,12 @@ flwkey_SOURCES += \
 # Additional source files that are distributed
 EXTRA_DIST = \
 	config.h \
-	flnfc_common.cxx \
+	widgets/flnfc_common.cxx \
 	compat/regex.c \
 	compat/regex.h \
-	Fl_Native_File_Chooser_FLTK.cxx \
-	Fl_Native_File_Chooser_MAC.cxx \
-	Fl_Native_File_Chooser_WIN32.cxx \
+	widgets/Fl_Native_File_Chooser_FLTK.cxx \
+	widgets/Fl_Native_File_Chooser_MAC.cxx \
+	widgets/Fl_Native_File_Chooser_WIN32.cxx \
 	widgets/Fl_Text_Display_mod_1_1.cxx \
 	widgets/Fl_Text_Display_mod_1_3.cxx \
 	widgets/Fl_Text_Editor_mod_1_1.cxx \
@@ -217,6 +218,7 @@ EXTRA_DIST = \
 	include/Fl_Text_Editor_mod_1_3.H \
 	include/flinput2.h \
 	include/pixmaps.h \
+	include/timeops.h \
 	include/icons.h \
 	include/fileselect.h \
 	include/wkey_dialogs.h \

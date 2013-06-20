@@ -104,7 +104,6 @@ Section "FLWKEY"
 	SectionIn RO
 	SetOutPath $INSTDIR
 	File "${FLWKEY_BINARY}"
-	File /nonfatal "${MINGWM_DLL}" "${PTW32_DLL}"
 SectionEnd
 
 # Start Menu path
@@ -115,8 +114,6 @@ SectionEnd
 Section "Start Menu Shortcuts"
     CreateDirectory "${SM_PATH}"
 	CreateShortCut "${SM_PATH}\${FLWKEY_NAME}.lnk" "$INSTDIR\${FLWKEY_BINARY}" "" "$INSTDIR\${FLWKEY_BINARY}" 0
-#	CreateShortCut "${SM_PATH}\${FLWKEY_NAME} Beginners' Guide.lnk" "${GUIDE_URL}"
-#	CreateShortCut "${SM_PATH}\${FLWKEY_NAME} Documentation.lnk" "${FLWKEY_DOCS_URL}"
     CreateShortCut "${SM_PATH}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
 SectionEnd
 

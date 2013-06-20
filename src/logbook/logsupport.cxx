@@ -45,6 +45,8 @@
 #include "icons.h"
 #include "gettext.h"
 
+#include "timeops.h"
+
 #include "wkey_dialogs.h"
 
 
