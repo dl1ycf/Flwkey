@@ -296,7 +296,6 @@ void config_parameters()
 	cntr_min_wpm->value(progStatus.min_wpm);
 
 	choice_keyer_mode->index((progStatus.mode_register & 0x30) >> 4);
-printf("pins %02X\n", progStatus.pin_configuration & 0x06);
 	choice_output_pins->index(((progStatus.pin_configuration & 0x06) >> 2) - 1);
 	choice_hang->index((progStatus.pin_configuration & 0x30) >> 4);
 	choice_sidetone->index((progStatus.sidetone & 0x0F) - 1);
@@ -332,7 +331,6 @@ void change_choice_output_pins()
 {
 	int pinbits = (choice_output_pins->index() + 1) << 2;
 	progStatus.pin_configuration = (progStatus.pin_configuration & 0xF3) | pinbits;
-printf("pinbits %02X, new pins %02X\n", pinbits, progStatus.pin_configuration);
 	load_defaults();
 }
 
