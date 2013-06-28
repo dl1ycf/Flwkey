@@ -49,7 +49,7 @@ const char *SEND_MSG_NBR	= "\x0E";
 
 // HOST MODE
 const char *SIDETONE		= "\x01";	// N see table page 6 Interface Manual
-const char *SET_WPM			= "\x02";	// 5 .. N .. 99 in WPM
+const char *SET_WPM		= "\x02";	// 5 .. N .. 99 in WPM
 const char *SET_WEIGHT		= "\x03";	// 10 .. N .. 90 %
 const char *SET_PTT_LT		= "\x04";	// A - lead time, B - tail time
 										// both 0..250 in 10 msec steps
@@ -95,12 +95,12 @@ const char *BUFFER_NOP		= "\x1F";
 // only accesses the serial port if it has been successfully opened
 //=============================================================================
 
-void version_(unsigned char);
-void echo_test(unsigned char);
-void status_(unsigned char);
-void speed_(unsigned char);
-void echo_(unsigned char);
-void eeprom_(unsigned char);
+void version_(int);
+void echo_test(int);
+void status_(int);
+void speed_(int);
+void echo_(int);
+void eeprom_(int);
 
 bool bypass_serial_thread_loop = true;
 bool run_serial_thread = true;
@@ -131,6 +131,10 @@ void noctrl(string &s)
 enum {NOTHING, WAIT_ECHO, WAIT_VERSION};
 void sendCommand(string &cmd, int what = NOTHING)
 {
+	int cnt = 101;
+	while (cnt-- && !str_out.empty()) MilliSleep(1);
+	if (!str_out.empty())
+		LOG_ERROR("output string not cleared!");
 	pthread_mutex_lock(&mutex_serial);
 	upcase(cmd);
 	str_out = cmd;
@@ -144,19 +148,19 @@ void sendCommand(string &cmd, int what = NOTHING)
 		default: ;
 	}
 	pthread_mutex_unlock(&mutex_serial);
-	int cnt = 101;
-	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
 void sendText(string &cmd)
 {
+	int cnt = 101;
+	while (cnt-- && !str_out.empty()) MilliSleep(1);
+	if (!str_out.empty())
+		LOG_ERROR("output string not cleared!");
 	pthread_mutex_lock(&mutex_serial);
 	upcase(cmd);
 	noctrl(cmd);
 	str_out = cmd;
 	pthread_mutex_unlock(&mutex_serial);
-	int cnt = 101;
-	while (cnt-- && !str_out.empty()) MilliSleep(1);
 }
 
 bool echo_ok = true;
@@ -231,32 +235,32 @@ void display_chars(void *d)
 	txt_sent->add(sz_chars);
 }
 
-void echo_(unsigned char byte)
+void echo_(int byte)
 {
 	if (WKEY_DEBUG)
-		LOG_WARN("%2x", byte);
+		LOG_WARN("%2x", byte & 0xFF);
 	Fl::awake(display_byte, (void*)byte);
 }
 
-void echo_test(unsigned char byte)
+void echo_test(int byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
 	if (byte == 'U') {
 		if (WKEY_DEBUG)
-			LOG_WARN("passed %c", byte);
+			LOG_WARN("passed %c", byte & 0xFF);
 	} else
-		LOG_ERROR("failed %c", byte);
+		LOG_ERROR("failed %c", byte & 0xFF);
 	test_echo = false;
 }
 
-void version_(unsigned char byte)
+void version_(int byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
 	static char ver[200];
 	snprintf(ver, sizeof(ver), "Flwkey version: %s\nWkeyer version %d\n", 
-		PACKAGE_VERSION, byte);
+		PACKAGE_VERSION, byte & 0xFF);
 	host_is_up = true;
 	get_version = false;
 	Fl::awake(display_chars, ver);
@@ -265,8 +269,7 @@ void version_(unsigned char byte)
 
 void show_status_change(void *d)
 {
-	long lbyte = (long)d;
-	unsigned char byte = (unsigned char)(lbyte & 0x3F);
+	int byte = reinterpret_cast<int>(d);
 
 	box_wait->color((byte & 0x10) == 0x10 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_wait->redraw();
@@ -284,11 +287,10 @@ void show_status_change(void *d)
 	box_xoff->redraw();
 }
 
-void status_(unsigned char byte)
+void status_(int byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
-//	status_query = 1000;
 	if ((byte & 0x04)== 0x04) wkeyer_ready = false;
 	else wkeyer_ready = true;
 	if (WKEY_DEBUG)
@@ -315,7 +317,7 @@ void show_speed_change(void *d)
 	sendCommand(cmd);
 }
 
-void speed_(unsigned char byte)
+void speed_(int byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
@@ -350,7 +352,7 @@ void use_pot_changed()
 
 char eeprom_image[256];
 int eeprom_ptr = 0;
-void eeprom_(unsigned char byte)
+void eeprom_(int byte)
 {
 	if (WKEY_DEBUG)
 		LOG_WARN("%02X", byte & 0xFF);
