@@ -1,8 +1,18 @@
-2013-05-11  David Freese  <w1hkj@w1hkj.com>
 
-	07a5f4d: Binary build
-	73a54e0: Serial by-id
-	a88735f: Serial by-id
+
+=Version 1.1.6=
+
+2013-06-28  David Freese  <w1hkj@w1hkj.com>
+
+	5943eea: Send text-command
+	6d6dbce: Debug cleanup
+	5b26983: MXE Build
+
+
+=Version 1.1.5=
+
+	859786e: Binary build
+	efc1c66: Serial by-id
 
 
 =Version 1.1.4=
