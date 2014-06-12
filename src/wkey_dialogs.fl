@@ -1,16 +1,18 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0110 
+version 1.0302 
 i18n_type 1 
 i18n_include "gettext.h" 
 i18n_function _ 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include "support.h"} {} 
+decl {\#include "support.h"} {private local
+} 
 
-Function {SetupDialog()} {} {
+Function {SetupDialog()} {open
+} {
   Fl_Window {} {
-    label {Select Serial Port}
-    xywh {699 383 274 78} type Double hide
+    label {Select Ports} open selected
+    xywh {578 389 270 145} type Double visible
   } {
     Fl_Group selectCommPort {
       label {Ser. Port} open
@@ -18,26 +20,37 @@ Function {SetupDialog()} {} {
       code0 {\#include "combo.h"}
       class Fl_ComboBox
     } {}
+    Fl_Input inpXmlAddress {
+      label {Xml Addr}
+      callback {progStatus.log_address = o->value();}
+      tooltip {External logbook net address} xywh {75 45 190 23}
+      code0 {o->value(progStatus.log_address.c_str());}
+    }
+    Fl_Input inpXmlPort {
+      label {Xml Port}
+      callback {progStatus.log_port = o->value();}
+      tooltip {External logbook net port} xywh {75 77 190 23}
+      code0 {o->value(progStatus.log_port.c_str());}
+    }
     Fl_Return_Button btn_ser_port_ok {
       label OK
       callback {cbOkSetupDialog();}
-      xywh {198 46 67 20}
+      xywh {193 114 67 20}
     }
     Fl_Button btn_serial_port_cancel {
       label Cancel
       callback {cbCancelSetupDialog();}
-      xywh {120 47 70 20}
+      xywh {115 114 70 20}
     }
   }
 } 
 
-Function {WKey_window()} {open
-} {
+Function {WKey_window()} {} {
   Fl_Window {} {
     label Fl_WinKey open
-    xywh {578 64 670 279} type Double resizable visible
+    xywh {578 64 670 275} type Double resizable visible
   } {
-    Fl_Menu_Bar {} {open selected
+    Fl_Menu_Bar {} {open
       xywh {0 0 670 20}
     } {
       Submenu {} {
@@ -55,7 +68,7 @@ Function {WKey_window()} {open
         xywh {0 0 70 21}
       } {
         MenuItem mnu_sel_port {
-          label {Select Port}
+          label Ports
           callback {config_comm_port();}
           xywh {0 0 36 21}
         }
@@ -76,8 +89,7 @@ Function {WKey_window()} {open
         }
       }
       Submenu mnu_Logbook {
-        label Logbook
-        callback {connect_to_server();} open
+        label Logbook open
         xywh {0 0 70 21}
       } {
         MenuItem mnu_display_log {
@@ -782,7 +794,7 @@ Function {make_operator_dialog()} {} {
 Function {make_contest_dialog()} {} {
   Fl_Window {} {
     label Contest open
-    xywh {581 456 455 65} type Double visible
+    xywh {553 749 455 65} type Double hide
   } {
     Fl_Input txt_serial_nbr {
       label {Next \#}

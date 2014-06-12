@@ -89,8 +89,10 @@ status progStatus = {
 	"",			//string	tag_loc;
 	"",			//string	tag_op;
 
-	"",			// string	logbookfilename
-	false,		// bool		xml_logbook
+	"",			//string	logbookfilename
+	false,		//bool		xml_logbook
+	"localhost",	//string log_address
+	"8421",			//string log_port
 
 	1,			// int	serial_nbr;
 	0,			// int	time_span;

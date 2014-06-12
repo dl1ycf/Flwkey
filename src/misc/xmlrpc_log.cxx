@@ -30,13 +30,17 @@
 
 using namespace XmlRpc;
 
-XmlRpcClient log_client("localhost", 8421);
+XmlRpcClient *log_client = (XmlRpcClient *)0;
 
 bool test_connection()
 {
 	XmlRpcValue result;
-	if (log_client.execute("system.listMethods", XmlRpcValue(), result))
+	if (log_client->execute("system.listMethods", XmlRpcValue(), result))
 		return true;
+	LOG_ERROR("Cannot connect to %s, %s", 
+			progStatus.log_address.c_str(),
+			progStatus.log_port.c_str());
+
 	return false;
 }
 
@@ -59,7 +63,7 @@ void xml_get_record(const char *callsign)
 		start_logbook();
 	}
 	oneArg[0] = callsign;
-	if (log_client.execute("log.get_record", oneArg, result)) {
+	if (log_client->execute("log.get_record", oneArg, result)) {
 		string adifline = std::string(result);
 		size_t pos1 = adifline.find("<NAME:");
 		if (pos1 == std::string::npos) {
@@ -125,7 +129,7 @@ void xml_add_record()
 		progStatus.xout.length(), progStatus.xout.c_str(),
 		xin.length(), xin.c_str());
 	oneArg[0] = adifrec;
-	log_client.execute("log.add_record", oneArg, result);
+	log_client->execute("log.add_record", oneArg, result);
 //	std::cout << "log.add_record result " << result << "\n\n";
 }
 
@@ -139,7 +143,7 @@ void xml_check_dup()
 	sixargs[3] = "0";
 	sixargs[4] = "0";
 	sixargs[5] = "0";
-	if (log_client.execute("log.check_dup", sixargs, result)) {
+	if (log_client->execute("log.check_dup", sixargs, result)) {
 		string res = std::string(result);
 		if (res == "true")
 			call_clr = fl_rgb_color( 255, 110, 180);
@@ -150,7 +154,31 @@ void xml_check_dup()
 
 void connect_to_server()
 {
-	if (mnu_log_client->value())
+	if (log_client) delete log_client;
+	if (mnu_log_client->value()) {
+		try {
+			log_client = new XmlRpcClient(
+					progStatus.log_address.c_str(), 
+					atol(progStatus.log_port.c_str()));
+			mnu_log_client->set();
+		} catch (...) {
+			LOG_ERROR("Cannot create %s, %s", 
+						progStatus.log_address.c_str(),
+						progStatus.log_port.c_str());
+			progStatus.xml_logbook = false;
+			mnu_log_client->clear();
+			mnu_display_log->activate();
+			mnu_new_log->activate();
+			mnu_open_logbook->activate();
+			mnu_save_logbook->activate();
+			mnu_merge_logbook->activate();
+			mnu_export_adif->activate();
+			mnu_export_logbook_text->activate();
+			mnu_export_logbook_csv->activate();
+			mnu_export_cabrillo->activate();
+			start_logbook();
+			return;
+		}
 		if (test_connection()) {
 			close_logbook();
 			if (dlgLogbook) dlgLogbook->hide();
@@ -164,6 +192,7 @@ void connect_to_server()
 			mnu_export_logbook_csv->deactivate();
 			mnu_export_cabrillo->deactivate();
 		} else {
+			fl_alert2(_("Cannot connect to logbook server!\nUsing internal logbook"));
 			progStatus.xml_logbook = false;
 			mnu_log_client->clear();
 			mnu_display_log->activate();
@@ -176,6 +205,7 @@ void connect_to_server()
 			mnu_export_logbook_csv->activate();
 			mnu_export_cabrillo->activate();
 			start_logbook();
+		}
 	} else {
 		mnu_display_log->activate();
 		mnu_new_log->activate();
