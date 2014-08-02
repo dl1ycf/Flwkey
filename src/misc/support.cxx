@@ -269,7 +269,7 @@ void version_(int byte)
 
 void show_status_change(void *d)
 {
-	int byte = reinterpret_cast<int>(d);
+	int byte = (int)(reinterpret_cast<long>(d));
 
 	box_wait->color((byte & 0x10) == 0x10 ? FL_RED : FL_BACKGROUND2_COLOR);
 	box_wait->redraw();
