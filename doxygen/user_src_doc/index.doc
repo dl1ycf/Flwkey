@@ -1,0 +1,216 @@
+/******************************************************************************
+ * Copyright (C) 2014 Robert Stiles, KK5VD.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation under the terms of the GNU General Public License is hereby
+ * granted. No representations are made about the suitability of this software
+ * for any purpose. It is provided "as is" without express or implied warranty.
+ * See the GNU General Public License for more details.
+ *
+ * Documents produced by Doxygen are derivative works derived from the
+ * input used in their production; they are not affected by this license.
+ *
+ * Requires Doxygen for HTML output
+ * plus LiveTeX (LaTeX) for PDF output
+ *
+ */
+
+
+/*!
+
+\mainpage FLWKey Users Manual - Version 1.1
+
+\tableofcontents
+
+<center>
+\image latex flwkeylogo.png "" width=0.5in
+\image html flwkeylogo.png ""
+</center>
+
+<!--FLWKEY User Manual-->
+\section flwkeyDesc FLWKEY
+
+flwkey is a simple interface to the Winkeyer series of CW code generators.
+It can be used with both the Winkeyer 1.x and 2.x series as well as the
+RigExpert and other units that either use the K1EL chipset or emulate it's
+behavior.  flwkey can run on Linux, Puppy, OS X and Windows computers.
+
+The main control window for flwkey provides all of the routine control
+of the Winkeyer chip:
+
+<center>
+\image latex main.png "" width=5.0in
+\image html main.png ""
+</center>
+
+The upper panel contains text that has been sent by the Winkeyer chip.  The
+lower panel is where you type text to transmit.  Both panels have pop-up
+menus that are obtained by right-clicking on the panel.  The transmit text
+may also come from a computer text file (plain text only) or from the
+message store.  Text from a file may be inserted into the transmit text
+via the pop-up menu or by dragging and dropping the file onto the transmit
+text panel.  The function keys F1 ... F12 or their on screen button may be
+selected to transmit the respective macro contents.  The message store or
+macros can be edited and also contain tags or data references that are
+filled in at the time the data is copied to the transmit panel.
+
+The Send button initiates or ends the sending of the transmit panel text.  It
+behaves as a toggle.
+
+The Cancel button will abort any text being sent by the Winkeyer chip and
+also clear the transmit text panel.
+
+The Tune button will cause the Winkeyer to hold the KEY LINE down and thus
+allow you to tune the transmitter.  It behaves as a toggle.
+
+The lighted diamonds at the lower left annunciate the status of the Winkeyer.
+
+The following short cut keys can be used in lieu of the mouse button action:
+
+<ul>
+	<li>Alt-T - toggle the Tune button </li>
+	<li>Alt-S - toggle the Send button </li>
+	<li>Alt-L - Log button closure </li>
+	<li>Esc - Cancel button closure </li>
+</ul>
+
+
+The fields are associated with the logbook entry and also used for macro
+expansion:
+
+<ul>
+  <li>STA - callsign of station being worked</li>
+  <li>NAM - name of other operator</li>
+  <li>Freq - frequency (in MHz) of transmitted signal</li>
+  <li>X_in - contest exchange received</li>
+</ul>
+
+\ref flwkeyDesc "Top of Page"
+
+\section sConfig Configuring
+
+<center>
+\image latex config-menu.png "" width=1.0in
+\image html config-menu.png ""
+</center>
+<br>
+
+<center>
+\image latex select_serial_port.png "Serial Port" width=2.8in
+\image html select_serial_port.png "Serial Port"
+</center>
+<br>
+
+Open the serial port selection dialog and select the port to which your
+Winkeyer is attached.  Flwkey should find all of the serial ports on the
+computer and populate the combo box selector.
+
+<center>
+\image latex operator.png "Operator" width=3.0in
+\image html operator.png "Operator"
+</center>
+<br>
+
+Open the Operator dialog and enter your callsign, name, QTH and Locator.
+
+<center>
+\image latex parameters.png "Parameters" width=5.25in
+\image html parameters.png "Parameters"
+</center>
+<br>
+
+Select the Configure / Parameters menu item to open up the Parameters dialog.
+
+You can set up the Winkeyer to suit your particular operating style.  Refer
+to your Winkeyer manual for details on the various settings.
+
+<center>
+\image latex message_editor.png "Message Editor" width=6.0in
+\image html message_editor.png "Message Editor"
+</center>
+<br>
+
+Select the Configure / Messages to open up the message editor.  You can also
+open this dialog by right-clicking on any of the macro buttons.  You can
+change the macros to suit your need.  The examples shown should give you a
+good idea as to how the various tags are applied.  The <STA> and <NAM> tags
+are associated with the main dialog entries with the same names.  Press the
+"Apply" button to see your changes reflected on the main dialog.
+
+\ref flwkeyDesc "Top of Page"
+
+\section sLogBook Logbook
+
+Flwkey maintains a logbook using the same type of ADIF file that FLDIGI
+uses.  The logbook menu provides you with nearly the same type of logbook
+support that is available in FLDIGI.
+
+<center>
+\image latex logbook-menu.png "Log Menu" width=1.25in
+\image html logbook-menu.png "Log Menu"
+</center>
+<br>
+
+Please refer to the fldigi logbook help for information on merging, exporting
+and Cabrillo usage.
+
+Do not open up the same logbook file with flwkey and fldigi concurrently.  If
+you use flwkey and fldigi at the same time I recommend keeping the logbook
+with fldigi or maintaining a separate CW only log with flwkey.  The two log
+books can be merged as needed.
+
+When the contest duplicate checking is not being used the program will
+search the log data base for the last QSO for the STA entry.  If it is
+found the NAM will be filled in for you.
+
+\ref flwkeyDesc "Top of Page"
+
+\section sContest Contest
+
+<center>
+\image latex contest.png "Contest" width=5.2in
+\image html contest.png "Contest"
+</center>
+<br>
+
+The contest capability of flwkey is very simple.
+
+<ul>
+	<li>You enter the starting value for the serial exchange. Click
+		leading zeros if you want the exchange to be sent as 09, 015 etc.
+		The leading zero will be prepended to all values less than 100.</li>
+    <li>If the contest allows a duplicate after a specified period of minutes
+        you enter that value in the Time Span entry and also check the Ck Time
+        Span box.</li>
+    <li>If entries are allowed on multiple bands check the Ck Band box</li>
+    <li>Finally check the Ck Dups entry.</li>
+</ul>
+
+During the contest a duplicate is indicated by the background color for the
+main panel STA entry.
+
+<center>
+\image latex no-dup.png "Not a Duplicate" width=1.3in
+\image html no-dup.png "Not a Duplicate"
+</center>
+<br>
+
+<center>
+\image latex dup.png "Duplicate" width=1.4in
+\image html dup.png "Duplicate"
+</center>
+<br>
+
+\ref flwkeyDesc "Top of Page"
+
+\section sEventLog Event Log
+
+You can monitor the data stream between flwkey and the Winkeyer by opening
+up the Event log and then setting the reporting level to the Debug setting.
+The log can be saved, reviewed and submitted for analysis if you are having
+problems with your setup.
+
+
+\ref flwkeyDesc "Top of Page"
+
+*/
