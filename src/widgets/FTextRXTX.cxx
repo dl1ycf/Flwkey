@@ -187,7 +187,7 @@ void FTextRX::add(unsigned char c, int attr)
 		}
 		// fall-through
 	default:
-		char s[] = { '\0', '\0', FTEXT_DEF + attr, '\0' };
+		char s[] = { '\0', '\0', static_cast<char>(FTEXT_DEF + attr), '\0' };
 		const char *cp;
 
 		if ((c < ' ' || c == 127) && attr != CTRL) // look it up
@@ -222,7 +222,8 @@ void FTextRX::setFont(Fl_Font f, int attr)
 
 void FTextRX::handle_clickable(int x, int y)
 {
-	int pos, style;
+	int pos;
+	size_t style;
 
 	pos = xy_to_position(x + this->x(), y + this->y(), CURSOR_POS);
 	// return unless clickable style
@@ -255,10 +256,10 @@ void FTextRX::handle_clickable(int x, int y)
 void FTextRX::handle_context_menu(void)
 {
 // availability of editing items depend on buffer state
-	set_active(&menu[RX_MENU_COPY], tbuf->selected());
-	set_active(&menu[RX_MENU_CLEAR], tbuf->length());
-	set_active(&menu[RX_MENU_SELECT_ALL], tbuf->length());
-	set_active(&menu[RX_MENU_SAVE], tbuf->length());
+	icons::set_active(&menu[RX_MENU_COPY], tbuf->selected());
+	icons::set_active(&menu[RX_MENU_CLEAR], tbuf->length());
+	icons::set_active(&menu[RX_MENU_SELECT_ALL], tbuf->length());
+	icons::set_active(&menu[RX_MENU_SAVE], tbuf->length());
 
 	if (wrap)
 		menu[RX_MENU_WRAP].set();
@@ -462,11 +463,11 @@ void FTextTX::handle_context_menu(void)
 {
 	bool modify_text_ok = insert_position() >= txpos;
 	bool selected = tbuf->selected();
-	set_active(&menu[TX_MENU_CLEAR], tbuf->length());
-	set_active(&menu[TX_MENU_CUT], selected && modify_text_ok);
-	set_active(&menu[TX_MENU_COPY], selected);
-	set_active(&menu[TX_MENU_PASTE], modify_text_ok);
-	set_active(&menu[TX_MENU_READ], modify_text_ok);
+	icons::set_active(&menu[TX_MENU_CLEAR], tbuf->length());
+	icons::set_active(&menu[TX_MENU_CUT], selected && modify_text_ok);
+	icons::set_active(&menu[TX_MENU_COPY], selected);
+	icons::set_active(&menu[TX_MENU_PASTE], modify_text_ok);
+	icons::set_active(&menu[TX_MENU_READ], modify_text_ok);
 
 	if (wrap)
 		menu[TX_MENU_WRAP].set();
