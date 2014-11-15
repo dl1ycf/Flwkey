@@ -1,13 +1,6 @@
 # build file to generate the distribution binary tarball
-myscripts/cleanup
 
 autoreconf
-
-./configure --prefix=/tmp/flwkey-build --enable-static
-make install-strip
-tar czf flwkey-$1.bin.tgz -C /tmp/flwkey-build .
-
-make clean
 
 ./configure \
   $PKGCFG \
@@ -17,6 +10,7 @@ make clean
   PTW32_LIBS="-lpthread -lpcreposix -lpcre -lregex" \
   FLTK_CONFIG=$PREFIX/bin/i686-pc-mingw32-fltk-config \
 
+make clean
 make
 $PREFIX/bin/i686-pc-mingw32-strip src/flwkey.exe
 make nsisinst
