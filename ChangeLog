@@ -1,8 +1,23 @@
 
 
-=Version 1.1.6=
+=Version 1.1.7=
 
-2013-06-28  David Freese  <w1hkj@w1hkj.com>
+2014-11-15  David Freese  <iam_w1hkj@w1hkj.com>
+
+	213ba1e: Build script
+	94ead6c: fltk-1.3.3
+	3f3d682: 64bit fix
+
+2014-08-02  Robert Stiles  <kk5vd@yahoo.com>
+
+	bb43a55: Doxygen Inclusion
+
+2014-06-12  David Freese  <w1hkj@w1hkj.com>
+
+	4373127: External logbook
+
+
+=Version 1.1.6=
 
 	5943eea: Send text-command
 	6d6dbce: Debug cleanup
