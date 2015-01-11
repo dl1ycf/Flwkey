@@ -44,6 +44,7 @@ extern void set_wpm();
 extern void use_pot_changed();
 extern void load_defaults();
 extern void check_call();
+extern void set_time_on();
 
 extern void config_parameters();
 extern void config_messages();

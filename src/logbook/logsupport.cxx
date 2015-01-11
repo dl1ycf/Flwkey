@@ -63,12 +63,12 @@ char *szTime(int typ)
 	time (&tmptr);
 	switch (typ) {
 		case 0:
-			localtime_r(&tmptr, &sTime);
+			gmtime_r(&tmptr, &sTime);
 			strftime(szDt, 79, "%H%M", &sTime);
 			break;
 		case 1:
 			localtime_r(&tmptr, &sTime);
-			strftime(szDt, 79, "%H:%M", &sTime);
+			strftime(szDt, 79, "%H%M", &sTime);
 			break;
 		case 2:
 			gmtime_r (&tmptr, &sTime);
@@ -85,6 +85,10 @@ char *szTime(int typ)
 		case 5:
 			gmtime_r (&tmptr, &sTime);
 			strftime(szDt, 79, "%H:%M UTC", &sTime);
+			break;
+		case 6:
+			gmtime_r (&tmptr, &sTime);
+			strftime(szDt, 79, "%H%M%S", &sTime);
 			break;
 		default:
 			localtime_r(&tmptr, &sTime);
@@ -520,7 +524,7 @@ void DupCheck()
 	if (qsodb.nbrRecs() > 0) 
 		if (qsodb.duplicate(
 				txt_sta->value(),
-				szDate(6), szTime(0), ispn, progStatus.time_span,
+				szDate(6), szTime(1), ispn, progStatus.time_span,
 				txt_freq->value(), progStatus.band,
 				"", false,
 				"CW", true,
@@ -638,7 +642,6 @@ void saveRecord() {
 	rec.putField(QSO_DATE, inpDate_log->value());
 	rec.putField(QSO_DATE_OFF, inpDateOff_log->value());
 	rec.putField(TIME_ON, inpTimeOn_log->value());
-	rec.putField(TIME_OFF, inpTimeOff_log->value());
 	rec.putField(TIME_OFF, inpTimeOff_log->value());
 	rec.putField(FREQ, inpFreq_log->value());
 	rec.putField(MODE, inpMode_log->value());
@@ -783,7 +786,7 @@ std::string sDate_on = "";
 void AddRecord ()
 {
 	if (txt_sta->value()[0] == 0) return;
-	char *szt = szTime(2);
+	char *szt = szTime(1);
 	char *szdt = szDate(0x86);
 	char sznbr[6];
 	snprintf(sznbr, sizeof(sznbr), "%d", progStatus.serial_nbr);

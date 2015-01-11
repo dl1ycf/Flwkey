@@ -182,13 +182,23 @@ void send_char()
 	}
 }
 
+static string zt_off;
+void show_time(void *)
+{
+	txt_time_off->value(zt_off.c_str());
+}
+
 void * serial_thread_loop(void *d)
 {
+Fl::awake(show_time);
+
 unsigned char byte;
 	for(;;) {
 		if (!run_serial_thread) break;
 
 		MilliSleep(progStatus.serloop_timing);
+		zt_off = szTime(1);
+		if (zt_off != txt_time_off->value()) Fl::awake(show_time);
 
 		if (bypass_serial_thread_loop ||
 			!WKEY_serial.IsOpen()) goto serial_bypass_loop;
@@ -802,4 +812,8 @@ void check_call()
 			xml_get_record(txt_sta->value());
 		else
 			SearchLastQSO(txt_sta->value());
+}
+
+void set_time_on() {
+	txt_time_on->value(txt_time_off->value());
 }

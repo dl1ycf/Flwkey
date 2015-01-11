@@ -19,22 +19,6 @@ Fl_Double_Window* SetupDialog();
 extern FTextView *txt_sent;
 #include "FTextRXTX.h"
 extern FTextTX *txt_to_send;
-#include <FL/Fl_Light_Button.H>
-extern Fl_Light_Button *btn_send;
-extern Fl_Light_Button *btn_tune;
-extern Fl_Button *btn_cancel;
-#include <FL/Fl_Box.H>
-extern Fl_Box *box_busy;
-extern Fl_Box *box_keydown;
-extern Fl_Box *box_break_in;
-extern Fl_Box *box_xoff;
-extern Fl_Box *box_wait;
-#include <FL/Fl_Output.H>
-extern Fl_Output *txt_wpm;
-#include <FL/Fl_Counter.H>
-extern Fl_Counter *cntr_wpm;
-#include <FL/Fl_Check_Button.H>
-extern Fl_Check_Button *btn_use_pot;
 extern Fl_Button *btn_msg1;
 extern Fl_Button *btn_msg2;
 extern Fl_Button *btn_msg3;
@@ -47,13 +31,33 @@ extern Fl_Button *btn_msg9;
 extern Fl_Button *btn_msg10;
 extern Fl_Button *btn_msg11;
 extern Fl_Button *btn_msg12;
+#include <FL/Fl_Box.H>
+extern Fl_Box *box_wait;
+extern Fl_Box *box_break_in;
+extern Fl_Box *box_busy;
+extern Fl_Box *box_xoff;
+extern Fl_Box *box_keydown;
+#include <FL/Fl_Check_Button.H>
+extern Fl_Check_Button *btn_use_pot;
+#include <FL/Fl_Output.H>
+extern Fl_Output *txt_wpm;
+#include <FL/Fl_Counter.H>
+extern Fl_Counter *cntr_wpm;
+#include <FL/Fl_Light_Button.H>
+extern Fl_Light_Button *btn_send;
+extern Fl_Button *btn_cancel;
+extern Fl_Light_Button *btn_tune;
+#include <FL/Fl_Group.H>
 #include "flinput2.h"
 extern Fl_Input2 *txt_sta;
+extern Fl_Input2 *txt_freq;
+extern Fl_Button *btn_time_on;
 extern Fl_Input2 *txt_name;
 extern Fl_Input2 *txt_xchg;
-extern Fl_Button *btn_log_it;
+extern Fl_Input2 *txt_time_on;
 extern Fl_Button *btn_clear;
-extern Fl_Input *txt_freq;
+extern Fl_Output *txt_time_off;
+extern Fl_Button *btn_log_it;
 Fl_Double_Window* WKey_window();
 extern unsigned char menu__i18n_done;
 extern Fl_Menu_Item menu_[];
@@ -77,7 +81,6 @@ extern Fl_Menu_Item menu_[];
 #define mnu_events (menu_+22)
 #define mnu_about (menu_+24)
 #define mnu_on_line_help (menu_+25)
-#include <FL/Fl_Group.H>
 extern Fl_Check_Button *btn_swap;
 extern Fl_Check_Button *btn_auto_space;
 extern Fl_Check_Button *btn_ct_space;
