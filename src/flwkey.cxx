@@ -63,10 +63,11 @@ string defFileName;
 string title;
 
 pthread_t *serial_thread = 0;
-pthread_t *digi_thread = 0;
+pthread_t *flrig_thread = 0;
 
 pthread_mutex_t mutex_serial = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_xmlrpc = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_flrig = PTHREAD_MUTEX_INITIALIZER;
 
 bool WKEY_DEBUG = 0;
 
@@ -77,12 +78,12 @@ void visit_URL(void* arg)
 #ifndef __WOE32__
 	const char* browsers[] = {
 #  ifdef __APPLE__
-		getenv("FLDIGI_BROWSER"), // valid for any OS - set by user
+		getenv("FLflrig_BROWSER"), // valid for any OS - set by user
 		"open"                    // OS X
 #  else
 		"fl-xdg-open",            // Puppy Linux
 		"xdg-open",               // other Unix-Linux distros
-		getenv("FLDIGI_BROWSER"), // force use of spec'd browser
+		getenv("FLflrig_BROWSER"), // force use of spec'd browser
 		getenv("BROWSER"),        // most Linux distributions
 		"sensible-browser",
 		"firefox",
@@ -268,6 +269,12 @@ int main (int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	flrig_thread = new pthread_t;
+	if (pthread_create(flrig_thread, NULL, flrig_thread_loop, NULL)) {
+		perror("flrig_thread create");
+		exit(EXIT_FAILURE);
+	}
+
 	progStatus.loadLastState();
 
 	mainwindow->resize( progStatus.mainX, progStatus.mainY, mainwindow->w(), mainwindow->h());
@@ -308,6 +315,10 @@ int parse_args(int argc, char **argv, int& idx)
   --help this help text\n\
   --version\n\
   --config-dir [pathname]\n\
+  --address [local-host]     socket address\n\
+  --port    [12345]          socket port\n\
+  --poll    [50]             poll interval in milliseconds\n\
+  --xml-debug [0] {0...5}    xmlrpcpp debug level\n\
   --debug\n");
 		exit(0);
 	} 
@@ -325,7 +336,31 @@ int parse_args(int argc, char **argv, int& idx)
 		if (WKeyHomeDir[WKeyHomeDir.length() -1] != '/')
 			WKeyHomeDir += '/';
 		idx += 2;
-		return 1;
+		return 2;
+	}
+	if (strcasecmp("--address", argv[idx]) == 0) {
+		idx++;
+		progStatus.address = argv[idx];
+		idx++;
+		return 2;
+	}
+	if (strcasecmp("--port", argv[idx]) == 0) {
+		idx++;
+		progStatus.port = argv[idx];
+		idx++;
+		return 2;
+	}
+	if (strcasecmp("--xml-debug", argv[idx]) == 0) {
+		idx++;
+		progStatus.xml_debug = argv[idx];
+		idx++;
+		return 2;
+	}
+	if (strcasecmp("--poll", argv[idx]) == 0) {
+		idx++;
+		progStatus.poll_interval = atoi(argv[idx]);
+		idx++;
+		return 2;
 	}
 	return 0;
 }

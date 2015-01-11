@@ -1,6 +1,6 @@
 // =====================================================================
 //
-// xmlrpc_io.cxx
+// xmlrpc_log.cxx
 //
 // connect to logbook xmlrpc server
 //
@@ -100,11 +100,11 @@ void xml_add_record()
 		start_logbook();
 	}
 
-	char *szt = szTime(2);
+	char *szt = szTime(0);
 	char *szdt = szDate(0x86);
 	char sznbr[6];
 	string call = txt_sta->value();
-	string freq = txt_freq->value();
+	string freq = xcvr_freq->strval();
 	string name = txt_name->value();
 	string xin = txt_xchg->value();
 	snprintf(sznbr, sizeof(sznbr), "%d", progStatus.serial_nbr);
@@ -219,3 +219,4 @@ void connect_to_server()
 		start_logbook();
 	}
 }
+

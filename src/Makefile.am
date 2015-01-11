@@ -133,7 +133,9 @@ flwkey_SOURCES += \
 	misc/pixmaps.cxx \
 	misc/icons.cxx \
 	misc/re.cxx \
+	misc/threads.cxx \
 	misc/xmlrpc_log.cxx \
+	misc/xmlrpc_rig.cxx \
 	misc/serial.cxx \
 	misc/status.cxx \
 	misc/support.cxx \
@@ -142,6 +144,7 @@ flwkey_SOURCES += \
 	widgets/combo.cxx \
 	widgets/flslider2.cxx \
 	widgets/ValueSlider.cxx \
+	widgets/FreqControl.cxx \
 	widgets/FTextRXTX.cxx \
 	widgets/FTextView.cxx \
 	widgets/Fl_Text_Display_mod.cxx \
@@ -197,6 +200,7 @@ EXTRA_DIST = \
 	include/flwkeyrc.h \
 	include/flslider2.h \
 	include/font_browser.h \
+	include/FreqControl.h \
 	include/gettext.h \
 	include/mingw.h \
 	include/flwkey.h \
@@ -227,6 +231,7 @@ EXTRA_DIST = \
 	include/FL/Fl_Native_File_Chooser_MAC.H \
 	include/FL/Fl_Native_File_Chooser_WIN32.H \
 	include/base64.h \
+	include/xmlrpc_rig.h \
 	include/XmlRpc.h \
 	include/XmlRpcServer.h \
 	include/XmlRpcSource.h \

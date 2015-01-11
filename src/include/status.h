@@ -92,6 +92,11 @@ struct status {
 	bool	dups;
 	string	xout;
 
+	std::string address;
+	std::string port;
+	int		poll_interval;
+	std::string xml_debug;
+
 	void saveLastState();
 	void loadLastState();
 };

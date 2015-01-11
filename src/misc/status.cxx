@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------------
  * status structure / methods
  *
- * A part of "rig", a rig control program compatible with fldigi / xmlrpc i/o
+ * A part of "rig", a rig control program compatible with flflrig / xmlrpc i/o
  *
  * copyright Dave Freese 2009, w1hkj@w1hkj.com
  *
@@ -99,7 +99,12 @@ status progStatus = {
 	1,			// bool	band;
 	true,		// bool	zeros;
 	false,		// bool	dups;
-	""			// string xout
+	"",			// string xout
+
+	"localhost",	// remote flrig socket address
+	"12345",		// remote flrig socket port
+	20,				// poll interval in milliseconds
+	"0"				// xml debug level
 
 };
 

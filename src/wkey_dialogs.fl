@@ -8,6 +8,9 @@ code_name {.cxx}
 decl {\#include "support.h"} {private local
 } 
 
+decl {\#include "xmlrpc_rig.h"} {private local
+} 
+
 Function {SetupDialog()} {open
 } {
   Fl_Window {} {
@@ -49,9 +52,9 @@ Function {WKey_window()} {open
 } {
   Fl_Window {} {
     label Fl_WinKey open
-    xywh {706 48 670 325} type Double resizable visible
+    xywh {674 24 670 400} type Double resizable visible
   } {
-    Fl_Menu_Bar {} {open
+    Fl_Menu_Bar {} {
       xywh {0 0 670 20}
     } {
       Submenu {} {
@@ -171,13 +174,13 @@ Function {WKey_window()} {open
       }
     }
     Fl_Output txt_sent {
-      xywh {5 23 660 96} type Multiline resizable
+      xywh {8 97 660 96} type Multiline resizable
       code0 {\#include "FTextView.h"}
       class FTextView
     }
     Fl_Input txt_to_send {
       label {input:}
-      xywh {5 121 660 68} type Multiline align 16 when 1
+      xywh {8 195 660 68} type Multiline align 16 when 1
       code0 {\#include "FTextRXTX.h"}
       class FTextTX
     }
@@ -185,154 +188,139 @@ Function {WKey_window()} {open
       label {m 1}
       callback {exec_msg1();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {4 197 50 24}
+Edit - Right click} xywh {7 271 50 24}
     }
     Fl_Button btn_msg2 {
       label {m 2}
       callback {exec_msg2();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {59 197 50 24}
+Edit - Right click} xywh {62 271 50 24}
     }
     Fl_Button btn_msg3 {
       label {m 3}
       callback {exec_msg3();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {115 197 50 24}
+Edit - Right click} xywh {118 271 50 24}
     }
     Fl_Button btn_msg4 {
       label {m 4}
       callback {exec_msg4();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {170 197 50 24}
+Edit - Right click} xywh {173 271 50 24}
     }
     Fl_Button btn_msg5 {
       label {m 5}
       callback {exec_msg5();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {226 197 50 24}
+Edit - Right click} xywh {229 271 50 24}
     }
     Fl_Button btn_msg6 {
       label {m 6}
       callback {exec_msg6();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {282 197 50 24}
+Edit - Right click} xywh {284 271 50 24}
     }
     Fl_Button btn_msg7 {
       label {m 7}
       callback {exec_msg7();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {337 197 50 24}
+Edit - Right click} xywh {340 271 50 24}
     }
     Fl_Button btn_msg8 {
       label {m 8}
       callback {exec_msg8();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {393 197 50 24}
+Edit - Right click} xywh {395 271 50 24}
     }
     Fl_Button btn_msg9 {
       label {m 9}
       callback {exec_msg9();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {449 197 50 24}
+Edit - Right click} xywh {451 271 50 24}
     }
     Fl_Button btn_msg10 {
       label {m 10}
       callback {exec_msg10();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {504 197 50 24}
+Edit - Right click} xywh {506 271 50 24}
     }
     Fl_Button btn_msg11 {
       label {m 11}
       callback {exec_msg11();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {560 197 50 24}
+Edit - Right click} xywh {562 271 50 24}
     }
     Fl_Button btn_msg12 {
       label {m 12}
       callback {exec_msg12();}
       tooltip {Action - Fkey/Left click
-Edit - Right click} xywh {616 197 50 24}
+Edit - Right click} xywh {618 271 50 24}
     }
     Fl_Box box_wait {
       label Wait
-      xywh {7 229 16 16} box DIAMOND_DOWN_BOX align 8
+      xywh {10 303 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Box box_break_in {
       label Bk
-      xywh {82 229 16 16} box DIAMOND_DOWN_BOX align 8
+      xywh {85 303 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Box box_busy {
       label Busy
-      xywh {157 229 16 16} box DIAMOND_DOWN_BOX align 8
+      xywh {160 303 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Box box_xoff {
       label Bfr
-      xywh {232 229 16 16} box DIAMOND_DOWN_BOX align 8
+      xywh {235 303 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Box box_keydown {
       label Key
-      xywh {308 229 16 16} box DIAMOND_DOWN_BOX align 8
+      xywh {311 303 16 16} box DIAMOND_DOWN_BOX align 8
     }
     Fl_Check_Button btn_use_pot {
       label Pot
       callback {use_pot_changed();}
-      tooltip {Winkeyer pot controls WPM} xywh {397 230 20 15} down_box DOWN_BOX align 4 when 1
+      tooltip {Winkeyer pot controls WPM} xywh {400 304 20 15} down_box DOWN_BOX align 4 when 1
     }
     Fl_Output txt_wpm {
-      xywh {425 226 50 24}
+      xywh {428 300 50 24}
     }
     Fl_Counter cntr_wpm {
       label WPM
       callback {set_wpm();}
-      tooltip {flwkey WPM} xywh {525 226 64 24} type Simple align 4 minimum 10 maximum 35 step 1 value 20
+      tooltip {flwkey WPM} xywh {528 300 64 24} type Simple align 4 minimum 10 maximum 35 step 1 value 20
     }
     Fl_Light_Button btn_send {
       label Send
       callback {cb_send_button();}
-      xywh {605 226 60 24}
-    }
-    Fl_Button btn_cancel {
-      label Cancel
-      callback {cb_cancel_transmit();}
-      xywh {605 258 60 24}
-    }
-    Fl_Light_Button btn_tune {
-      label Tune
-      callback {cb_tune();}
-      xywh {605 290 60 24} selection_color 5
+      xywh {608 300 60 24}
     }
     Fl_Group {} {open
-      xywh {2 254 590 66} box ENGRAVED_BOX
+      xywh {5 328 484 68} box ENGRAVED_BOX
     } {
       Fl_Input txt_sta {
         label STA
         callback {check_call();}
-        tooltip {Other station} xywh {50 258 120 24} when 1
+        tooltip {Other station} xywh {48 334 120 24} when 1
         code0 {\#include "flinput2.h"}
-        class Fl_Input2
-      }
-      Fl_Input txt_freq {
-        label {Freq:}
-        tooltip {Frequency (MHz preferred)} xywh {223 258 100 24} when 1
         class Fl_Input2
       }
       Fl_Button btn_time_on {
         label {On:}
         callback {set_time_on();}
-        tooltip {Press to set time on} xywh {408 258 32 24} down_box DOWN_BOX color 48
+        tooltip {Press to set time on} xywh {178 334 32 24} down_box DOWN_BOX color 48
       }
       Fl_Input txt_name {
         label NAM
-        tooltip {Other operator} xywh {50 290 120 24}
+        tooltip {Other operator} xywh {48 366 120 24}
         class Fl_Input2
       }
       Fl_Input txt_xchg {
         label X_in
-        tooltip {Rcvd Contest Exchange} xywh {223 290 175 24} when 1
+        tooltip {Rcvd Contest Exchange} xywh {211 366 200 24} when 1
         class Fl_Input2
       }
       Fl_Input txt_time_on {
-        tooltip {Frequency (MHz preferred)} xywh {441 258 80 24} when 1
+        tooltip {Frequency (MHz preferred)} xywh {211 334 80 24} when 1
         class Fl_Input2
       }
       Fl_Button btn_clear {
@@ -342,11 +330,11 @@ txt_name->value("");
 txt_xchg->value("");
 txt_sta->color(FL_BACKGROUND2_COLOR);
 txt_sta->take_focus();}
-        xywh {531 258 52 24}
+        xywh {428 334 52 24}
       }
       Fl_Output txt_time_off {
-        label {Off:} selected
-        tooltip {time off} xywh {441 290 80 24}
+        label {Off:}
+        tooltip {time off} xywh {331 334 80 24}
       }
       Fl_Button btn_log_it {
         label Log
@@ -355,8 +343,66 @@ txt_sta->take_focus();}
 else
   AddRecord();
 txt_sta->take_focus();}
-        xywh {531 290 52 24}
+        xywh {428 366 52 24}
       }
+    }
+    Fl_Light_Button btn_tune {
+      label Tune
+      callback {cb_tune();}
+      xywh {530 334 60 24} selection_color 5
+    }
+    Fl_Button btn_cancel {
+      label Cancel
+      callback {cb_cancel_transmit();}
+      xywh {608 334 60 24}
+    }
+    Fl_Group xcvr_group {
+      label Xcvr open
+      xywh {5 27 662 68} box ENGRAVED_FRAME align 21
+    } {
+      Fl_Group {} {open
+        xywh {10 46 60 44}
+      } {
+        Fl_Round_Button btn_vfoA {
+          label {vfo A}
+          callback {cb_vfoAB();}
+          xywh {12 50 56 15} type Radio down_box ROUND_DOWN_BOX value 1
+        }
+        Fl_Round_Button btn_vfoB {
+          label {vfo B}
+          callback {cb_vfoAB();} selected
+          xywh {12 72 56 15} type Radio down_box ROUND_DOWN_BOX
+        }
+      }
+      Fl_Group xcvr_freq {
+        callback {cb_frequency();} open
+        xywh {73 46 200 44} box DOWN_BOX
+        code0 {\#include "FreqControl.h"}
+        class cFreqControl
+      } {}
+      Fl_Group opMODE {
+        label Mode
+        callback {cb_mode();} open
+        xywh {284 46 100 24} box DOWN_BOX
+        code0 {\#include "combo.h"}
+        class Fl_ComboBox
+      } {}
+      Fl_Group opBW1 {
+        label Bandwidth
+        callback {cb_bw();} open
+        xywh {410 46 100 24} box DOWN_BOX
+        class Fl_ComboBox
+      } {}
+      Fl_Group opBW2 {
+        callback {cb_bw();} open
+        xywh {537 46 100 24} box DOWN_BOX
+        class Fl_ComboBox
+      } {}
+    }
+    Fl_Button btn_Quit {
+      label Quit
+      callback {cbExit();}
+      xywh {608 366 60 24}
     }
   }
 } 

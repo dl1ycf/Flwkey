@@ -197,7 +197,7 @@ unsigned char byte;
 		if (!run_serial_thread) break;
 
 		MilliSleep(progStatus.serloop_timing);
-		zt_off = szTime(1);
+		zt_off = szTime(0);
 		if (zt_off != txt_time_off->value()) Fl::awake(show_time);
 
 		if (bypass_serial_thread_loop ||
@@ -388,6 +388,11 @@ void cbExit()
 		run_serial_thread = false;
 	pthread_mutex_unlock(&mutex_serial);
 	pthread_join(*serial_thread, NULL);
+
+	pthread_mutex_lock(&mutex_flrig);
+		run_flrig_thread = false;
+	pthread_mutex_unlock(&mutex_flrig);
+	pthread_join(*flrig_thread, NULL);
 
 // close host and close down the serial port
 	if (host_is_up) {

@@ -6,20 +6,20 @@
 // Copyright (C) 2008-2009
 //		Stelios Bounanos, M0GLD
 //
-// This file is part of fldigi.
+// This file is part of flflrig.
 //
-// Fldigi is free software: you can redistribute it and/or modify
+// Flflrig is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Fldigi is distributed in the hope that it will be useful,
+// Flflrig is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with fldigi.  If not, see <http://www.gnu.org/licenses/>.
+// along with flflrig.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
 #include <config.h>
@@ -524,8 +524,8 @@ void DupCheck()
 	if (qsodb.nbrRecs() > 0) 
 		if (qsodb.duplicate(
 				txt_sta->value(),
-				szDate(6), szTime(1), ispn, progStatus.time_span,
-				txt_freq->value(), progStatus.band,
+				szDate(6), szTime(0), ispn, progStatus.time_span,
+				xcvr_freq->strval().c_str(), progStatus.band,
 				"", false,
 				"CW", true,
 				"", false ) ) {
@@ -786,7 +786,7 @@ std::string sDate_on = "";
 void AddRecord ()
 {
 	if (txt_sta->value()[0] == 0) return;
-	char *szt = szTime(1);
+	char *szt = szTime(0);
 	char *szdt = szDate(0x86);
 	char sznbr[6];
 	snprintf(sznbr, sizeof(sznbr), "%d", progStatus.serial_nbr);
@@ -801,7 +801,7 @@ void AddRecord ()
 	inpDate_log->value(szdt);
 	inpRstR_log->value ("599");
 	inpRstS_log->value ("599");
-	inpFreq_log->value(txt_freq->value());
+	inpFreq_log->value(xcvr_freq->strval().c_str());
 	inpMode_log->value ("CW");
 	inpState_log->value ("");
 	inpVE_Prov_log->value ("");

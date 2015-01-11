@@ -3,6 +3,7 @@
 #include "gettext.h"
 #include "wkey_dialogs.h"
 #include "support.h"
+#include "xmlrpc_rig.h"
 
 Fl_ComboBox *selectCommPort=(Fl_ComboBox *)0;
 
@@ -282,25 +283,11 @@ static void cb_btn_send(Fl_Light_Button*, void*) {
   cb_send_button();
 }
 
-Fl_Button *btn_cancel=(Fl_Button *)0;
-
-static void cb_btn_cancel(Fl_Button*, void*) {
-  cb_cancel_transmit();
-}
-
-Fl_Light_Button *btn_tune=(Fl_Light_Button *)0;
-
-static void cb_btn_tune(Fl_Light_Button*, void*) {
-  cb_tune();
-}
-
 Fl_Input2 *txt_sta=(Fl_Input2 *)0;
 
 static void cb_txt_sta(Fl_Input2*, void*) {
   check_call();
 }
-
-Fl_Input2 *txt_freq=(Fl_Input2 *)0;
 
 Fl_Button *btn_time_on=(Fl_Button *)0;
 
@@ -336,9 +323,65 @@ else
 txt_sta->take_focus();
 }
 
+Fl_Light_Button *btn_tune=(Fl_Light_Button *)0;
+
+static void cb_btn_tune(Fl_Light_Button*, void*) {
+  cb_tune();
+}
+
+Fl_Button *btn_cancel=(Fl_Button *)0;
+
+static void cb_btn_cancel(Fl_Button*, void*) {
+  cb_cancel_transmit();
+}
+
+Fl_Group *xcvr_group=(Fl_Group *)0;
+
+Fl_Round_Button *btn_vfoA=(Fl_Round_Button *)0;
+
+static void cb_btn_vfoA(Fl_Round_Button*, void*) {
+  cb_vfoAB();
+}
+
+Fl_Round_Button *btn_vfoB=(Fl_Round_Button *)0;
+
+static void cb_btn_vfoB(Fl_Round_Button*, void*) {
+  cb_vfoAB();
+}
+
+cFreqControl *xcvr_freq=(cFreqControl *)0;
+
+static void cb_xcvr_freq(cFreqControl*, void*) {
+  cb_frequency();
+}
+
+Fl_ComboBox *opMODE=(Fl_ComboBox *)0;
+
+static void cb_opMODE(Fl_ComboBox*, void*) {
+  cb_mode();
+}
+
+Fl_ComboBox *opBW1=(Fl_ComboBox *)0;
+
+static void cb_opBW1(Fl_ComboBox*, void*) {
+  cb_bw();
+}
+
+Fl_ComboBox *opBW2=(Fl_ComboBox *)0;
+
+static void cb_opBW2(Fl_ComboBox*, void*) {
+  cb_bw();
+}
+
+Fl_Button *btn_Quit=(Fl_Button *)0;
+
+static void cb_btn_Quit(Fl_Button*, void*) {
+  cbExit();
+}
+
 Fl_Double_Window* WKey_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(670, 325, _("Fl_WinKey"));
+  { Fl_Double_Window* o = new Fl_Double_Window(670, 400, _("Fl_WinKey"));
     w = o;
     { Fl_Menu_Bar* o = new Fl_Menu_Bar(0, 0, 670, 20);
       if (!menu__i18n_done) {
@@ -350,7 +393,7 @@ Fl_Double_Window* WKey_window() {
       }
       o->menu(menu_);
     } // Fl_Menu_Bar* o
-    { txt_sent = new FTextView(5, 23, 660, 96);
+    { txt_sent = new FTextView(8, 97, 660, 96);
       txt_sent->type(12);
       txt_sent->box(FL_DOWN_BOX);
       txt_sent->color(FL_BACKGROUND2_COLOR);
@@ -363,7 +406,7 @@ Fl_Double_Window* WKey_window() {
       txt_sent->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(txt_sent);
     } // FTextView* txt_sent
-    { txt_to_send = new FTextTX(5, 121, 660, 68, _("input:"));
+    { txt_to_send = new FTextTX(8, 195, 660, 68, _("input:"));
       txt_to_send->type(4);
       txt_to_send->box(FL_DOWN_BOX);
       txt_to_send->color(FL_BACKGROUND2_COLOR);
@@ -375,84 +418,84 @@ Fl_Double_Window* WKey_window() {
       txt_to_send->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
       txt_to_send->when(FL_WHEN_CHANGED);
     } // FTextTX* txt_to_send
-    { btn_msg1 = new Fl_Button(4, 197, 50, 24, _("m 1"));
+    { btn_msg1 = new Fl_Button(7, 271, 50, 24, _("m 1"));
       btn_msg1->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg1->callback((Fl_Callback*)cb_btn_msg1);
     } // Fl_Button* btn_msg1
-    { btn_msg2 = new Fl_Button(59, 197, 50, 24, _("m 2"));
+    { btn_msg2 = new Fl_Button(62, 271, 50, 24, _("m 2"));
       btn_msg2->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg2->callback((Fl_Callback*)cb_btn_msg2);
     } // Fl_Button* btn_msg2
-    { btn_msg3 = new Fl_Button(115, 197, 50, 24, _("m 3"));
+    { btn_msg3 = new Fl_Button(118, 271, 50, 24, _("m 3"));
       btn_msg3->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg3->callback((Fl_Callback*)cb_btn_msg3);
     } // Fl_Button* btn_msg3
-    { btn_msg4 = new Fl_Button(170, 197, 50, 24, _("m 4"));
+    { btn_msg4 = new Fl_Button(173, 271, 50, 24, _("m 4"));
       btn_msg4->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg4->callback((Fl_Callback*)cb_btn_msg4);
     } // Fl_Button* btn_msg4
-    { btn_msg5 = new Fl_Button(226, 197, 50, 24, _("m 5"));
+    { btn_msg5 = new Fl_Button(229, 271, 50, 24, _("m 5"));
       btn_msg5->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg5->callback((Fl_Callback*)cb_btn_msg5);
     } // Fl_Button* btn_msg5
-    { btn_msg6 = new Fl_Button(282, 197, 50, 24, _("m 6"));
+    { btn_msg6 = new Fl_Button(284, 271, 50, 24, _("m 6"));
       btn_msg6->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg6->callback((Fl_Callback*)cb_btn_msg6);
     } // Fl_Button* btn_msg6
-    { btn_msg7 = new Fl_Button(337, 197, 50, 24, _("m 7"));
+    { btn_msg7 = new Fl_Button(340, 271, 50, 24, _("m 7"));
       btn_msg7->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg7->callback((Fl_Callback*)cb_btn_msg7);
     } // Fl_Button* btn_msg7
-    { btn_msg8 = new Fl_Button(393, 197, 50, 24, _("m 8"));
+    { btn_msg8 = new Fl_Button(395, 271, 50, 24, _("m 8"));
       btn_msg8->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg8->callback((Fl_Callback*)cb_btn_msg8);
     } // Fl_Button* btn_msg8
-    { btn_msg9 = new Fl_Button(449, 197, 50, 24, _("m 9"));
+    { btn_msg9 = new Fl_Button(451, 271, 50, 24, _("m 9"));
       btn_msg9->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg9->callback((Fl_Callback*)cb_btn_msg9);
     } // Fl_Button* btn_msg9
-    { btn_msg10 = new Fl_Button(504, 197, 50, 24, _("m 10"));
+    { btn_msg10 = new Fl_Button(506, 271, 50, 24, _("m 10"));
       btn_msg10->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg10->callback((Fl_Callback*)cb_btn_msg10);
     } // Fl_Button* btn_msg10
-    { btn_msg11 = new Fl_Button(560, 197, 50, 24, _("m 11"));
+    { btn_msg11 = new Fl_Button(562, 271, 50, 24, _("m 11"));
       btn_msg11->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg11->callback((Fl_Callback*)cb_btn_msg11);
     } // Fl_Button* btn_msg11
-    { btn_msg12 = new Fl_Button(616, 197, 50, 24, _("m 12"));
+    { btn_msg12 = new Fl_Button(618, 271, 50, 24, _("m 12"));
       btn_msg12->tooltip(_("Action - Fkey/Left click\nEdit - Right click"));
       btn_msg12->callback((Fl_Callback*)cb_btn_msg12);
     } // Fl_Button* btn_msg12
-    { box_wait = new Fl_Box(7, 229, 16, 16, _("Wait"));
+    { box_wait = new Fl_Box(10, 303, 16, 16, _("Wait"));
       box_wait->box(FL_DIAMOND_DOWN_BOX);
       box_wait->align(Fl_Align(FL_ALIGN_RIGHT));
     } // Fl_Box* box_wait
-    { box_break_in = new Fl_Box(82, 229, 16, 16, _("Bk"));
+    { box_break_in = new Fl_Box(85, 303, 16, 16, _("Bk"));
       box_break_in->box(FL_DIAMOND_DOWN_BOX);
       box_break_in->align(Fl_Align(FL_ALIGN_RIGHT));
     } // Fl_Box* box_break_in
-    { box_busy = new Fl_Box(157, 229, 16, 16, _("Busy"));
+    { box_busy = new Fl_Box(160, 303, 16, 16, _("Busy"));
       box_busy->box(FL_DIAMOND_DOWN_BOX);
       box_busy->align(Fl_Align(FL_ALIGN_RIGHT));
     } // Fl_Box* box_busy
-    { box_xoff = new Fl_Box(232, 229, 16, 16, _("Bfr"));
+    { box_xoff = new Fl_Box(235, 303, 16, 16, _("Bfr"));
       box_xoff->box(FL_DIAMOND_DOWN_BOX);
       box_xoff->align(Fl_Align(FL_ALIGN_RIGHT));
     } // Fl_Box* box_xoff
-    { box_keydown = new Fl_Box(308, 229, 16, 16, _("Key"));
+    { box_keydown = new Fl_Box(311, 303, 16, 16, _("Key"));
       box_keydown->box(FL_DIAMOND_DOWN_BOX);
       box_keydown->align(Fl_Align(FL_ALIGN_RIGHT));
     } // Fl_Box* box_keydown
-    { btn_use_pot = new Fl_Check_Button(397, 230, 20, 15, _("Pot"));
+    { btn_use_pot = new Fl_Check_Button(400, 304, 20, 15, _("Pot"));
       btn_use_pot->tooltip(_("Winkeyer pot controls WPM"));
       btn_use_pot->down_box(FL_DOWN_BOX);
       btn_use_pot->callback((Fl_Callback*)cb_btn_use_pot);
       btn_use_pot->align(Fl_Align(FL_ALIGN_LEFT));
       btn_use_pot->when(FL_WHEN_CHANGED);
     } // Fl_Check_Button* btn_use_pot
-    { txt_wpm = new Fl_Output(425, 226, 50, 24);
+    { txt_wpm = new Fl_Output(428, 300, 50, 24);
     } // Fl_Output* txt_wpm
-    { cntr_wpm = new Fl_Counter(525, 226, 64, 24, _("WPM"));
+    { cntr_wpm = new Fl_Counter(528, 300, 64, 24, _("WPM"));
       cntr_wpm->tooltip(_("flwkey WPM"));
       cntr_wpm->type(1);
       cntr_wpm->minimum(10);
@@ -462,19 +505,12 @@ Fl_Double_Window* WKey_window() {
       cntr_wpm->callback((Fl_Callback*)cb_cntr_wpm);
       cntr_wpm->align(Fl_Align(FL_ALIGN_LEFT));
     } // Fl_Counter* cntr_wpm
-    { btn_send = new Fl_Light_Button(605, 226, 60, 24, _("Send"));
+    { btn_send = new Fl_Light_Button(608, 300, 60, 24, _("Send"));
       btn_send->callback((Fl_Callback*)cb_btn_send);
     } // Fl_Light_Button* btn_send
-    { btn_cancel = new Fl_Button(605, 258, 60, 24, _("Cancel"));
-      btn_cancel->callback((Fl_Callback*)cb_btn_cancel);
-    } // Fl_Button* btn_cancel
-    { btn_tune = new Fl_Light_Button(605, 290, 60, 24, _("Tune"));
-      btn_tune->selection_color((Fl_Color)5);
-      btn_tune->callback((Fl_Callback*)cb_btn_tune);
-    } // Fl_Light_Button* btn_tune
-    { Fl_Group* o = new Fl_Group(2, 254, 590, 66);
+    { Fl_Group* o = new Fl_Group(5, 328, 484, 68);
       o->box(FL_ENGRAVED_BOX);
-      { txt_sta = new Fl_Input2(50, 258, 120, 24, _("STA"));
+      { txt_sta = new Fl_Input2(48, 334, 120, 24, _("STA"));
         txt_sta->tooltip(_("Other station"));
         txt_sta->box(FL_DOWN_BOX);
         txt_sta->color(FL_BACKGROUND2_COLOR);
@@ -487,25 +523,13 @@ Fl_Double_Window* WKey_window() {
         txt_sta->align(Fl_Align(FL_ALIGN_LEFT));
         txt_sta->when(FL_WHEN_CHANGED);
       } // Fl_Input2* txt_sta
-      { txt_freq = new Fl_Input2(223, 258, 100, 24, _("Freq:"));
-        txt_freq->tooltip(_("Frequency (MHz preferred)"));
-        txt_freq->box(FL_DOWN_BOX);
-        txt_freq->color(FL_BACKGROUND2_COLOR);
-        txt_freq->selection_color(FL_SELECTION_COLOR);
-        txt_freq->labeltype(FL_NORMAL_LABEL);
-        txt_freq->labelfont(0);
-        txt_freq->labelsize(14);
-        txt_freq->labelcolor(FL_FOREGROUND_COLOR);
-        txt_freq->align(Fl_Align(FL_ALIGN_LEFT));
-        txt_freq->when(FL_WHEN_CHANGED);
-      } // Fl_Input2* txt_freq
-      { btn_time_on = new Fl_Button(408, 258, 32, 24, _("On:"));
+      { btn_time_on = new Fl_Button(178, 334, 32, 24, _("On:"));
         btn_time_on->tooltip(_("Press to set time on"));
         btn_time_on->down_box(FL_DOWN_BOX);
         btn_time_on->color((Fl_Color)48);
         btn_time_on->callback((Fl_Callback*)cb_btn_time_on);
       } // Fl_Button* btn_time_on
-      { txt_name = new Fl_Input2(50, 290, 120, 24, _("NAM"));
+      { txt_name = new Fl_Input2(48, 366, 120, 24, _("NAM"));
         txt_name->tooltip(_("Other operator"));
         txt_name->box(FL_DOWN_BOX);
         txt_name->color(FL_BACKGROUND2_COLOR);
@@ -517,7 +541,7 @@ Fl_Double_Window* WKey_window() {
         txt_name->align(Fl_Align(FL_ALIGN_LEFT));
         txt_name->when(FL_WHEN_RELEASE);
       } // Fl_Input2* txt_name
-      { txt_xchg = new Fl_Input2(223, 290, 175, 24, _("X_in"));
+      { txt_xchg = new Fl_Input2(211, 366, 200, 24, _("X_in"));
         txt_xchg->tooltip(_("Rcvd Contest Exchange"));
         txt_xchg->box(FL_DOWN_BOX);
         txt_xchg->color(FL_BACKGROUND2_COLOR);
@@ -529,7 +553,7 @@ Fl_Double_Window* WKey_window() {
         txt_xchg->align(Fl_Align(FL_ALIGN_LEFT));
         txt_xchg->when(FL_WHEN_CHANGED);
       } // Fl_Input2* txt_xchg
-      { txt_time_on = new Fl_Input2(441, 258, 80, 24);
+      { txt_time_on = new Fl_Input2(211, 334, 80, 24);
         txt_time_on->tooltip(_("Frequency (MHz preferred)"));
         txt_time_on->box(FL_DOWN_BOX);
         txt_time_on->color(FL_BACKGROUND2_COLOR);
@@ -541,17 +565,98 @@ Fl_Double_Window* WKey_window() {
         txt_time_on->align(Fl_Align(FL_ALIGN_LEFT));
         txt_time_on->when(FL_WHEN_CHANGED);
       } // Fl_Input2* txt_time_on
-      { btn_clear = new Fl_Button(531, 258, 52, 24, _("Clear"));
+      { btn_clear = new Fl_Button(428, 334, 52, 24, _("Clear"));
         btn_clear->callback((Fl_Callback*)cb_btn_clear);
       } // Fl_Button* btn_clear
-      { txt_time_off = new Fl_Output(441, 290, 80, 24, _("Off:"));
+      { txt_time_off = new Fl_Output(331, 334, 80, 24, _("Off:"));
         txt_time_off->tooltip(_("time off"));
       } // Fl_Output* txt_time_off
-      { btn_log_it = new Fl_Button(531, 290, 52, 24, _("Log"));
+      { btn_log_it = new Fl_Button(428, 366, 52, 24, _("Log"));
         btn_log_it->callback((Fl_Callback*)cb_btn_log_it);
       } // Fl_Button* btn_log_it
       o->end();
     } // Fl_Group* o
+    { btn_tune = new Fl_Light_Button(530, 334, 60, 24, _("Tune"));
+      btn_tune->selection_color((Fl_Color)5);
+      btn_tune->callback((Fl_Callback*)cb_btn_tune);
+    } // Fl_Light_Button* btn_tune
+    { btn_cancel = new Fl_Button(608, 334, 60, 24, _("Cancel"));
+      btn_cancel->callback((Fl_Callback*)cb_btn_cancel);
+    } // Fl_Button* btn_cancel
+    { xcvr_group = new Fl_Group(5, 27, 662, 68, _("Xcvr"));
+      xcvr_group->box(FL_ENGRAVED_FRAME);
+      xcvr_group->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
+      { Fl_Group* o = new Fl_Group(10, 46, 60, 44);
+        { btn_vfoA = new Fl_Round_Button(12, 50, 56, 15, _("vfo A"));
+          btn_vfoA->type(102);
+          btn_vfoA->down_box(FL_ROUND_DOWN_BOX);
+          btn_vfoA->value(1);
+          btn_vfoA->callback((Fl_Callback*)cb_btn_vfoA);
+        } // Fl_Round_Button* btn_vfoA
+        { btn_vfoB = new Fl_Round_Button(12, 72, 56, 15, _("vfo B"));
+          btn_vfoB->type(102);
+          btn_vfoB->down_box(FL_ROUND_DOWN_BOX);
+          btn_vfoB->callback((Fl_Callback*)cb_btn_vfoB);
+        } // Fl_Round_Button* btn_vfoB
+        o->end();
+      } // Fl_Group* o
+      { xcvr_freq = new cFreqControl(73, 46, 200, 44);
+        xcvr_freq->box(FL_DOWN_BOX);
+        xcvr_freq->color(FL_BACKGROUND_COLOR);
+        xcvr_freq->selection_color(FL_BACKGROUND_COLOR);
+        xcvr_freq->labeltype(FL_NORMAL_LABEL);
+        xcvr_freq->labelfont(0);
+        xcvr_freq->labelsize(14);
+        xcvr_freq->labelcolor(FL_FOREGROUND_COLOR);
+        xcvr_freq->callback((Fl_Callback*)cb_xcvr_freq);
+        xcvr_freq->align(Fl_Align(FL_ALIGN_TOP));
+        xcvr_freq->when(FL_WHEN_RELEASE);
+        xcvr_freq->end();
+      } // cFreqControl* xcvr_freq
+      { opMODE = new Fl_ComboBox(284, 46, 100, 24, _("Mode"));
+        opMODE->box(FL_DOWN_BOX);
+        opMODE->color(FL_BACKGROUND_COLOR);
+        opMODE->selection_color(FL_BACKGROUND_COLOR);
+        opMODE->labeltype(FL_NORMAL_LABEL);
+        opMODE->labelfont(0);
+        opMODE->labelsize(14);
+        opMODE->labelcolor(FL_FOREGROUND_COLOR);
+        opMODE->callback((Fl_Callback*)cb_opMODE);
+        opMODE->align(Fl_Align(FL_ALIGN_TOP));
+        opMODE->when(FL_WHEN_RELEASE);
+        opMODE->end();
+      } // Fl_ComboBox* opMODE
+      { opBW1 = new Fl_ComboBox(410, 46, 100, 24, _("Bandwidth"));
+        opBW1->box(FL_DOWN_BOX);
+        opBW1->color(FL_BACKGROUND_COLOR);
+        opBW1->selection_color(FL_BACKGROUND_COLOR);
+        opBW1->labeltype(FL_NORMAL_LABEL);
+        opBW1->labelfont(0);
+        opBW1->labelsize(14);
+        opBW1->labelcolor(FL_FOREGROUND_COLOR);
+        opBW1->callback((Fl_Callback*)cb_opBW1);
+        opBW1->align(Fl_Align(FL_ALIGN_TOP));
+        opBW1->when(FL_WHEN_RELEASE);
+        opBW1->end();
+      } // Fl_ComboBox* opBW1
+      { opBW2 = new Fl_ComboBox(537, 46, 100, 24);
+        opBW2->box(FL_DOWN_BOX);
+        opBW2->color(FL_BACKGROUND_COLOR);
+        opBW2->selection_color(FL_BACKGROUND_COLOR);
+        opBW2->labeltype(FL_NORMAL_LABEL);
+        opBW2->labelfont(0);
+        opBW2->labelsize(14);
+        opBW2->labelcolor(FL_FOREGROUND_COLOR);
+        opBW2->callback((Fl_Callback*)cb_opBW2);
+        opBW2->align(Fl_Align(FL_ALIGN_TOP));
+        opBW2->when(FL_WHEN_RELEASE);
+        opBW2->end();
+      } // Fl_ComboBox* opBW2
+      xcvr_group->end();
+    } // Fl_Group* xcvr_group
+    { btn_Quit = new Fl_Button(608, 366, 60, 24, _("Quit"));
+      btn_Quit->callback((Fl_Callback*)cb_btn_Quit);
+    } // Fl_Button* btn_Quit
     o->end();
   } // Fl_Double_Window* o
   return w;

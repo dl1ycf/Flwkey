@@ -31,7 +31,14 @@ extern string defFileName;
 extern string title;
 
 extern pthread_t *serial_thread;
+extern pthread_t *flrig_thread;
+
 extern pthread_mutex_t mutex_serial;
+extern pthread_mutex_t mutex_xmlrpc;
+extern pthread_mutex_t mutex_flrig;
+
+extern void * flrig_thread_loop(void *d);
+extern bool  run_flrig_thread;
 
 extern bool WKEY_DEBUG;
 

@@ -45,12 +45,9 @@ extern Fl_Output *txt_wpm;
 extern Fl_Counter *cntr_wpm;
 #include <FL/Fl_Light_Button.H>
 extern Fl_Light_Button *btn_send;
-extern Fl_Button *btn_cancel;
-extern Fl_Light_Button *btn_tune;
 #include <FL/Fl_Group.H>
 #include "flinput2.h"
 extern Fl_Input2 *txt_sta;
-extern Fl_Input2 *txt_freq;
 extern Fl_Button *btn_time_on;
 extern Fl_Input2 *txt_name;
 extern Fl_Input2 *txt_xchg;
@@ -58,6 +55,18 @@ extern Fl_Input2 *txt_time_on;
 extern Fl_Button *btn_clear;
 extern Fl_Output *txt_time_off;
 extern Fl_Button *btn_log_it;
+extern Fl_Light_Button *btn_tune;
+extern Fl_Button *btn_cancel;
+extern Fl_Group *xcvr_group;
+#include <FL/Fl_Round_Button.H>
+extern Fl_Round_Button *btn_vfoA;
+extern Fl_Round_Button *btn_vfoB;
+#include "FreqControl.h"
+extern cFreqControl *xcvr_freq;
+extern Fl_ComboBox *opMODE;
+extern Fl_ComboBox *opBW1;
+extern Fl_ComboBox *opBW2;
+extern Fl_Button *btn_Quit;
 Fl_Double_Window* WKey_window();
 extern unsigned char menu__i18n_done;
 extern Fl_Menu_Item menu_[];
