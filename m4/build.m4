@@ -5,20 +5,26 @@ AC_DEFUN([AC_FLWKEY_SH_DQ], [
 AC_DEFUN([AC_FLWKEY_BUILD_INFO], [
 # Define build flags and substitute in Makefile.in
 # CPPFLAGS
-  FLWKEY_BUILD_CPPFLAGS="-I\$(srcdir) -I\$(srcdir)/include -I\$(srcdir)/xmlrpcpp"
+  FLWKEY_BUILD_CPPFLAGS="-I\$(srcdir) -I\$(srcdir)/include"
+  if test "x$ac_cv_flxmlrpc" != "xyes"; then
+    FLWKEY_BUILD_CPPFLAGS="$FLWKEY_BUILD_CPPFLAGS -I\$(srcdir)/xmlrpcpp"
+  fi
   if test "x$target_win32" = "xyes"; then
       FLWKEY_BUILD_CPPFLAGS="$FLWKEY_BUILD_CPPFLAGS -D_WINDOWS"
   fi
 # CXXFLAGS
-  FLWKEY_BUILD_CXXFLAGS="$FLTK_CFLAGS -pipe -Wall -fexceptions $OPT_CFLAGS $DEBUG_CFLAGS \
-$PTW32_CFLAGS"
+  FLWKEY_BUILD_CXXFLAGS="$FLTK_CFLAGS -I\$(srcdir) -I\$(srcdir)/include  \
+$X_CFLAGS -pipe -Wall -fexceptions $OPT_CFLAGS $DEBUG_CFLAGS $PTW32_CFLAGS"
+  if test "x$ac_cv_flxmlrpc" != "xyes"; then
+    FLWKEY_BUILD_CXXFLAGS="-I\$(srcdir)/xmlrpcpp $FLWKEY_BUILD_CXXFLAGS"
+  fi
   if test "x$target_mingw32" = "xyes"; then
       FLWKEY_BUILD_CXXFLAGS="-mthreads $FLWKEY_BUILD_CXXFLAGS"
   fi
 # LDFLAGS
   FLWKEY_BUILD_LDFLAGS=
 # LDADD
-  FLWKEY_BUILD_LDADD="$FLTK_LIBS $EXTRA_LIBS $PTW32_LIBS"
+  FLWKEY_BUILD_LDADD="$FLTK_LIBS $X_LIBS $EXTRA_LIBS $PTW32_LIBS $FLXMLRPC_LIBS"
 
   if test "x$ac_cv_debug" = "xyes"; then
       FLWKEY_BUILD_CXXFLAGS="$FLWKEY_BUILD_CXXFLAGS -UNDEBUG"
@@ -28,14 +34,6 @@ $PTW32_CFLAGS"
   fi
   if test "x$target_mingw32" = "xyes"; then
       FLWKEY_BUILD_LDFLAGS="-mthreads $FLWKEY_BUILD_LDFLAGS"
-  fi
-  if test "x$target_mingw32" = "xyes"; then
-      FLWKEY_BUILD_LDFLAGS="-mthreads $FLWKEY_BUILD_LDFLAGS"
-  else if test "x$target_darwin" = "xyes"; then
-      FLWKEY_BUILD_LDFLAGS="$FLWKEY_BUILD_LDFLAGS"
-    else
-        FLWKEY_BUILD_LDFLAGS="$FLWKEY_BUILD_LDFLAGS -lm -lX11"
-    fi
   fi
 
   AC_SUBST([FLWKEY_BUILD_CPPFLAGS])

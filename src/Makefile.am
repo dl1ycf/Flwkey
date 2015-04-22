@@ -15,11 +15,45 @@ MINGW32_SRC = \
 	compat/regex.c \
 	include/compat.h
 
+# Build the xmlrpcpp source if libflxmlrpc is not found
+XMLRPCPP_SRC = \
+	xmlrpcpp/XmlRpcBase64.h \
+	xmlrpcpp/XmlRpcClient.cpp \
+	xmlrpcpp/XmlRpcClient.h \
+	xmlrpcpp/XmlRpcDispatch.cpp \
+	xmlrpcpp/XmlRpcDispatch.h \
+	xmlrpcpp/XmlRpcException.h \
+	xmlrpcpp/XmlRpc.h \
+	xmlrpcpp/XmlRpcMutex.cpp \
+	xmlrpcpp/XmlRpcMutex.h \
+	xmlrpcpp/XmlRpcServerConnection.cpp \
+	xmlrpcpp/XmlRpcServerConnection.h \
+	xmlrpcpp/XmlRpcServer.cpp \
+	xmlrpcpp/XmlRpcServer.h \
+	xmlrpcpp/XmlRpcServerMethod.cpp \
+	xmlrpcpp/XmlRpcServerMethod.h \
+	xmlrpcpp/XmlRpcSocket.cpp \
+	xmlrpcpp/XmlRpcSocket.h \
+	xmlrpcpp/XmlRpcSource.cpp \
+	xmlrpcpp/XmlRpcSource.h \
+	xmlrpcpp/XmlRpcUtil.cpp \
+	xmlrpcpp/XmlRpcUtil.h \
+	xmlrpcpp/XmlRpcValue.cpp \
+	xmlrpcpp/XmlRpcValue.h
 
 # We distribute these but do not always compile them
-EXTRA_flwkey_SOURCES = $(FLWKEY_WIN32_RES_SRC) $(MINGW32_SRC)
+EXTRA_flwkey_SOURCES = $(FLWKEY_WIN32_RES_SRC) $(MINGW32_SRC) $(XMLRPCPP_SRC)
 
 flwkey_SOURCES =
+
+if !ENABLE_FLXMLRPC
+flwkey_SOURCES += $(XMLRPCPP_SRC)
+else
+flwkey_CPPFLAGS += @FLXMLRPC_CFLAGS@
+flwkey_CXXFLAGS += @FLXMLRPC_CFLAGS@
+flwkey_CFLAGS   += @FLXMLRPC_CFLAGS@
+flwkey_LDFLAGS  += @FLXMLRPC_LIBS@
+endif
 
 if MINGW32
 if HAVE_WINDRES
@@ -151,18 +185,7 @@ flwkey_SOURCES += \
 	widgets/Fl_Text_Editor_mod.cxx \
 	widgets/Fl_Native_File_Chooser.cxx \
 	widgets/flinput2.cxx \
-	widgets/fileselect.cxx \
-	xmlrpccpp/XmlRpcClient.cpp \
-	xmlrpccpp/XmlRpcMutex.cpp \
-	xmlrpccpp/XmlRpcServerMethod.cpp \
-	xmlrpccpp/XmlRpcThread.cpp \
-	xmlrpccpp/XmlRpcValue.cpp \
-	xmlrpccpp/XmlRpcDispatch.cpp \
-	xmlrpccpp/XmlRpcServerConnection.cpp \
-	xmlrpccpp/XmlRpcSocket.cpp \
-	xmlrpccpp/XmlRpcServer.cpp \
-	xmlrpccpp/XmlRpcSource.cpp \
-	xmlrpccpp/XmlRpcUtil.cpp
+	widgets/fileselect.cxx 
 
 # Additional source files that are distributed
 EXTRA_DIST = \
@@ -230,23 +253,7 @@ EXTRA_DIST = \
 	include/FL/Fl_Native_File_Chooser_FLTK.H \
 	include/FL/Fl_Native_File_Chooser_MAC.H \
 	include/FL/Fl_Native_File_Chooser_WIN32.H \
-	include/base64.h \
-	include/xmlrpc_rig.h \
-	include/XmlRpc.h \
-	include/XmlRpcServer.h \
-	include/XmlRpcSource.h \
-	include/XmlRpcUtil.h \
-	include/XmlRpcClient.h \
-	include/XmlRpcMutex.h \
-	include/XmlRpcServerMethod.h \
-	include/XmlRpcValue.h \
-	include/XmlRpcThreadedServer.h \
-	include/XmlRpcDispatch.h \
-	include/XmlRpcServerConnection.h \
-	include/XmlRpcSocket.h \
-	include/XmlRpcThread.h \
-	include/XmlRpcException.h
-
+	include/xmlrpc_rig.h
 
 # Additional non-source files that are distributed
 # Additional source files that support non-Linux cross compilation
