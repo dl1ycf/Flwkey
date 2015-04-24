@@ -1,8 +1,12 @@
+2015-04-22  David Freese  <iam_w1hkj@w1hkj.com>
+
+	ed0f9f3: flxmlrpc
+	f403e45: FSF address
+	ca8dcd7: Flrig xmlrpc
+	441b3c7: Time On
 
 
 =Version 1.1.7=
-
-2014-11-15  David Freese  <iam_w1hkj@w1hkj.com>
 
 	213ba1e: Build script
 	94ead6c: fltk-1.3.3
