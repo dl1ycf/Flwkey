@@ -34,7 +34,6 @@ fi
 
 set -e
 
-test "x$NOSTRIP" = "x" && $STRIP -S "$flwkey_bin"
 def="-Dflwkey_NAME=$flwkey_name -Dflwkey_BINARY=$flwkey_bin -Dflwkey_VERSION=$PACKAGE_VERSION"
 
 $MAKENSIS -V2 -NOCD -D"INSTALLER_FILE=$INSTALLER_FILE" -D"LICENSE_FILE=$data/../COPYING" \
