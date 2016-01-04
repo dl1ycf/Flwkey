@@ -480,7 +480,6 @@ void flrig_get_bws()
 // transceiver get / set vfo A / B
 //----------------------------------------------------------------------
 
-pthread_mutex_t mutex_flrig_ab = PTHREAD_MUTEX_INITIALIZER;
 void set_flrig_ab(int n)
 {
 	if (!connected_to_flrig) return;
@@ -496,14 +495,12 @@ void set_flrig_ab(int n)
 
 void show_A(void *)
 {
-	guard_lock flrig_lock(&mutex_flrig_ab);
 	btn_vfoA->set();
 	btn_vfoB->clear();
 }
 
 void show_B(void *)
 {
-	guard_lock flrig_lock(&mutex_flrig_ab);
 	btn_vfoA->clear();
 	btn_vfoB->set();
 }
@@ -512,10 +509,9 @@ void flrig_get_vfo()
 {
 	XmlRpcValue result;
 	if (flrig_client->execute("rig.get_AB", XmlRpcValue(), result) ) {
-		std::string str_vfo = std::string(result[0]);
-		guard_lock flrig_lock(&mutex_flrig_ab);
-		if (str_vfo == "A" && !btn_vfoA->value()) Fl::awake(show_A);
-		else if (str_vfo == "B" && !btn_vfoB->value()) Fl::awake(show_B);
+		std::string str_vfo = string(result);
+		if (str_vfo[0] == 'A' && !btn_vfoA->value()) Fl::awake(show_A);
+		else if (str_vfo[0] == 'B' && !btn_vfoB->value()) Fl::awake(show_B);
 	} else {
 		connected_to_flrig = false;
 	}
