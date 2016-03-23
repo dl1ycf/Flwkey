@@ -12,7 +12,7 @@ dnl major and minor must be integers; patch may
 dnl contain other characters or be empty
 m4_define(FLWKEY_MAJOR,  [1])
 m4_define(FLWKEY_MINOR,  [2])
-m4_define(FLWKEY_PATCH,  [.1])
+m4_define(FLWKEY_PATCH,  [.2])
 
 AC_INIT([FLWKEY], FLWKEY_MAJOR.FLWKEY_MINOR[]FLWKEY_PATCH, [w1hkj AT w1hkj DOT com])
 

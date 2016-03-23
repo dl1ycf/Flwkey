@@ -1,6 +1,15 @@
-2015-08-14  David Freese  <iam_w1hkj@w1hkj.com>
 
-	7b61318: MXE update
+
+=Version 1.2.2=
+
+2016-01-03  David Freese  <iam_w1hkj@w1hkj.com>
+
+	a82deb0: get_vfo
+
+
+=Version 1.2.1=
+
+	300b42d: MXE update
 
 2015-06-08  Kamal Mostafa  <kamal@whence.com>
 
