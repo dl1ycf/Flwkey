@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
+version 1.0303 
 i18n_type 1 
 i18n_include "gettext.h" 
 i18n_function _ 
@@ -52,7 +52,7 @@ Function {WKey_window()} {open
 } {
   Fl_Window {} {
     label Fl_WinKey open
-    xywh {674 24 670 400} type Double resizable visible
+    xywh {761 187 670 400} type Double resizable visible
   } {
     Fl_Menu_Bar {} {
       xywh {0 0 670 20}
@@ -286,8 +286,9 @@ Edit - Right click} xywh {618 271 50 24}
     }
     Fl_Counter cntr_wpm {
       label WPM
-      callback {set_wpm();}
+      callback {set_wpm();} selected
       tooltip {flwkey WPM} xywh {528 300 64 24} type Simple align 4 minimum 10 maximum 35 step 1 value 20
+      code0 {o->value(progStatus.speed_wpm);}
     }
     Fl_Light_Button btn_send {
       label Send
@@ -370,7 +371,7 @@ txt_sta->take_focus();}
         }
         Fl_Round_Button btn_vfoB {
           label {vfo B}
-          callback {cb_vfoAB();} selected
+          callback {cb_vfoAB();}
           xywh {12 72 56 15} type Radio down_box ROUND_DOWN_BOX
         }
       }

@@ -261,6 +261,7 @@ void status::loadLastState()
 			mnu_log_client->set();
 			connect_to_server();
 		}
+		cntr_wpm->value(speed_wpm);
 	}
 }
 
