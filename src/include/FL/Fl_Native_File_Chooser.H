@@ -31,7 +31,11 @@
 
 // Use Apple's chooser
 #ifdef __APPLE__
-#include <FL/Fl_Native_File_Chooser_MAC.H>
+//
+// DL1YCF:
+// This does not work for recent versions of MacOS, so use fallback
+//#include <FL/Fl_Native_File_Chooser_MAC.H>
+#include <FL/Fl_Native_File_Chooser_FLTK.H>
 #endif
 
 // All else falls back to FLTK's own chooser
