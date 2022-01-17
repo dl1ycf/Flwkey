@@ -391,7 +391,7 @@ Fl_Double_Window* WKey_window() {
   Fl_Double_Window* w;
   int row;
 #ifndef NO_XML
-  { Fl_Double_Window* o = new Fl_Double_Window(670, 400, _("Fl_WinKey"));
+  { Fl_Double_Window* o = new Fl_Double_Window(670, 360, _("Fl_WinKey"));
 #else
   { Fl_Double_Window* o = new Fl_Double_Window(670, 300, _("Fl_WinKey"));
 #endif
