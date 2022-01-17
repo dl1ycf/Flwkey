@@ -507,6 +507,11 @@ Fl_Menu_Item FTextView::menu[] = {
 FTextView::FTextView(int x, int y, int w, int h, const char *l)
         : FTextBase(x, y, w, h, l), quick_entry(false)
 {
+	//
+	// DL1YCF: on the RaspPi OS, the next call produces an error message
+	// indicating that there no "modify CB" has been found that can be
+	// removed. This can probably be ignored.
+	//
 	tbuf->remove_modify_callback(buffer_modified_cb, this);
 	tbuf->add_modify_callback(changed_cb, this);
 	tbuf->canUndo(0);
