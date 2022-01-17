@@ -257,10 +257,12 @@ void status::loadLastState()
 		spref.get("logbook_xout", defbuffer, "", 199); xout = defbuffer;
 
 		update_msg_labels();
+#ifndef NO_XML
 		if (xml_logbook) {
 			mnu_log_client->set();
 			connect_to_server();
 		}
+#endif
 		cntr_wpm->value(speed_wpm);
 	}
 }

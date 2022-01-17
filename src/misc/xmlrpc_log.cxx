@@ -34,6 +34,7 @@ XmlRpcClient *log_client = (XmlRpcClient *)0;
 
 bool test_connection()
 {
+#ifndef NO_XML
 	XmlRpcValue result;
 	if (log_client->execute("system.listMethods", XmlRpcValue(), result))
 		return true;
@@ -41,11 +42,13 @@ bool test_connection()
 			progStatus.log_address.c_str(),
 			progStatus.log_port.c_str());
 
+#endif
 	return false;
 }
 
 void xml_get_record(const char *callsign)
 {
+#ifndef NO_XML
 	XmlRpcValue oneArg, result;
 	if (!test_connection()) {
 		fl_alert2(_("Logbook server down!\nUsing internal logbook"));
@@ -79,10 +82,12 @@ void xml_get_record(const char *callsign)
 	}
 //  else
 //    std::cout << "Error calling 'log.get_record'\n\n";
+#endif
 }
 
 void xml_add_record()
 {
+#ifndef NO_XML
 	if (txt_sta->value()[0] == 0) return;
 
 	if (!test_connection()) {
@@ -131,10 +136,12 @@ void xml_add_record()
 	oneArg[0] = adifrec;
 	log_client->execute("log.add_record", oneArg, result);
 //	std::cout << "log.add_record result " << result << "\n\n";
+#endif
 }
 
 void xml_check_dup()
 {
+#ifndef NO_XML
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
 	XmlRpcValue sixargs, result;
 	sixargs[0] = txt_sta->value();
@@ -150,10 +157,12 @@ void xml_check_dup()
 	}
 	txt_sta->color(call_clr);
 	txt_sta->redraw();
+#endif
 }
 
 void connect_to_server()
 {
+#ifndef NO_XML
 	if (log_client) delete log_client;
 	if (mnu_log_client->value()) {
 		try {
@@ -218,5 +227,5 @@ void connect_to_server()
 		mnu_export_cabrillo->activate();
 		start_logbook();
 	}
+#endif
 }
-

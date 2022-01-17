@@ -518,6 +518,7 @@ void cb_SortByFreq (void) {
 
 void DupCheck()
 {
+#ifndef NO_XML
 	Fl_Color call_clr = FL_BACKGROUND2_COLOR;
 	int ispn = atoi(txt_time_span->value());
 
@@ -533,6 +534,7 @@ void DupCheck()
 	}
 	txt_sta->color(call_clr);
 	txt_sta->redraw();
+#endif
 }
 
 cQsoRec* SearchLog(const char *callsign)
@@ -547,6 +549,7 @@ cQsoRec* SearchLog(const char *callsign)
 
 void SearchLastQSO(const char *callsign)
 {
+#ifndef NO_XML
 	if (qsodb.nbrRecs() == 0) return;
 	size_t len = strlen(callsign);
 	if (!len)
@@ -563,6 +566,7 @@ void SearchLastQSO(const char *callsign)
 		inpSearchString->value("");
 	}
 	delete [] re;
+#endif
 }
 
 void cb_search(Fl_Widget* w, void*)
@@ -785,6 +789,7 @@ std::string sDate_on = "";
 
 void AddRecord ()
 {
+#ifndef NO_XML
 	if (txt_sta->value()[0] == 0) return;
 	char *szt = szTime(0);
 	char *szdt = szDate(0x86);
@@ -830,6 +835,7 @@ void AddRecord ()
 	txt_sta->value("");
 	txt_name->value("");
 	txt_xchg->value("");
+#endif
 }
 
 void cb_browser (Fl_Widget *w, void *data )
