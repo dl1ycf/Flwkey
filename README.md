@@ -10,5 +10,6 @@ the flwkey window occupies much less space.
 TODO:
 
 Read/Write WinKey EEPROM, and add user interface to change the
-"standalone" settings.
+"standalone" settings, including the CW texts that are produced
+in standalone mode when pushing one off the buttons.
 
