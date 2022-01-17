@@ -357,6 +357,7 @@ txt_sta->take_focus();}
       callback {cb_cancel_transmit();}
       xywh {608 334 60 24}
     }
+#ifndef NO_XML
     Fl_Group xcvr_group {
       label Xcvr open
       xywh {5 27 662 68} box ENGRAVED_FRAME align 21
@@ -400,6 +401,7 @@ txt_sta->take_focus();}
         class Fl_ComboBox
       } {}
     }
+#endif
     Fl_Button btn_Quit {
       label Quit
       callback {cbExit();}
