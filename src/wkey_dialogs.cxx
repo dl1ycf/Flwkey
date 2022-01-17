@@ -409,7 +409,6 @@ Fl_Double_Window* WKey_window() {
     row=27;
 #ifndef NO_XML
     { xcvr_group = new Fl_Group(5, row, 662, 68, _("Xcvr"));
-      row +=70;
       xcvr_group->box(FL_ENGRAVED_FRAME);
       xcvr_group->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
       { Fl_Group* o = new Fl_Group(10, row+19, 60, 44);
