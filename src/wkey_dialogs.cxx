@@ -7,6 +7,7 @@
 
 Fl_ComboBox *selectCommPort=(Fl_ComboBox *)0;
 
+#ifndef NO_XML
 Fl_Input *inpXmlAddress=(Fl_Input *)0;
 
 static void cb_inpXmlAddress(Fl_Input* o, void*) {
@@ -18,6 +19,7 @@ Fl_Input *inpXmlPort=(Fl_Input *)0;
 static void cb_inpXmlPort(Fl_Input* o, void*) {
   progStatus.log_port = o->value();
 }
+#endif
 
 Fl_Return_Button *btn_ser_port_ok=(Fl_Return_Button *)0;
 
@@ -48,6 +50,7 @@ Fl_Double_Window* SetupDialog() {
       selectCommPort->when(FL_WHEN_RELEASE);
       selectCommPort->end();
     } // Fl_ComboBox* selectCommPort
+#ifndef NO_XML
     { Fl_Input* o = inpXmlAddress = new Fl_Input(75, 45, 190, 23, _("Xml Addr"));
       inpXmlAddress->tooltip(_("External logbook net address"));
       inpXmlAddress->callback((Fl_Callback*)cb_inpXmlAddress);
@@ -58,6 +61,7 @@ Fl_Double_Window* SetupDialog() {
       inpXmlPort->callback((Fl_Callback*)cb_inpXmlPort);
       o->value(progStatus.log_port.c_str());
     } // Fl_Input* inpXmlPort
+#endif
     { btn_ser_port_ok = new Fl_Return_Button(193, 114, 67, 20, _("OK"));
       btn_ser_port_ok->callback((Fl_Callback*)cb_btn_ser_port_ok);
     } // Fl_Return_Button* btn_ser_port_ok
