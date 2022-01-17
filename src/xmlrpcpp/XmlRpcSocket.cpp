@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
+#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcSocket.h"
@@ -232,4 +233,4 @@ XmlRpcSocket::getErrorMsg(int error)
   return std::string(err);
 }
 
-
+#endif

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
+#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcServerMethod.h"
@@ -37,3 +38,5 @@ namespace XmlRpc {
 
 
 } // namespace XmlRpc
+
+#endif

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
+#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcDispatch.h"
@@ -290,3 +291,4 @@ XmlRpcDispatch::waitForAndProcessEvents(double timeoutSeconds)
 
   return true;
 }
+#endif
