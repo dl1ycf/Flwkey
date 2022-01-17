@@ -7,3 +7,8 @@ David Freese's (W1HKJ) FLWKEY program, slightly adapted and modified:
 then all XML stuff (rig control, logbook) is left out such that
 the flwkey window occupies much less space.
 
+TODO:
+
+Read/Write WinKey EEPROM, and add user interface to change the
+"standalone" settings.
+
