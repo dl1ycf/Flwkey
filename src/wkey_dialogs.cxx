@@ -297,7 +297,7 @@ static void cb_btn_time_on(Fl_Button*, void*) {
 
 Fl_Input2 *txt_name=(Fl_Input2 *)0;
 
-#ifdef NO_XML
+#ifndef NO_XML
 Fl_Input2 *txt_xchg=(Fl_Input2 *)0;
 #endif
 
@@ -308,7 +308,7 @@ Fl_Button *btn_clear=(Fl_Button *)0;
 static void cb_btn_clear(Fl_Button*, void*) {
   txt_sta->value("");
 txt_name->value("");
-#ifdef NO_XML
+#ifndef NO_XML
 txt_xchg->value("");
 #endif
 txt_sta->color(FL_BACKGROUND2_COLOR);
