@@ -191,8 +191,7 @@ void init_port_combos()
 	for (size_t i = 0; i < sizeof(tty_fmt)/sizeof(*tty_fmt); i++) {
 		glob(tty_fmt[i], 0, NULL, &gbuf);
 		for (size_t j = 0; j < gbuf.gl_pathc; j++) {
-			if ( !(stat(gbuf.gl_pathv[j], &st) == 0 && S_ISCHR(st.st_mode)) ||
-			     strstr(gbuf.gl_pathv[j], "modem") )
+			if ( !(stat(gbuf.gl_pathv[j], &st) == 0 && S_ISCHR(st.st_mode)))
 				continue;
 			LOG_INFO("Found serial port %s", gbuf.gl_pathv[j]);
 			add_combos(gbuf.gl_pathv[j]);
