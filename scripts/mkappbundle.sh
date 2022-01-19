@@ -57,6 +57,7 @@ function copy_libs()
 		libfn="`basename $lib`"
 		if ! test -f "Frameworks/$libfn"; then
 		    cp "$lib" "Frameworks/$libfn"
+		    chmod 755 "Frameworks/$libfn"
 		    install_name_tool -id "@executable_path/../Frameworks/$libfn" "Frameworks/$libfn"
 		    list="$list Frameworks/$libfn"
 		fi
