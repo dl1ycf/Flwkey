@@ -383,16 +383,15 @@ void eeprom_(int byte)
 
 void cbExit()
 {
-// shutdown serial thread
-	pthread_mutex_lock(&mutex_serial);
-		run_serial_thread = false;
-	pthread_mutex_unlock(&mutex_serial);
-	pthread_join(*serial_thread, NULL);
+// shutdown threads
+	run_serial_thread = false;
+	run_flrig_thread = false;
 
-	pthread_mutex_lock(&mutex_flrig);
-		run_flrig_thread = false;
-	pthread_mutex_unlock(&mutex_flrig);
-	pthread_join(*flrig_thread, NULL);
+	//
+	// do NOT use pthread_join, we might hang
+	// if the threads have lost connection etc.
+	//
+        usleep(100000);
 
 // close host and close down the serial port
 	if (host_is_up) {
