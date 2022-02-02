@@ -1,6 +1,6 @@
 AC_DEFUN([AC_FL_OPT], [
   AC_ARG_ENABLE([optimizations],
-		AC_HELP_STRING([--enable-optimizations],
+		AS_HELP_STRING([--enable-optimizations],
 		               [use x86 optimizations (none|sse|sse2|sse3|native) @<:@none@:>@]),
                 [case "${enableval}" in
                   none|sse|sse2|sse3|native) ac_cv_opt="${enableval}" ;;
