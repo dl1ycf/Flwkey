@@ -8,7 +8,7 @@ case "$target_os" in
       ;;
 esac
 
-AC_ARG_ENABLE([mac-universal], AC_HELP_STRING([--enable-mac-universal],
+AC_ARG_ENABLE([mac-universal], AS_HELP_STRING([--enable-mac-universal],
                                               [build a universal binary on Mac OS X @<:@no@:>@]),
               [case "${enableval}" in
                  yes|no) ac_cv_mac_universal="${enableval}" ;;
