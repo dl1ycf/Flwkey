@@ -504,8 +504,8 @@ void load_defaults()
 	cmd += '\0';//progStatus.speed_wpm;
 	cmd += progStatus.sidetone;
 	cmd += progStatus.weight;
-	cmd += progStatus.lead_in_time;
-	cmd += progStatus.tail_time;
+	cmd += progStatus.lead_in_time / 10;
+	cmd += progStatus.tail_time / 10;
 	cmd += progStatus.min_wpm;
 	cmd += progStatus.rng_wpm;
 	cmd += progStatus.first_extension;
