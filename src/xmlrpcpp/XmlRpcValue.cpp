@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcValue.h"
@@ -694,4 +693,3 @@ std::ostream& operator<<(std::ostream& os, XmlRpc::XmlRpcValue& v)
   //return os << v.toXml(); 
   return v.write(os);
 }
-#endif

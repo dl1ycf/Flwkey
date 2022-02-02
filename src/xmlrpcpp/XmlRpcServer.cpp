@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcServer.h"
@@ -519,4 +518,3 @@ XmlRpcServer::generateFaultResponse(std::string const& errorMsg, int errorCode)
   return header + body;
 }
 
-#endif

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcServerConnection.h"
@@ -231,4 +230,3 @@ void XmlRpcServerConnection::executeRequest()
   _response = _server->executeRequest(_request);
 }
 
-#endif

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
 #include <config.h>
 
 #include "XmlRpcUtil.h"
@@ -330,4 +329,3 @@ XmlRpcUtil::xmlEncode(const std::string& raw)
 }
 
 
-#endif

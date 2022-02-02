@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
 #if defined(XMLRPC_THREADS)
 
 #include <config.h>
@@ -78,4 +77,3 @@ void XmlRpcMutex::release()
 
 #endif // XMLRPC_THREADS
 
-#endif

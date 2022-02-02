@@ -15,8 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ----------------------------------------------------------------------------
 
-#ifndef NO_XML
-
 #include <config.h>
 
 #include "XmlRpcClient.h"
@@ -545,4 +543,3 @@ XmlRpcClient::parseResponse(XmlRpcValue& result)
   return result.valid();
 }
 
-#endif
