@@ -108,14 +108,24 @@ if test "x$target_darwin" = "xno" && test "x$target_win32" = "xno"; then
     AC_FLWKEY_PKG_CHECK([x], [x11], [no], [yes])
 fi
 
+### compilation without XML
+# Set ac_cv_want_xml to yes/no
+# if "no": add -DNO_XML to CXXFLAGS
+AC_FL_XML
+
+if test "x$ac_want_xml" = "xyes"; then
+
 ### libflxmlrpc
 # Set ac_cv_flxmlrpc to yes/no
 # Define USE_FLXMLRPC in config.h
 # Substitute FLXMLRPC_CFLAGS and FLXMLRPC_LIBS in Makefile
+# if using --without-xml then this is not executed
 
 AC_FLWKEY_PKG_CHECK([flxmlrpc], [flxmlrpc >= 0.1.0], 
   [yes], [yes], [use external flxmlrpc library @<:@autodetect@:>@],
   [ENABLE_FLXMLRPC])
+
+fi
 
 ### build info
 # Define various build variables in config.h
@@ -133,6 +143,7 @@ Configuration summary:
   
   Target OS ................... $target_os
 
+  Compile with XmlRpc...........$ac_cv_want_xml
   Have flxmlrpc library ....... $ac_cv_flxmlrpc
 
   Static linking .............. $ac_cv_static

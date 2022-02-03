@@ -32,7 +32,9 @@
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 
+#ifndef NO_XML
 #include "XmlRpc.h"
+#endif
 
 #include "support.h"
 #include "wkey_dialogs.h"
@@ -44,9 +46,13 @@
 #include "date.h"
 #include "threads.h"
 
+#ifndef NO_XML
 #include "xmlrpc_rig.h"
+#endif
 
+#ifndef NO_XML
 using namespace XmlRpc;
+#endif
 using namespace std;
 
 int xmlrpc_verbosity = 0;
@@ -85,7 +91,9 @@ void set_flrig_bw(int bw1, int bw2);
 
 void connect_to_flrig();
 
+#ifndef NO_XML
 XmlRpcClient *flrig_client = (XmlRpcClient *)0;
+#endif
 
 bool bws_posted = false;
 bool bw_posted = false;
@@ -791,6 +799,7 @@ void connect_to_flrig()
 
 void * flrig_thread_loop(void *d)
 {
+#ifndef NO_XML
 	for(;;) {
 		MilliSleep( poll_interval );
 
@@ -812,6 +821,7 @@ void * flrig_thread_loop(void *d)
 //			else  flrig_get_pwrmeter();
 		}
 	}
+#endif
 	return NULL;
 }
 

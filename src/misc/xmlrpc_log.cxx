@@ -15,7 +15,9 @@
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 
+#ifndef NO_XML
 #include "XmlRpc.h"
+#endif
 
 #include "support.h"
 #include "wkey_dialogs.h"
@@ -28,9 +30,11 @@
 #include "date.h"
 #include "logbook.h"
 
+#ifndef NO_XML
 using namespace XmlRpc;
 
 XmlRpcClient *log_client = (XmlRpcClient *)0;
+#endif
 
 bool test_connection()
 {
