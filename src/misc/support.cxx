@@ -497,6 +497,123 @@ void open_wkeyer()
 
 }
 
+//
+// read_parameters()
+//
+// Read WinKey EEPROM (all 256 bytes), set progStatus according
+// to the first 16 bytes therein
+//
+void read_parameters()
+{
+  string cmd;
+
+  if (host_is_up) {
+    cmd = " ";
+    cmd += HOST_CLOSE;
+    cmd[0] = ADMIN;
+    sendString(cmd, true);
+    host_is_up=false;
+  }
+
+  cmd = " ";
+  cmd += DUMP_EEPROM;
+  cmd[0] = ADMIN;
+  sendString(cmd, true);
+  read_EEPROM=true;
+
+  int cnt = 4000;
+  while (read_EEPROM == true && cnt) {
+    MilliSleep(10);
+    cnt--;
+  }
+
+  cmd = " ";
+  cmd += HOST_OPEN;
+  cmd[0] = ADMIN;
+  sendCommand(cmd, WAIT_VERSION);
+
+  if (!read_EEPROM) {
+    LOG_INFO("EEPROM read.");
+    progStatus.mode_register     = eeprom_image[ 1];
+    // ignore speed
+    progStatus.sidetone          = eeprom_image[ 3];
+    progStatus.weight            = eeprom_image[ 4];
+    progStatus.lead_in_time      = eeprom_image[ 5]*10;
+    progStatus.tail_time         = eeprom_image[ 6]*10;
+    progStatus.min_wpm           = eeprom_image[ 7];
+    progStatus.rng_wpm           = eeprom_image[ 8];
+    progStatus.first_extension   = eeprom_image[ 9];
+    progStatus.key_compensation  = eeprom_image[10];
+    progStatus.farnsworth_wpm    = eeprom_image[11];
+    progStatus.paddle_setpoint   = eeprom_image[12];
+    progStatus.dit_dah_ratio     = eeprom_image[13];
+    progStatus.pin_configuration = eeprom_image[14];
+    progStatus.dont_care         = eeprom_image[15];
+  }
+}
+
+//
+// write_parameters()
+//
+// Load all 256 WinKey EEPROM bytes. The first 16 bytes are
+// updated from progStatus, the others are either zeroed
+// (if there was no read_parameters() before) or left
+// unchanged
+//
+void write_parameters()
+{
+  string cmd;
+
+  eeprom_image[ 0] = 0xA5;  // magic byte
+  eeprom_image[ 1] = progStatus.mode_register;
+  eeprom_image[ 2] = progStatus.speed_wpm;
+  eeprom_image[ 3] = progStatus.sidetone;
+  eeprom_image[ 4] = progStatus.weight;
+  eeprom_image[ 5] = (progStatus.lead_in_time+5)/10;
+  eeprom_image[ 6] = (progStatus.tail_time+5)/10;
+  eeprom_image[ 7] = progStatus.min_wpm;
+  eeprom_image[ 8] = progStatus.rng_wpm;
+  eeprom_image[ 9] = progStatus.first_extension;
+  eeprom_image[10] = progStatus.key_compensation;
+  eeprom_image[11] = progStatus.farnsworth_wpm;
+  eeprom_image[12] = progStatus.paddle_setpoint;
+  eeprom_image[13] = progStatus.dit_dah_ratio;
+  eeprom_image[14] = progStatus.pin_configuration;
+  eeprom_image[15] = progStatus.dont_care;
+
+  if (host_is_up) {
+    cmd = " ";
+    cmd += HOST_CLOSE;
+    cmd[0] = ADMIN;
+    sendString(cmd, true);
+    host_is_up=false;
+  }
+  cmd = " ";
+  cmd += LOAD_EEPROM;
+  cmd[0] = ADMIN;
+  sendString(cmd, true);
+
+  //
+  // Sending the EEPROM image in one large string
+  // overflows the serial buffer of the Winkey device.
+  // At 1200 baud, each character takes up to 12 msec!
+  // So writing the EEPROM takes about 4 seconds.
+  //
+  for (int i=0; i<256; i++) {
+    cmd = " ";
+    cmd[0] = eeprom_image[i];
+    MilliSleep(15);
+    sendString(cmd, true);
+  }
+
+  cmd = " ";
+  cmd += HOST_OPEN;
+  cmd[0] = ADMIN;
+  sendCommand(cmd, WAIT_VERSION);
+
+  LOG_INFO("EEPROM written.");
+}
+
 void load_defaults()
 {
 	string cmd = LOAD_DEFAULTS;
@@ -504,8 +621,8 @@ void load_defaults()
 	cmd += '\0';//progStatus.speed_wpm;
 	cmd += progStatus.sidetone;
 	cmd += progStatus.weight;
-	cmd += progStatus.lead_in_time / 10;
-	cmd += progStatus.tail_time / 10;
+	cmd += (progStatus.lead_in_time+5) / 10;
+	cmd += (progStatus.tail_time+5) / 10;
 	cmd += progStatus.min_wpm;
 	cmd += progStatus.rng_wpm;
 	cmd += progStatus.first_extension;

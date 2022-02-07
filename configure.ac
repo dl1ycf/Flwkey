@@ -119,12 +119,15 @@ if test "x$ac_want_xml" = "xyes"; then
 # Set ac_cv_flxmlrpc to yes/no
 # Define USE_FLXMLRPC in config.h
 # Substitute FLXMLRPC_CFLAGS and FLXMLRPC_LIBS in Makefile
-# if using --without-xml then this is not executed
+# if using --without-xml then this is not executed and
+# ENABLE_FLXMLRPC set to false
 
 AC_FLWKEY_PKG_CHECK([flxmlrpc], [flxmlrpc >= 0.1.0], 
   [yes], [yes], [use external flxmlrpc library @<:@autodetect@:>@],
   [ENABLE_FLXMLRPC])
 
+else
+AM_CONDITIONAL( [ENABLE_FLXMLRPC], [test a = b] )
 fi
 
 ### build info

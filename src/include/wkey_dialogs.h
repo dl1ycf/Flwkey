@@ -116,6 +116,8 @@ extern Fl_ComboBox *choice_hang;
 extern Fl_ComboBox *choice_sidetone;
 extern Fl_ComboBox *choice_output_pins;
 extern Fl_Button *btn_done_parameters;
+extern Fl_Button *btn_read_parameters;
+extern Fl_Button *btn_write_parameters;
 Fl_Double_Window* make_parameters_dialog();
 extern Fl_Input2 *label_1;
 extern Fl_Input2 *edit_msg1;

@@ -80,7 +80,7 @@ private:
 	bool	rtsptt;
 	bool	rtscts;
 	int		stopbits;
-	char	bfr[2048];
+	//char	bfr[2048];
 //Methods
 	bool	IOselect();
 };

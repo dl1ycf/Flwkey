@@ -93,6 +93,7 @@ static void cb_mnu_operator(Fl_Menu_*, void*) {
   open_operator_dialog();
 }
 
+#ifndef NO_XML
 static void cb_mnu_display_log(Fl_Menu_*, void*) {
   cb_mnuShowLogbook();
 }
@@ -132,6 +133,7 @@ static void cb_mnu_export_cabrillo(Fl_Menu_*, void*) {
 static void cb_mnu_log_client(Fl_Menu_*, void*) {
   connect_to_server();
 }
+#endif
 
 static void cb_mnu_contest(Fl_Menu_*, void*) {
   cb_contest();
@@ -160,6 +162,7 @@ Fl_Menu_Item menu_[] = {
  {"Messages", 0,  (Fl_Callback*)cb_mnu_messages, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"Operator", 0,  (Fl_Callback*)cb_mnu_operator, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
+#ifndef NO_XML
  {"Logbook", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
  {"Display Log", 0,  (Fl_Callback*)cb_mnu_display_log, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
  {"New", 0,  (Fl_Callback*)cb_mnu_new_log, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
@@ -172,6 +175,7 @@ Fl_Menu_Item menu_[] = {
  {"Cabrillo Report", 0,  (Fl_Callback*)cb_mnu_export_cabrillo, 0, 128, FL_NORMAL_LABEL, 0, 14, 0},
  {"Connect to Server", 0,  (Fl_Callback*)cb_mnu_log_client, 0, 130, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0},
+#endif
  {"Contest", 0,  (Fl_Callback*)cb_mnu_contest, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"Events", 0,  (Fl_Callback*)cb_mnu_events, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"Help", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 14, 0},
@@ -843,14 +847,25 @@ static void cb_choice_output_pins(Fl_ComboBox*, void*) {
 }
 
 Fl_Button *btn_done_parameters=(Fl_Button *)0;
+Fl_Button *btn_read_parameters=(Fl_Button *)0;
+Fl_Button *btn_write_parameters=(Fl_Button *)0;
 
 static void cb_btn_done_parameters(Fl_Button*, void*) {
   done_parameters();
 }
 
+static void cb_btn_read_parameters(Fl_Button*, void*) {
+  read_parameters();    // from EEPROM
+  config_parameters();  // update menu with new params
+}
+
+static void cb_btn_write_parameters(Fl_Button*, void*) {
+  write_parameters();  // to EEPROM
+}
+
 Fl_Double_Window* make_parameters_dialog() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = new Fl_Double_Window(515, 232, _("WKeyer Parameters"));
+  { Fl_Double_Window* o = new Fl_Double_Window(515, 255, _("WKeyer Parameters"));
     w = o;
     { Fl_Group* o = new Fl_Group(5, 23, 115, 114, _("ModeReg"));
       o->box(FL_ENGRAVED_FRAME);
@@ -1010,6 +1025,10 @@ Fl_Double_Window* make_parameters_dialog() {
     } // Fl_Group* o
     { btn_done_parameters = new Fl_Button(411, 194, 75, 27, _("Done"));
       btn_done_parameters->callback((Fl_Callback*)cb_btn_done_parameters);
+      btn_read_parameters = new Fl_Button(250, 194, 120, 27, _("Read EEPROM"));
+      btn_read_parameters->callback((Fl_Callback*)cb_btn_read_parameters);
+      btn_write_parameters = new Fl_Button(250, 224, 120, 27, _("Write EEPROM"));
+      btn_write_parameters->callback((Fl_Callback*)cb_btn_write_parameters);
     } // Fl_Button* btn_done_parameters
     o->end();
   } // Fl_Double_Window* o

@@ -61,7 +61,6 @@ static bool open_serial(const char* dev)
 #  define TTY_MAX 255
 void init_port_combos()
 {
-	int retval;
 	clear_combos();
 
 	char ttyname[21];
@@ -175,7 +174,6 @@ out:
 
 void init_port_combos()
 {
-	int retval;
 
 	clear_combos();
 
@@ -213,7 +211,6 @@ void init_port_combos()
 
 void init_port_combos()
 {
-	int retval;
 	struct stat st;
 	char ttyname[PATH_MAX + 1];
 	const char* tty_fmt[] = {
@@ -322,7 +319,6 @@ void change_choice_keyer_mode()
 {
 	int modebits = choice_keyer_mode->index() << 4;
 	progStatus.mode_register = (progStatus.mode_register & 0xCF) | modebits;
-	LOG_WARN("mode reg: %02X", progStatus.mode_register);
 	load_defaults();
 }
 
