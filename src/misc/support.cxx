@@ -521,7 +521,7 @@ void read_parameters()
   sendString(cmd, true);
   read_EEPROM=true;
 
-  int cnt = 4000;
+  int cnt = 1000;
   while (read_EEPROM == true && cnt) {
     MilliSleep(10);
     cnt--;
@@ -550,6 +550,7 @@ void read_parameters()
     progStatus.pin_configuration = eeprom_image[14];
     progStatus.dont_care         = eeprom_image[15];
   }
+  load_defaults();
 }
 
 //
@@ -596,8 +597,9 @@ void write_parameters()
   //
   // Sending the EEPROM image in one large string
   // overflows the serial buffer of the Winkey device.
-  // At 1200 baud, each character takes up to 12 msec!
-  // So writing the EEPROM takes about 4 seconds.
+  // At 1200 baud, each character takes up to 12 msec,
+  // we send 1 char every 15 msec.
+  // So writing the EEPROM takes about 4 seconds (!).
   //
   for (int i=0; i<256; i++) {
     cmd = " ";
@@ -610,6 +612,8 @@ void write_parameters()
   cmd += HOST_OPEN;
   cmd[0] = ADMIN;
   sendCommand(cmd, WAIT_VERSION);
+
+  load_defaults();
 
   LOG_INFO("EEPROM written.");
 }
