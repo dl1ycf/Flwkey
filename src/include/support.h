@@ -49,8 +49,8 @@ extern void set_time_on();
 extern void config_parameters();
 extern void config_messages();
 extern void done_parameters();
-extern void read_parameters();
-extern void write_parameters();
+extern void read_parameters();  // read parameters from EEPROM
+extern void write_parameters();	// write parameters to EEPROM
 
 extern void update_msg_labels();
 extern void apply_edit();

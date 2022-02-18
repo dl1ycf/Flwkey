@@ -188,6 +188,11 @@ void init_port_combos()
 
 	glob_t gbuf;
 
+        //
+        // Some microcontroller (e.g. Teensy4) offer a serial port with
+	// name "usbmodem.*" so we can no longer exclude names containing
+	// "modem" from the list
+	//
 	for (size_t i = 0; i < sizeof(tty_fmt)/sizeof(*tty_fmt); i++) {
 		glob(tty_fmt[i], 0, NULL, &gbuf);
 		for (size_t j = 0; j < gbuf.gl_pathc; j++) {
