@@ -6,13 +6,8 @@ AC_DEFUN([AC_FLWKEY_BUILD_INFO], [
 # Define build flags and substitute in Makefile.in
 # CPPFLAGS
   FLWKEY_BUILD_CPPFLAGS="-I\$(srcdir) -I\$(srcdir)/include"
-  if test "x$ac_cv_want_xml" == "xno"; then
-    FLWKEY_BUILD_CPPFLAGS="$FLWKEY_BUILD_CPPFLAGS -DNO_XML"
-  fi
   if test "x$ac_cv_flxmlrpc" != "xyes"; then
-  if test "x$ac_cv_want_xml" == "xyes"; then
     FLWKEY_BUILD_CPPFLAGS="$FLWKEY_BUILD_CPPFLAGS -I\$(srcdir)/xmlrpcpp"
-  fi
   fi
   if test "x$target_win32" = "xyes"; then
       FLWKEY_BUILD_CPPFLAGS="$FLWKEY_BUILD_CPPFLAGS -D_WINDOWS"
@@ -20,13 +15,8 @@ AC_DEFUN([AC_FLWKEY_BUILD_INFO], [
 # CXXFLAGS
   FLWKEY_BUILD_CXXFLAGS="$FLTK_CFLAGS -I\$(srcdir) -I\$(srcdir)/include  \
 $X_CFLAGS -pipe -Wall -fexceptions $OPT_CFLAGS $DEBUG_CFLAGS $PTW32_CFLAGS"
-  if test "x$ac_cv_want_xml" == "xno"; then
-    FLWKEY_BUILD_CXXFLAGS="$FLWKEY_BUILD_CXXFLAGS -DNO_XML"
-  fi
   if test "x$ac_cv_flxmlrpc" != "xyes"; then
-  if test "x$ac_cv_want_xml" == "xyes"; then
     FLWKEY_BUILD_CXXFLAGS="-I\$(srcdir)/xmlrpcpp $FLWKEY_BUILD_CXXFLAGS"
-  fi
   fi
   if test "x$target_mingw32" = "xyes"; then
       FLWKEY_BUILD_CXXFLAGS="-mthreads $FLWKEY_BUILD_CXXFLAGS"

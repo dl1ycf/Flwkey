@@ -694,7 +694,6 @@ void expand_msg(string &msg)
 	while ((ptr = msg.find("<#>")) != string::npos)
 		msg.replace(ptr, 3, snbr);
 
-#ifndef NO_XML
 	if ((ptr = msg.find("<LOG>")) != string::npos) {
 		if (mnu_log_client->value())
 			xml_add_record();
@@ -702,7 +701,6 @@ void expand_msg(string &msg)
 			AddRecord();
 		msg.replace(ptr, 5, "");
 	}
-#endif
 
 	while ((ptr = msg.find("<+>")) != string::npos) {
 		progStatus.serial_nbr++;
@@ -857,7 +855,6 @@ int main_handler(int event)
 			else btn_send->value(1);
 			return 1;
 		}
-#ifndef NO_XML
 		if ((key == 'l') && ((state & FL_ALT) == FL_ALT)) {
 			if (mnu_log_client->value())
 				xml_add_record();
@@ -865,7 +862,6 @@ int main_handler(int event)
 				AddRecord();
 			return 1;
 		}
-#endif
 		if ((key > FL_F) && key <= (FL_F + 12)) {
 			switch (key) {
 				case (FL_F + 1):
@@ -915,7 +911,6 @@ int main_handler(int event)
 
 void check_call()
 {
-#ifndef NO_XML
 	string chkcall = txt_sta->value();
 	txt_sta->color(FL_BACKGROUND2_COLOR);
 	txt_sta->redraw();
@@ -942,7 +937,6 @@ void check_call()
 			xml_get_record(txt_sta->value());
 		else
 			SearchLastQSO(txt_sta->value());
-#endif
 }
 
 void set_time_on() {

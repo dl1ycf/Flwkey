@@ -19,10 +19,7 @@
 #define __BASE64_H_INCLUDED__ 1
 
 #include <iterator>
-#ifdef __APPLE__
-// including <ios> could be a good idea for non-Apple as well
-#include <ios>
-#endif
+#include <ios>  // necessary on MacOS, can do no harm on other OS
 
 static
 int _xmlrpc_base64Chars[]= {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',

@@ -693,3 +693,4 @@ std::ostream& operator<<(std::ostream& os, XmlRpc::XmlRpcValue& v)
   //return os << v.toXml(); 
   return v.write(os);
 }
+

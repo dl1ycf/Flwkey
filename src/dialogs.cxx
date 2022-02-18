@@ -61,6 +61,7 @@ static bool open_serial(const char* dev)
 #  define TTY_MAX 255
 void init_port_combos()
 {
+	int retval;
 	clear_combos();
 
 	char ttyname[21];
@@ -174,6 +175,7 @@ out:
 
 void init_port_combos()
 {
+	int retval;
 
 	clear_combos();
 
@@ -211,6 +213,7 @@ void init_port_combos()
 
 void init_port_combos()
 {
+	int retval;
 	struct stat st;
 	char ttyname[PATH_MAX + 1];
 	const char* tty_fmt[] = {
@@ -696,4 +699,5 @@ void create_dialogs()
 // contest dialog
 	contest_dialog = make_contest_dialog();
 }
+
 

@@ -121,6 +121,9 @@ void re_t::suboff(size_t n, int* start, int* end) const
 }
 
 #ifndef __APPLE__
+//
+// std::tr1 is non-standard and is not available on MacOS
+//
 #include <tr1/functional>
 
 size_t re_t::hash(void) const
@@ -130,14 +133,11 @@ size_t re_t::hash(void) const
 }
 #else
 //
-// DL1YCF:
-// MacOS "clang" does not have the (non-standard!) std::tr1
-// No effort done here, since this seems not to be used anywhere
-//
-size_t re_t::hash(void) const
-{
-	return 987654321;
-}
+// Replacement in case of last resort
+//size_t re_t::hash(void) const
+//{
+//	return 987654321;
+//}
 #endif
 
 // ------------------------------------------------------------------------
