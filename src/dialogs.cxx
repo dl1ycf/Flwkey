@@ -346,13 +346,13 @@ void change_choice_sidetone()
 
 void change_btn_tone_on()
 {
-	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFD) | btn_tone_on->value() ? 2 : 0;
+	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFD) | (btn_tone_on->value() ? 2 : 0);
 	load_defaults();
 }
 
 void change_btn_ptt_on()
 {
-	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFE) | btn_ptt_on->value() ? 1 : 0;
+	progStatus.pin_configuration = (progStatus.pin_configuration & 0xFE) | (btn_ptt_on->value() ? 1 : 0);
 	load_defaults();
 }
 
