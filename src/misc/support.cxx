@@ -582,6 +582,23 @@ void write_parameters()
   eeprom_image[14] = progStatus.pin_configuration;
   eeprom_image[15] = progStatus.dont_care;
 
+  //
+  // If this is a "virgin" EEPROM image (without CW messages stored),
+  // set the data at addresses 16 through 23 to a reasonable value
+  // and clear message area
+  //
+  if ((int) eeprom_image[17] & 0xFF < 24) {
+    eeprom_image[16] = 15;   // default CmdWPM
+    eeprom_image[17] = 24;   // default FreePtr;
+    eeprom_image[18] = 0;    // no messages stored
+    eeprom_image[19] = 0;
+    eeprom_image[20] = 0;
+    eeprom_image[21] = 0;
+    eeprom_image[22] = 0;
+    eeprom_image[23] = 0;
+    for (int i=24; i<256; i++) eeprom_image[i]=0;
+  }
+
   if (host_is_up) {
     cmd = " ";
     cmd += HOST_CLOSE;
@@ -597,14 +614,14 @@ void write_parameters()
   //
   // Sending the EEPROM image in one large string
   // overflows the serial buffer of the Winkey device.
-  // At 1200 baud, each character takes up to 12 msec,
-  // we send 1 char every 15 msec.
-  // So writing the EEPROM takes about 4 seconds (!).
+  // At 1200 baud, each character takes up to 8.3 msec,
+  // therfore we send 1 char every 12 msec.
+  // So writing the EEPROM takes about 3 seconds (!).
   //
   for (int i=0; i<256; i++) {
     cmd = " ";
     cmd[0] = eeprom_image[i];
-    MilliSleep(15);
+    MilliSleep(12);
     sendString(cmd, true);
   }
 
@@ -622,7 +639,7 @@ void load_defaults()
 {
 	string cmd = LOAD_DEFAULTS;
 	cmd += progStatus.mode_register;
-	cmd += '\0';//progStatus.speed_wpm;
+	cmd += '\0';                                   //progStatus.speed_wpm;
 	cmd += progStatus.sidetone;
 	cmd += progStatus.weight;
 	cmd += (progStatus.lead_in_time+5) / 10;

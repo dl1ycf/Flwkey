@@ -705,4 +705,3 @@ void create_dialogs()
 	contest_dialog = make_contest_dialog();
 }
 
-
