@@ -136,7 +136,10 @@ void sendCommand(string &cmd, int what = NOTHING)
 	if (!str_out.empty())
 		LOG_ERROR("output string not cleared!");
 	pthread_mutex_lock(&mutex_serial);
-	upcase(cmd);
+        //
+        // no "upcase" when sending a command. This may have disastrous results
+        // e.g. modifying the mode_register in load_defaults()
+	// upcase(cmd);
 	str_out = cmd;
 	switch (what) {
 		case WAIT_ECHO : 
