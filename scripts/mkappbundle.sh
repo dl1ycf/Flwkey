@@ -46,6 +46,7 @@ upcase1()
 function copy_libs()
 {
     list="$1"
+    dylibs=""
     while test "x$list" != "x"; do
 	change="$list"
 	list=""
@@ -57,13 +58,28 @@ function copy_libs()
 		libfn="`basename $lib`"
 		if ! test -f "Frameworks/$libfn"; then
 		    cp "$lib" "Frameworks/$libfn"
-		    chmod 755 "Frameworks/$libfn"
+                    #
+                    # on some versions of MacOS, the following install_name_tool
+                    # command fails if $libfn is not writable
+                    #
+                    chmod 755 Frameworks/$libfn
 		    install_name_tool -id "@executable_path/../Frameworks/$libfn" "Frameworks/$libfn"
 		    list="$list Frameworks/$libfn"
+                    #
+                    # maintain a list of all dylibs copied to the Frameworks directory
+                    #
+                    dylibs="$dylibs Frameworks/$libfn"
 		fi
 		install_name_tool -change "$lib" "@executable_path/../Frameworks/$libfn" "$obj"
 	    done
 	done
+    done
+    #
+    # Since BigSur and on ARM processors, the above install_name_tools invalidate the code sign 
+    # of the "patched" dylibs, so we have to re-sign them
+    #
+    for obj in $dylibs; do
+      codesign --force -s - $obj
     done
 }
 
