@@ -121,13 +121,13 @@ void xml_add_record()
 <STX_STRING:%d>%s\
 <SRX_STRING:%d>%s\
 <RST_RCVD:3>599<RST_SENT:3>599<EOR>",
-		freq.length(), freq.c_str(),
-		call.length(), call.c_str(),
-		name.length(), name.c_str(),
+		(int)freq.length(), freq.c_str(),
+		(int)call.length(), call.c_str(),
+		(int)name.length(), name.c_str(),
 		szdt, szt, szt,
-		strlen(sznbr), sznbr,
-		progStatus.xout.length(), progStatus.xout.c_str(),
-		xin.length(), xin.c_str());
+		(int)strlen(sznbr), sznbr,
+		(int)progStatus.xout.length(), progStatus.xout.c_str(),
+		(int)xin.length(), xin.c_str());
 	oneArg[0] = adifrec;
 	log_client->execute("log.add_record", oneArg, result);
 //	std::cout << "log.add_record result " << result << "\n\n";

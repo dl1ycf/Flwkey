@@ -590,7 +590,7 @@ void write_parameters()
   // set the data at addresses 16 through 23 to a reasonable value
   // and clear message area
   //
-  if ((int) eeprom_image[17] & 0xFF < 24) {
+  if ((int) (eeprom_image[17] & 0xFF) < 24) {
     eeprom_image[16] = 15;   // default CmdWPM
     eeprom_image[17] = 24;   // default FreePtr;
     eeprom_image[18] = 0;    // no messages stored

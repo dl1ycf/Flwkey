@@ -23,7 +23,7 @@ friend std::istream &operator>>( std::istream &, cQsoRec & );
 
 private:
 	string qsofield[NUMFIELDS];
-	bool normal; // sort ordering
+
 public:
 	cQsoRec ();
 	~cQsoRec ();

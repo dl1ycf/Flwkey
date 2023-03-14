@@ -130,11 +130,10 @@ void on_line_help()
 
 extern void saveFreqList();
 
-void * flwkey_terminate(void) {
+void flwkey_terminate(void) {
 	std::cerr << "terminating" << std::endl;
 	fl_message("Closing flwkey");
 	cbExit();
-	return 0;
 }
 
 void showEvents(void *)
@@ -226,11 +225,12 @@ void startup(void*)
 
 int main (int argc, char *argv[])
 {
-	std::terminate_handler(flwkey_terminate);
-
 	int arg_idx;
 
 	char dirbuf[FL_PATH_MAX + 1];
+
+        set_terminate(flwkey_terminate);
+
 #ifdef __WIN32__
 	fl_filename_expand(dirbuf, sizeof(dirbuf) - 1, "$USERPROFILE/flwkey.files/");
 #else

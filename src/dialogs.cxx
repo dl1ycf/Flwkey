@@ -175,8 +175,6 @@ out:
 
 void init_port_combos()
 {
-	int retval;
-
 	clear_combos();
 
 	struct stat st;
