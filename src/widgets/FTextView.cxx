@@ -51,10 +51,6 @@
 
 using namespace std;
 
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLMSG_FLTK_API_MINOR < 3
-#	define Fl_Text_Buffer_mod Fl_Text_Buffer
-#endif
-
 /// FTextBase constructor.
 /// Word wrapping is enabled by default at column 80, but see \c reset_wrap_col.
 /// @param x 
@@ -63,7 +59,7 @@ using namespace std;
 /// @param h 
 /// @param l 
 FTextBase::FTextBase(int x, int y, int w, int h, const char *l)
-	: Fl_Text_Editor_mod(x, y, w, h, l),
+	: Fl_Text_Editor(x, y, w, h, l),
           wrap(true), wrap_col(80), max_lines(0), scroll_hint(false)
 {
 	oldw = oldh = olds = -1;
@@ -72,12 +68,12 @@ FTextBase::FTextBase(int x, int y, int w, int h, const char *l)
 	textsize(FL_NORMAL_SIZE);
 	textcolor(FL_FOREGROUND_COLOR);
 
-	tbuf = new Fl_Text_Buffer_mod;
-	sbuf = new Fl_Text_Buffer_mod;
+	tbuf = new Fl_Text_Buffer;
+	sbuf = new Fl_Text_Buffer;
 
 	buffer(tbuf);
 	highlight_data(sbuf, styles, NATTR, FTEXT_DEF, 0, 0);
-	cursor_style(Fl_Text_Editor_mod::NORMAL_CURSOR);
+	cursor_style(Fl_Text_Editor::NORMAL_CURSOR);
 
 	// Do we want narrower scrollbars? The default width is 16.
 	// scrollbar_width((int)floor(scrollbar_width() * 3.0/4.0));
@@ -107,9 +103,9 @@ int FTextBase::handle(int event)
 	// (e.g. Intel on the Asus Eee PC).  Call handle_key directly to work
 	// around this problem.
 	if (event == FL_KEYBOARD)
-		return Fl_Text_Editor_mod::handle_key();
+		return Fl_Text_Editor::handle_key();
 	else
-		return Fl_Text_Editor_mod::handle(event);
+		return Fl_Text_Editor::handle(event);
 }
 
 /// @see FTextRX::add
@@ -165,7 +161,7 @@ void FTextBase::setFontColor(Fl_Color c, int attr)
 }
 
 /// Resizes the text widget.
-/// The real work is done by \c Fl_Text_Editor_mod::resize or, if \c HSCROLLBAR_KLUDGE
+/// The real work is done by \c Fl_Text_Editor::resize or, if \c HSCROLLBAR_KLUDGE
 /// is defined, a version of that code modified so that no horizontal
 /// scrollbars are displayed when word wrapping.
 ///
@@ -196,17 +192,6 @@ void FTextBase::resize(int X, int Y, int W, int H)
 	if (need_wrap_reset)
 		reset_wrap_col();
 
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
-#else
-	if (need_margin_reset && textsize() > 0) {
-		TOP_MARGIN = DEFAULT_TOP_MARGIN;
-		int r = H - Fl::box_dh(box()) - TOP_MARGIN - BOTTOM_MARGIN;
-		if (mHScrollBar->visible())
-			r -= scrollbar_width();
-		if (r %= textsize())
-			TOP_MARGIN += r;
-	}
-#endif
         if (scroll_hint) {
                 mTopLineNumHint = mNBufferLines;
                 mHorizOffsetHint = 0;
@@ -215,7 +200,7 @@ void FTextBase::resize(int X, int Y, int W, int H)
         }
 
 	bool hscroll_visible = mHScrollBar->visible();
-	Fl_Text_Editor_mod::resize(X, Y, W, H);
+	Fl_Text_Editor::resize(X, Y, W, H);
 	if (hscroll_visible != mHScrollBar->visible())
 		oldh = 0; // reset margins next time
 }
@@ -255,7 +240,7 @@ void FTextBase::set_style(int attr, Fl_Font f, int s, Fl_Color c, int set)
 		start = 0;
 		end = NATTR;
 		if (set & SET_FONT)
-			Fl_Text_Display_mod::textfont(f);
+			Fl_Text_Display::textfont(f);
 		if (set & SET_SIZE)
 			textsize(s);
 		if (set & SET_COLOR)
@@ -387,13 +372,9 @@ void FTextBase::saveFile(void)
 ///
 /// @return The selection, or the word text at (x,y). <b>Must be freed by the caller</b>.
 ///
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR < 3
-char* FTextBase::get_word(int x, int y, const char* nwchars, bool ontext)
-#else
 char* FTextBase::get_word(int x, int y, bool ontext)
-#endif
 {
-	int p = xy_to_position(x + this->x(), y + this->y(), Fl_Text_Display_mod::CURSOR_POS);
+	int p = xy_to_position(x + this->x(), y + this->y(), Fl_Text_Display::CURSOR_POS);
 	int start, end;
 
 	if (tbuf->selected()) {
@@ -403,19 +384,8 @@ char* FTextBase::get_word(int x, int y, bool ontext)
 			return tbuf->selection_text();
 	}
 
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
 	start = tbuf->word_start(p);
 	end = tbuf->word_end(p);
-#else
-	string nonword = nwchars;
-	nonword.append(" \t\n");
-	if (!tbuf->findchars_backward(p, nonword.c_str(), &start))
-		start = 0;
-	else
-		start++;
-	if (!tbuf->findchars_forward(p, nonword.c_str(), &end))
-		end = tbuf->length();
-#endif
 
 	if (ontext && (p < start || p >= end))
 		return 0;
@@ -496,7 +466,7 @@ Fl_Menu_Item FTextView::menu[] = {
 };
 
 /// FTextView constructor.
-/// We remove \c Fl_Text_Display_mod::buffer_modified_cb from the list of callbacks
+/// We remove \c Fl_Text_Display::buffer_modified_cb from the list of callbacks
 /// because we want to scroll depending on the visibility of the last line; @see
 /// changed_cb.
 /// @param x 
@@ -627,17 +597,17 @@ void FTextView::changed_cb(int pos, int nins, int ndel, int nsty, const char *dt
 ///
 void FTextView::change_keybindings(void)
 {
-	Fl_Text_Editor_mod::Key_Func fdelete[] = { Fl_Text_Editor_mod::kf_default,
-					       Fl_Text_Editor_mod::kf_enter,
-					       Fl_Text_Editor_mod::kf_delete,
-					       Fl_Text_Editor_mod::kf_cut,
-					       Fl_Text_Editor_mod::kf_paste };
+	Fl_Text_Editor::Key_Func fdelete[] = { Fl_Text_Editor::kf_default,
+					       Fl_Text_Editor::kf_enter,
+					       Fl_Text_Editor::kf_delete,
+					       Fl_Text_Editor::kf_cut,
+					       Fl_Text_Editor::kf_paste };
 	int n = sizeof(fdelete) / sizeof(fdelete[0]);
 
 	// walk the keybindings linked list and delete items containing elements
 	// of fdelete
 loop:
-	for (Fl_Text_Editor_mod::Key_Binding *k = key_bindings; k; k = k->next) {
+	for (Fl_Text_Editor::Key_Binding *k = key_bindings; k; k = k->next) {
 		for (int i = 0; i < n; i++) {
 			if (k->function == fdelete[i]) {
 				remove_key_binding(k->key, k->state);
@@ -720,7 +690,7 @@ int FTextEdit::handle(int event)
 	return FTextBase::handle(event);
 }
 
-/// Handles keyboard events to override Fl_Text_Editor_mod's handling of some
+/// Handles keyboard events to override Fl_Text_Editor's handling of some
 /// keystrokes.
 ///
 /// @param key 

@@ -99,11 +99,11 @@ protected:
 	void		handle_context_menu(void);
 	void		menu_cb(size_t item);
 	void		change_keybindings(void);
-	static int	kf_default(int c, Fl_Text_Editor_mod* e);
-	static int	kf_enter(int c, Fl_Text_Editor_mod* e);
-	static int	kf_delete(int c, Fl_Text_Editor_mod* e);
-	static int	kf_cut(int c, Fl_Text_Editor_mod* e);
-	static int	kf_paste(int c, Fl_Text_Editor_mod* e);
+	static int	kf_default(int c, Fl_Text_Editor* e);
+	static int	kf_enter(int c, Fl_Text_Editor* e);
+	static int	kf_delete(int c, Fl_Text_Editor* e);
+	static int	kf_cut(int c, Fl_Text_Editor* e);
+	static int	kf_paste(int c, Fl_Text_Editor* e);
 
 private:
 	FTextTX();

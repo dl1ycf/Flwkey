@@ -26,6 +26,7 @@
 #include <FL/Fl_Float_Input.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Window.H>
 
 #include <cstdlib>
 #include <cmath>

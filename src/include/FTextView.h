@@ -29,14 +29,13 @@
 #include <FL/Enumerations.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Tile.H>
-
-#include "Fl_Text_Editor_mod.H"
+#include <FL/Fl_Text_Editor.H>
 
 ///
 /// The text widgets base class.
-/// This class implements a basic text editing widget based on Fl_Text_Editor_mod.
+/// This class implements a basic text editing widget based on Fl_Text_Editor.
 ///
-class FTextBase : public Fl_Text_Editor_mod
+class FTextBase : public Fl_Text_Editor
 {
 public:
 	// CLICK_START: same as first clickable style
@@ -96,9 +95,9 @@ private:
 protected:
 	enum { FTEXT_DEF = 'A' };
 	enum set_style_op_e { SET_FONT = 1 << 0, SET_SIZE = 1 << 1, SET_COLOR = 1 << 2 };
-	Fl_Text_Buffer_mod			*tbuf;	///< text buffer
-	Fl_Text_Buffer_mod			*sbuf;	///< style buffer
-	Fl_Text_Display_mod::Style_Table_Entry	styles[NATTR];
+	Fl_Text_Buffer			*tbuf;	///< text buffer
+	Fl_Text_Buffer			*sbuf;	///< style buffer
+	Fl_Text_Display::Style_Table_Entry	styles[NATTR];
 	Fl_Menu_Item				*context_menu;
 	int					popx, popy;
 	bool					wrap;

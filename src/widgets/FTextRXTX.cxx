@@ -67,7 +67,7 @@ Fl_Menu_Item FTextRX::menu[] = {
 };
 
 /// FTextRX constructor.
-/// We remove \c Fl_Text_Display_mod::buffer_modified_cb from the list of callbacks
+/// We remove \c Fl_Text_Display::buffer_modified_cb from the list of callbacks
 /// because we want to scroll depending on the visibility of the last line; @see
 /// changed_cb.
 /// @param x
@@ -131,12 +131,8 @@ int FTextRX::handle(int event)
 			break;
 		}
 	case FL_MOVE: {
-		int p = xy_to_position(Fl::event_x(), Fl::event_y(), Fl_Text_Display_mod::CURSOR_POS);
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
+		int p = xy_to_position(Fl::event_x(), Fl::event_y(), Fl_Text_Display::CURSOR_POS);
 		if (sbuf->char_at(p) >= CLICK_START + FTEXT_DEF) {
-#else
-		if (sbuf->character(p) >= CLICK_START + FTEXT_DEF) {
-#endif
 			if (cursor != FL_CURSOR_HAND)
 				window()->cursor(cursor = FL_CURSOR_HAND);
 			return 1;
@@ -227,29 +223,17 @@ void FTextRX::handle_clickable(int x, int y)
 
 	pos = xy_to_position(x + this->x(), y + this->y(), CURSOR_POS);
 	// return unless clickable style
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
 	if ((style = sbuf->char_at(pos)) < CLICK_START + FTEXT_DEF)
-#else
-	if ((style = sbuf->character(pos)) < CLICK_START + FTEXT_DEF)
-#endif
 		return;
 
 	int start, end;
 	for (start = pos-1; start >= 0; start--)
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
 		if (sbuf->char_at(start) != style)
-#else
-		if (sbuf->character(start) != style)
-#endif
 			break;
 	start++;
 	int len = sbuf->length();
 	for (end = pos+1; end < len; end++)
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
 		if (sbuf->char_at(end) != style)
-#else
-		if (sbuf->character(end) != style)
-#endif
 			break;
 }
 
@@ -392,11 +376,7 @@ int FTextTX::nextChar(void)
 	if (insert_position() <= txpos) // empty buffer or cursor inside transmitted text
 		c = -1;
 	else {
-#if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR == 3
 		if ((c = static_cast<unsigned char>(tbuf->char_at(txpos)))) {
-#else
-		if ((c = static_cast<unsigned char>(tbuf->character(txpos)))) {
-#endif
 			++txpos;
 			changed_cb(txpos, 0, 0,-1, static_cast<const char *>(0), this);
 		}
@@ -410,7 +390,7 @@ void FTextTX::setFont(Fl_Font f, int attr)
 	FTextBase::setFont(f, attr);
 }
 
-/// Handles keyboard events to override Fl_Text_Editor_mod's handling of some
+/// Handles keyboard events to override Fl_Text_Editor's handling of some
 /// keystrokes.
 ///
 /// @param key
@@ -512,45 +492,45 @@ void FTextTX::menu_cb(size_t item)
 void FTextTX::change_keybindings(void)
 {
 	struct {
-		Fl_Text_Editor_mod::Key_Func function, override;
+		Fl_Text_Editor::Key_Func function, override;
 	} fbind[] = {
-		{ Fl_Text_Editor_mod::kf_default, FTextTX::kf_default },
-		{ Fl_Text_Editor_mod::kf_enter,   FTextTX::kf_enter   },
-		{ Fl_Text_Editor_mod::kf_delete,  FTextTX::kf_delete  },
-		{ Fl_Text_Editor_mod::kf_cut,     FTextTX::kf_cut     },
-		{ Fl_Text_Editor_mod::kf_paste,   FTextTX::kf_paste   }
+		{ Fl_Text_Editor::kf_default, FTextTX::kf_default },
+		{ Fl_Text_Editor::kf_enter,   FTextTX::kf_enter   },
+		{ Fl_Text_Editor::kf_delete,  FTextTX::kf_delete  },
+		{ Fl_Text_Editor::kf_cut,     FTextTX::kf_cut     },
+		{ Fl_Text_Editor::kf_paste,   FTextTX::kf_paste   }
 	};
 	int n = sizeof(fbind) / sizeof(fbind[0]);
 
 	// walk the keybindings linked list and replace items containing
 	// functions for which we have an override in fbind
-	for (Fl_Text_Editor_mod::Key_Binding *k = key_bindings; k; k = k->next) {
+	for (Fl_Text_Editor::Key_Binding *k = key_bindings; k; k = k->next) {
 		for (int i = 0; i < n; i++)
 			if (fbind[i].function == k->function)
 				k->function = fbind[i].override;
 	}
 }
 
-// The kf_* functions below call the corresponding Fl_Text_Editor_mod routines, but
+// The kf_* functions below call the corresponding Fl_Text_Editor routines, but
 // may make adjustments so that no transmitted text is modified.
 
-int FTextTX::kf_default(int c, Fl_Text_Editor_mod* e)
+int FTextTX::kf_default(int c, Fl_Text_Editor* e)
 {
-	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor_mod::kf_default(c, e);
+	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor::kf_default(c, e);
 }
 
-int FTextTX::kf_enter(int c, Fl_Text_Editor_mod* e)
+int FTextTX::kf_enter(int c, Fl_Text_Editor* e)
 {
-	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor_mod::kf_enter(c, e);
+	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor::kf_enter(c, e);
 }
 
-int FTextTX::kf_delete(int c, Fl_Text_Editor_mod* e)
+int FTextTX::kf_delete(int c, Fl_Text_Editor* e)
 {
 	// single character
 	if (!e->buffer()->selected()) {
                 if (e->insert_position() >= *ptxpos &&
                     e->insert_position() != e->buffer()->length())
-                        return Fl_Text_Editor_mod::kf_delete(c, e);
+                        return Fl_Text_Editor::kf_delete(c, e);
                 else
                         return 1;
         }
@@ -563,10 +543,10 @@ int FTextTX::kf_delete(int c, Fl_Text_Editor_mod* e)
 	if (*ptxpos > start)
 		e->buffer()->select(*ptxpos, end);
 
-	return Fl_Text_Editor_mod::kf_delete(c, e);
+	return Fl_Text_Editor::kf_delete(c, e);
 }
 
-int FTextTX::kf_cut(int c, Fl_Text_Editor_mod* e)
+int FTextTX::kf_cut(int c, Fl_Text_Editor* e)
 {
 	if (e->buffer()->selected()) {
 		int start, end;
@@ -577,10 +557,10 @@ int FTextTX::kf_cut(int c, Fl_Text_Editor_mod* e)
 			e->buffer()->select(*ptxpos, end);
 	}
 
-	return Fl_Text_Editor_mod::kf_cut(c, e);
+	return Fl_Text_Editor::kf_cut(c, e);
 }
 
-int FTextTX::kf_paste(int c, Fl_Text_Editor_mod* e)
+int FTextTX::kf_paste(int c, Fl_Text_Editor* e)
 {
-	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor_mod::kf_paste(c, e);
+	return e->insert_position() < *ptxpos ? 1 : Fl_Text_Editor::kf_paste(c, e);
 }
