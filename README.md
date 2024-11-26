@@ -13,3 +13,8 @@ Additions:
 
 - read/write parameters from/to WinKeyer EEPROM, these then become
   effective in the WinKeyer "standalone" mode
+
+Note:
+
+- FLTK 1.1 support dropped, works on FLTK 1.3.x and 1.4.x
+  but still uses some deprecated FLTK 1.3 features.
