@@ -30,10 +30,6 @@
 #include <FL/filename.H>
 
 #ifdef __MINGW32__
-#	if FLWKEY_FLTK_API_MAJOR == 1 && FLWKEY_FLTK_API_MINOR < 3
-#		undef dirent
-#		include <dirent.h>
-#	endif
 #else
 #	include <dirent.h>
 #endif

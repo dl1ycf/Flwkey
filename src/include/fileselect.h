@@ -8,15 +8,11 @@
 //#endif
 //#define FSEL_THREAD 0
 
-#if FLMSG_FLTK_API_MAJOR == 1 && FLMSG_FLTK_API_MINOR < 3
-	class Fl_Native_File_Chooser;
-#else
 	#ifdef __WIN_32
 		class Fl_Native_File_Chooser;
 	#else
 		#include <FL/Fl_Native_File_Chooser.H>
 	#endif
-#endif
 
 namespace FSEL {
 

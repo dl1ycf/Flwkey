@@ -181,7 +181,6 @@ flwkey_SOURCES += \
 	widgets/FreqControl.cxx \
 	widgets/FTextRXTX.cxx \
 	widgets/FTextView.cxx \
-	widgets/Fl_Native_File_Chooser.cxx \
 	widgets/flinput2.cxx \
 	widgets/fileselect.cxx 
 
@@ -191,9 +190,6 @@ EXTRA_DIST = \
 	widgets/flnfc_common.cxx \
 	compat/regex.c \
 	compat/regex.h \
-	widgets/Fl_Native_File_Chooser_FLTK.cxx \
-	widgets/Fl_Native_File_Chooser_MAC.cxx \
-	widgets/Fl_Native_File_Chooser_WIN32.cxx \
 	flwkey_icon.cxx \
 	wkey_dialogs.fl \
 	logbook/lgbook.fl \
@@ -237,10 +233,6 @@ EXTRA_DIST = \
 	include/icons.h \
 	include/fileselect.h \
 	include/wkey_dialogs.h \
-	include/FL/Fl_Native_File_Chooser.H \
-	include/FL/Fl_Native_File_Chooser_FLTK.H \
-	include/FL/Fl_Native_File_Chooser_MAC.H \
-	include/FL/Fl_Native_File_Chooser_WIN32.H \
 	include/xmlrpc_rig.h
 
 # Additional non-source files that are distributed

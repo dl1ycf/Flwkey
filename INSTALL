@@ -6,10 +6,9 @@ To compile flwkey you will need:
   * A recent C++ compiler.  The GNU C++ compilers in the 4.x series are
     known to work.
 
-  * Version 1.1.x of the Fast Light Tool Kit (FLTK), with its
-    development library and headers.  Versions 1.1.7 to 1.1.9 are known
-    to work.  FLTK's multi-threading support is recommended but not
-	required.
+  * Version 1.3.x  or 1.4.x of the Fast Light Tool Kit (FLTK), with its
+    development library and headers. Note support for old FLTK versions
+    such as 1.1.x has been dropped now.
 
 Once you have installed the required packages, the following commands
 should be sufficient to compile flwkey and install it under /usr/local:
